@@ -6,7 +6,7 @@
   venue: "IEEE Conference on Decision and Control (CDC)"
   pdf: "https://joonlee16.github.io/files/construction.pdf"
   bibtexurl: "https://joonlee16.github.io/files/construction.bib"
-  authors: "Haejoon Lee, Dimitra Panagou"
+  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
 
 - year: 2025
@@ -17,7 +17,7 @@
   venue: "IEEE International Conference on Robotics and Automation (ICRA)"
   pdf: "https://joonlee16.github.io/files/maintaining.pdf"
   bibtexurl: "https://joonlee16.github.io/files/maintaining.bib"
-  authors: "Haejoon Lee, Dimitra Panagou"
+  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
 
 - year: 2025
@@ -27,7 +27,7 @@
   image: "/pics/minimal.png"
   venue: "submitted and under review"
   pdf: "https://joonlee16.github.io/files/minimal.pdf"
-  authors: "Haejoon Lee, Dimitra Panagou"
+  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
 
 - year: 2025
@@ -38,7 +38,7 @@
   venue: "Journal of Optimization Theory and Applications"
   slidesurl: "https://joonlee16.github.io/files/slides3.pdf"
   pdf: "https://joonlee16.github.io/files/paper3.pdf"
-  authors: "Tan H Cao, Nilson Chapagain, Haejoon Lee, Thi Phung, Nguyen Nang Thieu"
+  authors: "Tan H Cao, Nilson Chapagain, <strong>Haejoon Lee</strong>, Thi Phung, Nguyen Nang Thieu"
   first_coauthors: false
 
 - year: 2025
@@ -49,7 +49,7 @@
   venue: "submitted and under review"
   pdf: "https://joonlee16.github.io/files/reformulations.pdf"
   bibtexurl: "https://joonlee16.github.io/files/reformulations.bib"
-  authors: "Devansh R. Agrawal, Haejoon Lee, Dimitra Panagou"
+  authors: "Devansh R. Agrawal, <strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: true
 
 - year: 2025
@@ -60,7 +60,7 @@
   venue: "submitted and under review"
   pdf: "https://joonlee16.github.io/files/combinatorial.pdf"
   bibtexurl: "https://joonlee16.github.io/files/combinatorial.bib"
-  authors: "Pio Ong, Haejoon Lee, Tamas G Molnar, Dimitra Panagou, Aaron Ames"
+  authors: "Pio Ong, <strong>Haejoon Lee</strong>, Tamas G Molnar, Dimitra Panagou, Aaron Ames"
   first_coauthors: false
 
 - year: 2025
@@ -71,7 +71,7 @@
   venue: "submitted and under review"
   pdf: "https://joonlee16.github.io/files/partial.pdf"
   bibtexurl: "https://joonlee16.github.io/files/partial.bib"
-  authors: "Haejoon Lee, Dimitra Panagou"
+  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
 
 - year: 2025
@@ -82,5 +82,5 @@
   venue: 'submitted and under review' # IEEE Control Systems Letters (L-CSS)
   paperurl: 'https://joonlee16.github.io/files/allocation.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/allocation.bib'
-  authors: "Kaleb Ben Naveed, Haejoon Lee, Dimitra Panagou"
+  authors: "Kaleb Ben Naveed, <strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
