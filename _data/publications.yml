@@ -59,7 +59,7 @@
   title: "Distributed Resilience-Aware Control in Multi-Robot Networks"
   category: conferences
   image: "/pics/distributed.gif"
-  venue: "IEEE Conference on Decision and Control (CDC)"
+  venue: "2025 IEEE Conference on Decision and Control (CDC)"
   pdf: "https://arxiv.org/pdf/2504.03120"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
@@ -69,7 +69,7 @@
   title: "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"
   category: conferences
   image: "/pics/maintaining.gif"
-  venue: "IEEE International Conference on Robotics and Automation (ICRA)"
+  venue: "2025 IEEE International Conference on Robotics and Automation (ICRA)"
   pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11127420"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
@@ -79,7 +79,7 @@
   title: "Construction of the Sparsest Maximally r-Robust Graphs"
   category: conferences
   image: "/pics/construction.png"
-  venue: "IEEE Conference on Decision and Control (CDC)"
+  venue: "2024 IEEE Conference on Decision and Control (CDC)"
   pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10886656"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
