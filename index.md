@@ -11,12 +11,6 @@ author_profile: true
 # Welcome
 
 
-
----
-layout: default
-title: "Haejoon Lee"
----
-
 <div class="about-container">
   <div class="bio-text">
     <h1><strong>Haejoon Lee</strong> <span class="normal-weight"></span></h1>
