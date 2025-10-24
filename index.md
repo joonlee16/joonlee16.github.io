@@ -1,28 +1,32 @@
 ---
-layout: home
+layout: default
 title: "Home"
-permalink: /
-author_profile: true
 ---
 
-<div style="text-align:center; margin-bottom: 20px;">
-  <!-- Profile photo -->
-  <img src="/pics/haejoonlee.jpg" alt="Haejoon Lee" style="width:180px;">
+<div style="display:flex; flex-direction:column; align-items:center; margin-bottom: 30px;">
 
-  <!-- Contact info -->
-  <div style="margin-top:10px; font-size:0.95rem; color:#444;">
-    📧 <a href="mailto:haejoonl@umich.edu">haejoonl@umich.edu</a><br>
-    🔗 <a href="https://scholar.google.com/citations?user=W0kpJYUAAAAJ&hl=en">Google Scholar</a> · 
-       <a href="https://github.com/joonlee16/">GitHub</a> · 
-       <a href="https://www.linkedin.com/in/haejoon-lee-450900244/">LinkedIn</a>
+  <!-- Profile card -->
+  <div style="text-align:center; padding:20px; max-width:400px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); background-color:#f9f9f9;">
+    
+    <!-- Profile photo -->
+    <img src="/pics/haejoonlee.jpg" alt="Haejoon Lee" style="width:180px; height:180px; border-radius:50%; object-fit:cover; margin-bottom:15px;">
+    
+    <!-- Name and title -->
+    <h1 style="margin:0; font-size:1.8rem;"><strong>Haejoon Lee</strong></h1>
+    <p style="margin:5px 0 15px 0; font-size:1rem; color:#555;"><strong>PhD Candidate</strong> in Robotics, University of Michigan</p>
+    
+    <!-- Contact info -->
+    <div style="font-size:0.95rem; color:#444; line-height:1.6;">
+      📧 <a href="mailto:haejoonl@umich.edu">haejoonl@umich.edu</a><br>
+      🔗 <a href="https://scholar.google.com/citations?user=W0kpJYUAAAAJ&hl=en">Google Scholar</a> · 
+         <a href="https://github.com/joonlee16/">GitHub</a> · 
+         <a href="https://www.linkedin.com/in/haejoon-lee-450900244/">LinkedIn</a>
+    </div>
   </div>
 </div>
 
-<div class="about-container">
+<div class="about-container" style="max-width:800px; margin:0 auto; line-height:1.6; font-size:1rem; color:#333;">
   <div class="bio-text">
-    <h1><strong>Haejoon Lee</strong></h1>
-    <p><strong>PhD Candidate</strong> in Robotics, University of Michigan, Ann Arbor</p>
-
     <p>
       I am a third-year Robotics Ph.D. student in
       <a href="https://dasc-lab.github.io/" target="_blank">The DASC Lab</a>
