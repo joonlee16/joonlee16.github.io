@@ -1,0 +1,265 @@
+---
+layout: default
+title: Research
+slides:
+  - src: "/assets/dual_gatekeeper_full.png"
+  - src: "/assets/NST_Alg_fig4.png"
+  - src: "/assets/mEclares_block.png"
+---
+
+<!-- ======= HERO SLIDER (full width, fits whole image) ======= -->
+<section class="hero" id="hero">
+  <div class="hero-track" id="hero-track">
+    {% for s in page.slides %}
+    <div class="hero-slide">
+      <img src="{{ s.src }}" alt="Research image">
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Controls (no title overlay) -->
+  <button class="hero-nav prev" aria-label="Previous">⟨</button>
+  <button class="hero-nav next" aria-label="Next">⟩</button>
+
+  <div class="hero-dots" id="hero-dots">
+    {% for s in page.slides %}
+      <button class="dot{% if forloop.first %} active{% endif %}" aria-label="Go to slide {{ forloop.index }}"></button>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ======= CONTENT BELOW THE HERO ======= -->
+<div class="content-wrap">
+  <h2>Research</h2>
+  <p>Some problems I have been working on:</p>
+
+  <!-- CATEGORY 1 -->
+  <div class="research-category">
+    <h3>Long-horizon energy-constrained planning</h3>
+    <ul>
+      <li>
+        <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10611286" target="_blank" class="paper-link">
+          How can a robot perform long-horizon exploration by tracking online-updated nominal trajectories while ensuring enough energy to return for recharging when needed?
+        </a>
+      </li>
+      <li>
+        <a href="https://arxiv.org/abs/2406.04560" target="_blank" class="paper-link">
+          How can multiple robots coordinate to share a single mobile charging station during such missions?
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- CATEGORY 2 -->
+  <div class="research-category">
+    <h3>Informative Planning in Spatiotemporal Environments</h3>
+    <ul>
+      <li>
+        <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10611286" target="_blank" class="paper-link">
+          How can a robot plan trajectories that explicitly account for how information evolves and decays across space and time during exploration?
+        </a>
+      </li>
+      <li>
+        <a href="https://link.springer.com/article/10.1007/s10514-025-10215-6" target="_blank" class="paper-link">
+          How can this framework be extended to the multi-agent case, where robots must coordinate sensing and avoid redundant observations of the same regions?
+        </a>
+      </li>
+      <li>
+        <a href="https://arxiv.org/abs/2509.22883" target="_blank" class="paper-link">
+          How can a team of robots be allocated across regions with differing spatial and temporal correlations to effectively capture the varying degrees of variability across the regions?
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- CATEGORY 3 -->
+  <div class="research-category">
+    <h3>Planning under Uncertainty</h3>
+    <ul>
+      <li>
+        How can we design trajectories that reduce uncertainty safely, and only when it improves performance and lowers cost?
+      </li>
+      <li>
+        <a href="https://arxiv.org/abs/2510.06351" target="_blank" class="paper-link">
+          How can we design trajectories that reduce uncertainty safely while staying within a fixed mission cost budget?
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<style>
+.content-wrap {
+  max-width: 850px;
+  margin: 2rem auto;
+  color: #333;
+  line-height: 1.7;
+}
+
+/* Category Titles */
+.research-category h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 1.8rem;
+  margin-bottom: 0.6rem;
+  color: #000;
+}
+
+/* Bullet Lists */
+.research-category ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.research-category li {
+  margin-bottom: 0.5rem;
+}
+
+/* Links */
+.paper-link {
+  color: #0066cc;
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.paper-link:hover {
+  color: #004c99;
+  text-decoration: underline;
+}
+</style>
+
+
+
+<style>
+:root{
+  --max-content: 1100px;
+  --side-gap: 16px;
+  --max-img-vh: 70vh;   /* limit hero height so the whole image fits on screen */
+}
+
+/* Full-bleed hero container; height is set dynamically to current slide */
+.hero{
+  position: relative;
+  width: 100%;
+  margin: 0;               /* flush under your site nav */
+  overflow: hidden;
+  background: #fff;        /* clean background around images */
+}
+
+/* Horizontal rail */
+.hero-track{
+  display: flex;
+  width: 100%;
+  transition: transform .5s ease-in-out;
+  will-change: transform;
+}
+
+/* Each slide fills width; height is content-driven */
+.hero-slide{
+  flex: 0 0 100%;
+  display: grid;
+  place-items: center;
+  padding: 8px 0 12px;
+}
+
+/* Fit entire image (no cropping). Constrain by viewport height */
+.hero-slide img{
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: calc(100% - 2*var(--side-gap));
+  max-height: var(--max-img-vh);
+  object-fit: contain;     /* key: show full image */
+  background: transparent;
+  margin: 0 auto;
+}
+
+/* Arrows */
+.hero-nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px; height: 40px;
+  border-radius: 999px;
+  border: 1px solid #e4e7eb;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 2px 10px rgba(0,0,0,.12);
+  cursor: pointer;
+  font-size: 18px;
+  z-index: 2;
+}
+.hero-nav.prev{ left: 12px; }
+.hero-nav.next{ right: 12px; }
+.hero-nav:hover{ background: #fff; }
+
+/* Dots */
+.hero-dots{
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  bottom: 10px;
+  display: flex; gap: 8px;
+}
+.hero-dots .dot{
+  width: 10px; height: 10px; border-radius: 50%;
+  border: none; background: #cfd4da; cursor: pointer;
+}
+.hero-dots .dot.active{ background: #111; }
+
+/* Content below hero */
+.content-wrap{
+  max-width: var(--max-content);
+  margin: 28px auto 48px;
+  padding: 0 16px;
+}
+
+@media (max-width: 640px){
+  :root{ --side-gap: 10px; --max-img-vh: 60vh; }
+}
+</style>
+
+<script>
+(function(){
+  const hero = document.getElementById('hero');
+  const track = document.getElementById('hero-track');
+  const slides = Array.from(track.children);
+  const prev = document.querySelector('.hero-nav.prev');
+  const next = document.querySelector('.hero-nav.next');
+  const dots = Array.from(document.getElementById('hero-dots').children);
+  let i = 0;
+
+  function adjustHeight(){
+    const h = slides[i].offsetHeight;
+    hero.style.height = h + 'px';
+  }
+
+  function go(to){
+    i = (to + slides.length) % slides.length;
+    track.style.transform = `translateX(-${i * 100}%)`;
+    dots.forEach((d,k)=>d.classList.toggle('active', k===i));
+    // after the slide moves, set hero height to match the new slide
+    requestAnimationFrame(adjustHeight);
+  }
+
+  // wire controls
+  prev.addEventListener('click', ()=> go(i - 1));
+  next.addEventListener('click', ()=> go(i + 1));
+  dots.forEach((d,k)=> d.addEventListener('click', ()=> go(k)));
+
+  // adjust height when images load or window resizes
+  slides.forEach(s=>{
+    const img = s.querySelector('img');
+    if (!img) return;
+    if (img.complete) { /* already loaded */ }
+    else img.addEventListener('load', adjustHeight, { once:true });
+  });
+  window.addEventListener('resize', adjustHeight);
+
+  // optional auto-advance
+  let timer = setInterval(()=> go(i+1), 6000);
+  track.addEventListener('mouseenter', ()=> clearInterval(timer));
+  track.addEventListener('mouseleave', ()=> (timer = setInterval(()=> go(i+1), 6000)));
+
+  go(0);
+})();
+</script>
