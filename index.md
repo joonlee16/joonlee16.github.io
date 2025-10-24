@@ -28,8 +28,7 @@ title: "Haejoon Lee"
   </div>
 
   <div class="bio-photo">
-    <img src="/pics/haejoonlee.jpg" alt="Haejoon Lee">
-    <!-- <p class="caption">Kaleb, 2025</p> -->
+    <img src="/pics/haejoonlee.jpg" alt="Haejoon Lee" style="width:150px; height:auto;>
   </div>
 </div>
 
