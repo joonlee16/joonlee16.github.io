@@ -4,7 +4,7 @@
   category: conferences
   image: /pics/construction.png
   venue: 'IEEE Conference on Decision and Control (CDC)'
-  paperurl: 'https://joonlee16.github.io/files/construction.pdf'
+  pdf: 'https://joonlee16.github.io/files/construction.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/construction.bib'
   authors: "Haejoon Lee, Dimitra Panagou"
   first_coauthors: false
@@ -17,7 +17,7 @@
   category: conferences
   image: /pics/maintaining.png
   venue: 'IEEE International Conference on Robotics and Automation (ICRA)'
-  paperurl: 'https://joonlee16.github.io/files/maintaining.pdf'
+  pdf: 'https://joonlee16.github.io/files/maintaining.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/maintaining.bib'
   authors: "Haejoon Lee, Dimitra Panagou"
   first_coauthors: false
@@ -28,7 +28,7 @@
   category: journal
   image: /pics/minimal.png
   venue: "submitted and under reivew"
-  paperurl: 'https://joonlee16.github.io/files/minimal.pdf'
+  pdf: 'https://joonlee16.github.io/files/minimal.pdf'
   authors: "Haejoon Lee, Dimitra Panagou"
   first_coauthors: false
 
@@ -39,7 +39,7 @@
   image: /pics/optimal.png
   venue: 'Journal of Optimization Theory and Applications'
   slidesurl: 'https://joonlee16.github.io/files/slides3.pdf'
-  paperurl: 'https://joonlee16.github.io/files/paper3.pdf'
+  pdf: 'https://joonlee16.github.io/files/paper3.pdf'
   authors: "Tan H Cao, Nilson Chapagain, Haejoon Lee, Thi Phung, Nguyen Nang Thieu"
   first_coauthors: false
 
@@ -50,7 +50,7 @@
   category: manuscripts
   image: /pics/reformulations.png
   venue: "submitted and under reivew" # IEEE Control Systems Letters (L-CSS)
-  paperurl: 'https://joonlee16.github.io/files/reformulations.pdf'
+  pdf: 'https://joonlee16.github.io/files/reformulations.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/reformulations.bib'
   authors: "Devansh R. Agrawal, Haejoon Lee, Dimitra Panagou"
   first_coauthors: true 
@@ -62,7 +62,7 @@
   category: manuscripts
   image: /pics/combinatorial.png
   venue: "submitted and under review" # IEEE Control Systems Letters (L-CSS)
-  paperurl: 'https://joonlee16.github.io/files/combinatorial.pdf'
+  pdf: 'https://joonlee16.github.io/files/combinatorial.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/combinatorial.bib'
   authors: "Pio Ong, Haejoon Lee, Tamas G Molnar ,Dimitra Panagou, Aaron Ames"
   first_coauthors: false
@@ -75,7 +75,7 @@
   category: conferences
   image: /pics/partial.png
   venue: "submitted and under reivew" # IEEE Control Systems Letters (L-CSS)
-  paperurl: 'https://joonlee16.github.io/files/partial.pdf'
+  pdf: 'https://joonlee16.github.io/files/partial.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/partial.bib'
   authors: "Haejoon Lee, Dimitra Panagou"
   first_coauthors: false
@@ -87,7 +87,7 @@
   category: conferences
   image: /pics/allocation.png
   venue: 'submitted and under review' # IEEE Control Systems Letters (L-CSS)
-  paperurl: 'https://joonlee16.github.io/files/allocation.pdf'
+  pdf: 'https://joonlee16.github.io/files/allocation.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/allocation.bib'
   authors: "Kaleb Ben Naveed, Haejoon Lee, Dimitra Panagou"
   first_coauthors: false
