@@ -5,7 +5,7 @@ title: "Haejoon Lee"
 
 <div class="about-container">
   <div class="bio-text">
-    <h1><strong>Haejoon</strong> <span class="normal-weight">Lee</span></h1>
+    <h1><strong>Haejoon Lee</strong> <span class="normal-weight"></span></h1>
     <p><strong>PhD Candidate</strong> in Robotics, University of Michigan, Ann Arbor</p>
 
     <p>I am a third-year Robotics Ph.D. student in
@@ -28,7 +28,7 @@ title: "Haejoon Lee"
   </div>
 
   <div class="bio-photo">
-    <img src="/pics/haejoonlee.jpg" alt="Haejoon Lee" style="width:150px; height:auto;>
+    <img src="/pics/haejoonlee.jpg" alt="Haejoon Lee" style="width:150px; height:auto;">
   </div>
 </div>
 
