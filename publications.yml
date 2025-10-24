@@ -1,8 +1,8 @@
-- title: "Construction of the Sparsest Maximally r-Robust Graphs"
+- year: 2024
+  title: "Construction of the Sparsest Maximally r-Robust Graphs"
   collection: publications
   category: conferences
   image: /pics/construction.png
-  year: 2024
   venue: 'IEEE Conference on Decision and Control (CDC)'
   paperurl: 'https://joonlee16.github.io/files/construction.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/construction.bib'
@@ -11,32 +11,32 @@
 
 
 
-- title: "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"
+- year: 2025
+  title: "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"
   collection: publications
   category: conferences
   image: /pics/maintaining.png
-  year: 2025
   venue: 'IEEE International Conference on Robotics and Automation (ICRA)'
   paperurl: 'https://joonlee16.github.io/files/maintaining.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/maintaining.bib'
   authors: "Haejoon Lee, Dimitra Panagou"
   first_coauthors: false
 
-- title: "Minimal Construction of Graphs with Maximum Robustness"
+- year: 2025
+  title: "Minimal Construction of Graphs with Maximum Robustness"
   collection: publications
   category: journal
   image: /pics/minimal.png
-  year: 2025
   venue: "submitted and under reivew"
   paperurl: 'https://joonlee16.github.io/files/minimal.pdf'
   authors: "Haejoon Lee, Dimitra Panagou"
   first_coauthors: false
 
-- title: "Optimal Control of Several Motion Models"
+- year: 2025
+  title: "Optimal Control of Several Motion Models"
   collection: publications
   category: manuscripts
   image: /pics/optimal.png
-  year: 2025
   venue: 'Journal of Optimization Theory and Applications'
   slidesurl: 'https://joonlee16.github.io/files/slides3.pdf'
   paperurl: 'https://joonlee16.github.io/files/paper3.pdf'
@@ -44,11 +44,11 @@
   first_coauthors: false
 
 
-- title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
+- year: 2025
+  title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
   collection: publications
   category: manuscripts
   image: /pics/reformulations.png
-  year: 2025
   venue: "submitted and under reivew" # IEEE Control Systems Letters (L-CSS)
   paperurl: 'https://joonlee16.github.io/files/reformulations.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/reformulations.bib'
@@ -56,11 +56,11 @@
   first_coauthors: true 
 
 
-- title: "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
+- year: 2025
+  title: "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
   collection: publications
   category: manuscripts
   image: /pics/combinatorial.png
-  year: 2025
   venue: "submitted and under review" # IEEE Control Systems Letters (L-CSS)
   paperurl: 'https://joonlee16.github.io/files/combinatorial.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/combinatorial.bib'
@@ -69,11 +69,11 @@
 
 
 
-- title: "Partial Resilient Leader-Follower Consensus in Time-Varying Graphs"
+- year: 2025
+  title: "Partial Resilient Leader-Follower Consensus in Time-Varying Graphs"
   collection: publications
   category: conferences
   image: /pics/partial.png
-  year: 2025
   venue: "submitted and under reivew" # IEEE Control Systems Letters (L-CSS)
   paperurl: 'https://joonlee16.github.io/files/partial.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/partial.bib'
@@ -81,11 +81,11 @@
   first_coauthors: false
 
 
-- title: "Multi-Robot Allocation for Information Gathering in Non-Uniform Spatiotemporal Environments"
+- year: 2025
+  title: "Multi-Robot Allocation for Information Gathering in Non-Uniform Spatiotemporal Environments"
   collection: publications
   category: conferences
   image: /pics/allocation.png
-  year: 2025
   venue: 'submitted and under review' # IEEE Control Systems Letters (L-CSS)
   paperurl: 'https://joonlee16.github.io/files/allocation.pdf'
   bibtexurl: 'https://joonlee16.github.io/files/allocation.bib'
