@@ -13,12 +13,24 @@
   title: "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"
   collection: publications
   category: conferences
-  image: "/pics/maintaining.png"
+  image: "/pics/maintaining.gif"
   venue: "IEEE International Conference on Robotics and Automation (ICRA)"
   pdf: "https://joonlee16.github.io/files/maintaining.pdf"
   bibtexurl: "https://joonlee16.github.io/files/maintaining.bib"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
+
+- year: 2025
+  title: "Distributed Resilience-Aware Control in Multi-Robot Networks"
+  collection: publications
+  category: conferences
+  image: "/pics/distributed.gif"
+  venue: "IEEE Conference on Decision and Control (CDC)"
+  pdf: "https://joonlee16.github.io/files/distributed.pdf"
+  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
+  first_coauthors: false
+  code: "https://github.com/joonlee16/Distributed-Resilience-Aware-Control"
+
 
 - year: 2025
   title: "Minimal Construction of Graphs with Maximum Robustness"
@@ -45,21 +57,23 @@
   title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
   collection: publications
   category: manuscripts
-  image: "/pics/reformulations.png"
+  image: "/pics/reformulations.gif"
   venue: "submitted and under review"
   pdf: "https://joonlee16.github.io/files/reformulations.pdf"
   bibtexurl: "https://joonlee16.github.io/files/reformulations.bib"
   authors: "Devansh R. Agrawal, <strong>Haejoon Lee</strong>, Dimitra Panagou"
+  code: "https://github.com/joonlee16/Lipschitz-controllers"
   first_coauthors: true
 
 - year: 2025
   title: "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
   collection: publications
   category: manuscripts
-  image: "/pics/combinatorial.png"
+  image: "/pics/combinatorial.gif"
   venue: "submitted and under review"
   pdf: "https://joonlee16.github.io/files/combinatorial.pdf"
   bibtexurl: "https://joonlee16.github.io/files/combinatorial.bib"
+  code: "https://github.com/joonlee16/combinatorial_cbf"
   authors: "Pio Ong, <strong>Haejoon Lee</strong>, Tamas G Molnar, Dimitra Panagou, Aaron Ames"
   first_coauthors: false
 
@@ -72,6 +86,7 @@
   pdf: "https://joonlee16.github.io/files/partial.pdf"
   bibtexurl: "https://joonlee16.github.io/files/partial.bib"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
+  code: "https://github.com/joonlee16/partial_resilient_leader_follower_consensus"
   first_coauthors: false
 
 - year: 2025

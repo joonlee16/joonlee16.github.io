@@ -6,3 +6,8 @@ markdown: kramdown
 theme: null
 
 
+
+collections:
+  publications:
+    output: true
+    permalink: /publications/:title/
