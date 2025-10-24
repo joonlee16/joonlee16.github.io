@@ -7,7 +7,7 @@ permalink: /publications/
 <main class="container">
   <h1>Publications</h1>
 
-  {% assign pubs = site.data.publications | sort: "year" | reverse %}
+  {% assign pubs = site.publications | sort: "year" | reverse %}
   {% assign current_year = "" %}
 
   {% for pub in pubs %}
