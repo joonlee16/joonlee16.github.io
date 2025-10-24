@@ -5,10 +5,21 @@ permalink: /
 author_profile: true
 ---
 
-<img src="/pics/haejoonlee.jpg" alt="Haejoon Lee" style="width:180px; border-radius:50%; float:right; margin: 0 0 20px 20px;">
 
 
-# Welcome
+<div style="text-align:center; margin-bottom: 20px;">
+  <!-- Profile photo -->
+  <img src="/pics/haejoonlee.jpg" alt="Haejoon Lee" style="width:180px; border-radius:50%;">
+
+  <!-- Contact info -->
+  <div style="margin-top:10px; font-size:0.95rem; color:#444;">
+    📧 <a href="mailto:haejoonl@umich.edu">haejoonl@umich.edu</a><br>
+    🔗 <a href="https://scholar.google.com/citations?user=W0kpJYUAAAAJ&hl=en">Google Scholar</a> · 
+       <a href="https://github.com/joonlee16/">GitHub</a> · 
+       <a href="https://www.linkedin.com/in/haejoon-lee-450900244/">LinkedIn</a>
+  </div>
+</div>
+
 
 
 <div class="about-container">
@@ -38,7 +49,3 @@ author_profile: true
 </div>
 
 ---
-
-## Contact
-📧 [haejoonl@umich.edu](mailto:haejoonl@umich.edu)  
-🔗 [Google Scholar](https://scholar.google.com/citations?user=W0kpJYUAAAAJ&hl=en) · [GitHub](https://github.com/joonlee16/) · [LinkedIn](https://www.linkedin.com/in/haejoon-lee-450900244/)
