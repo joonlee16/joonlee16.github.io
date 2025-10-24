@@ -19,6 +19,7 @@
   bibtexurl: "https://joonlee16.github.io/files/maintaining.bib"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
+  code: "https://github.com/joonlee16/Resilient-Leader-Follower-CBF-QP"
 
 - year: 2025
   title: "Distributed Resilience-Aware Control in Multi-Robot Networks"

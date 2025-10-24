@@ -6,7 +6,7 @@ title: Publications
 <main class="container">
   <h1>Publications</h1>
 
-  {% assign pubs = site.publications %}
+  {% assign pubs = site.data.publications %}
   {% assign years = pubs | map: "year" | uniq | sort | reverse %}
   {% for y in years %}
     <h2>{{ y }}</h2>
