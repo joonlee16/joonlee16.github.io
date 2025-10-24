@@ -35,7 +35,7 @@
   category: journal
   image: "/pics/reformulations.gif"
   venue: "submitted and under review"
-  authors: "Devansh R. Agrawal, <strong>Haejoon Lee</strong>, Dimitra Panagou"
+  authors: "Devansh R. Agrawal*, <strong>Haejoon Lee</strong>*, Dimitra Panagou"
   first_coauthors: true
   links:
     pdf: "https://arxiv.org/pdf/2508.18530"
