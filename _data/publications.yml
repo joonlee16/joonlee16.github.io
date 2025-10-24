@@ -1,29 +1,24 @@
 - year: 2024
   title: "Construction of the Sparsest Maximally r-Robust Graphs"
-  collection: publications
   category: conferences
   image: "/pics/construction.png"
   venue: "IEEE Conference on Decision and Control (CDC)"
   pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10886656"
-  bibtexurl: "https://joonlee16.github.io/files/construction.bib"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
 
 - year: 2025
   title: "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"
-  collection: publications
   category: conferences
   image: "/pics/maintaining.gif"
   venue: "IEEE International Conference on Robotics and Automation (ICRA)"
   pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11127420"
-  bibtexurl: "https://joonlee16.github.io/files/maintaining.bib"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
   code: "https://github.com/joonlee16/Resilient-Leader-Follower-CBF-QP"
 
 - year: 2025
   title: "Distributed Resilience-Aware Control in Multi-Robot Networks"
-  collection: publications
   category: conferences
   image: "/pics/distributed.gif"
   venue: "IEEE Conference on Decision and Control (CDC)"
@@ -35,7 +30,6 @@
 
 - year: 2025
   title: "Minimal Construction of Graphs with Maximum Robustness"
-  collection: publications
   category: journal
   image: "/pics/minimal.png"
   venue: "submitted and under review"
@@ -45,8 +39,7 @@
 
 - year: 2025
   title: "Optimal Control of Several Motion Models"
-  collection: publications
-  category: manuscripts
+  category: journal
   image: "/pics/optimal.png"
   venue: "Journal of Optimization Theory and Applications"
   pdf: "https://arxiv.org/pdf/2205.00260"
@@ -55,47 +48,39 @@
 
 - year: 2025
   title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
-  collection: publications
-  category: manuscripts
+  category: journal
   image: "/pics/reformulations.gif"
   venue: "submitted and under review"
   pdf: "https://arxiv.org/pdf/2508.18530"
-  bibtexurl: "https://joonlee16.github.io/files/reformulations.bib"
   authors: "Devansh R. Agrawal, <strong>Haejoon Lee</strong>, Dimitra Panagou"
   code: "https://github.com/joonlee16/Lipschitz-controllers"
   first_coauthors: true
 
 - year: 2025
   title: "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
-  collection: publications
-  category: manuscripts
+  category: journal
   image: "/pics/combinatorial.gif"
   venue: "submitted and under review"
   pdf: "https://arxiv.org/pdf/2509.10716"
-  bibtexurl: "https://joonlee16.github.io/files/combinatorial.bib"
   code: "https://github.com/joonlee16/combinatorial_cbf"
   authors: "Pio Ong, <strong>Haejoon Lee</strong>, Tamas G Molnar, Dimitra Panagou, Aaron Ames"
   first_coauthors: false
 
 - year: 2025
   title: "Partial Resilient Leader-Follower Consensus in Time-Varying Graphs"
-  collection: publications
   category: conferences
   image: "/pics/partial.png"
   venue: "submitted and under review"
   pdf: "https://arxiv.org/pdf/2510.01144"
-  bibtexurl: "https://joonlee16.github.io/files/partial.bib"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   code: "https://github.com/joonlee16/partial_resilient_leader_follower_consensus"
   first_coauthors: false
 
 - year: 2025
   title: "Multi-Robot Allocation for Information Gathering in Non-Uniform Spatiotemporal Environments"
-  collection: publications
   category: conferences
   image: "/pics/allocation.png"
   venue: 'submitted and under review' # IEEE Control Systems Letters (L-CSS)
   pdf: 'https://arxiv.org/pdf/2509.22883'
-  bibtexurl: 'https://joonlee16.github.io/files/allocation.bib'
   authors: "Kaleb Ben Naveed, <strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false

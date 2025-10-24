@@ -21,12 +21,12 @@ title: Publications
             <div class="pub-authors">{{ pub.authors }}</div>
             <div class="pub-venue"><em>{{ pub.venue }}</em></div>
             <div class="pub-links">
-              {% if pub.links.pdf %}
+              {% if pub.pdf %}
                 <a class="pub-btn" href="{{ pub.links.pdf }}" target="_blank" title="PDF">
                   📄
                 </a>
               {% endif %}
-              {% if pub.links.code %}
+              {% if pub.code %}
                 <!-- <a class="pub-btn" href="{{ pub.links.code }}" target="_blank" title="Code">
                   💻
                 </a> -->
@@ -36,7 +36,7 @@ title: Publications
                 </svg>
                 </a>
               {% endif %}
-              {% if pub.links.video %}
+              {% if pub.video %}
                 <!-- <a class="pub-btn" href="{{ pub.links.video }}" target="_blank" title="Video">
                   📺
                 </a> -->
@@ -46,7 +46,7 @@ title: Publications
                 </svg>
                 </a>
               {% endif %}
-              {% if pub.links.website %}
+              {% if pub.website %}
                 <a class="pub-btn" href="{{ pub.links.website }}" target="_blank">
                   Paper Website
                 </a>
