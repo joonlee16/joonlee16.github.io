@@ -7,7 +7,5 @@ date: 2025-07-01
 venue: "submitted and under reivew"
 paperurl: 'https://joonlee16.github.io/files/minimal.pdf'
 authors: "Haejoon Lee, Dimitra Panagou"
-status: "submitted and under review"       # optional
-
 ---
 
