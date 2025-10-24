@@ -10,7 +10,7 @@ title: Publications
 
   <!-- Conferences Section -->
   <h2>Conferences</h2>
-  {% assign conf_pubs = pubs | where: "type", "conference" %}
+  {% assign conf_pubs = pubs | where: "type", "conferences" %}
   {% assign conf_years = conf_pubs | map: "year" | uniq | sort | reverse %}
   {% for y in conf_years %}
     <h3>{{ y }}</h3>
@@ -53,7 +53,7 @@ title: Publications
 
   <!-- Journals Section -->
   <h2>Journals</h2>
-  {% assign journal_pubs = pubs | where: "type", "journal" %}
+  {% assign journal_pubs = pubs | where: "type", "journals" %}
   {% assign journal_years = journal_pubs | map: "year" | uniq | sort | reverse %}
   {% for y in journal_years %}
     <h3>{{ y }}</h3>
