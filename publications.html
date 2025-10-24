@@ -15,6 +15,7 @@ author_profile: true
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid #e0e0e0;
+  flex-wrap: wrap;
 }
 .pub-card img {
   width: 140px;
@@ -25,6 +26,7 @@ author_profile: true
 }
 .pub-details {
   flex: 1;
+  min-width: 200px;
 }
 .pub-title {
   font-weight: 600;
@@ -42,6 +44,11 @@ author_profile: true
 .pub-links a {
   margin-right: 10px;
   font-size: 0.9rem;
+  text-decoration: none;
+  color: #0073e6;
+}
+.pub-links a:hover {
+  text-decoration: underline;
 }
 .year-heading {
   font-size: 1.4rem;
@@ -54,15 +61,21 @@ author_profile: true
 .coauthor-note {
   font-size: 0.8rem;
   color: #777;
+  margin-top: 2px;
 }
 </style>
 
-{% assign publications_by_year = site.publications | group_by_exp:"item","item.date | date: '%Y'" | sort: "name" | reverse %}
+{% assign sorted_pubs = site.publications | sort: 'date' | reverse %}
+{% assign current_year = "" %}
 
-{% for year_group in publications_by_year %}
-  <h2 class="year-heading">{{ year_group.name }}</h2>
+{% for pub in sorted_pubs %}
+  {% assign pub_year = pub.date | date: "%Y" %}
+  
+  {% if pub_year != current_year %}
+    <h2 class="year-heading">{{ pub_year }}</h2>
+    {% assign current_year = pub_year %}
+  {% endif %}
 
-  {% for pub in year_group.items %}
   <div class="pub-card">
     {% if pub.image %}
       <img src="{{ pub.image | relative_url }}" alt="{{ pub.title }}">
@@ -87,7 +100,9 @@ author_profile: true
         {% endif %}
       </div>
 
-      <div class="pub-venue">{{ pub.venue }}</div>
+      {% if pub.venue %}
+        <div class="pub-venue">{{ pub.venue }}</div>
+      {% endif %}
 
       <div class="pub-links">
         {% if pub.paperurl %}
@@ -105,5 +120,4 @@ author_profile: true
       </div>
     </div>
   </div>
-  {% endfor %}
 {% endfor %}
