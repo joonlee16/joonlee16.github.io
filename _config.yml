@@ -4,3 +4,10 @@ baseurl: ""
 url: "https://joonlee16.github.io"
 markdown: kramdown
 theme: null
+
+
+
+collections:
+  publications:
+    output: true
+    permalink: /publications/:title/

@@ -8,5 +8,6 @@ venue: "submitted and under reivew" # IEEE Control Systems Letters (L-CSS)
 paperurl: 'https://joonlee16.github.io/files/partial.pdf'
 bibtexurl: 'https://joonlee16.github.io/files/partial.bib'
 authors: "Haejoon Lee, Dimitra Panagou"
+first_coauthors: false
 ---
 

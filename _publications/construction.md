@@ -8,5 +8,6 @@ venue: 'IEEE Conference on Decision and Control (CDC)'
 paperurl: 'https://joonlee16.github.io/files/construction.pdf'
 bibtexurl: 'https://joonlee16.github.io/files/construction.bib'
 authors: "Haejoon Lee, Dimitra Panagou"
+first_coauthors: false
 ---
 

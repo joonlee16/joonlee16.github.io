@@ -9,5 +9,6 @@ venue: 'IEEE International Conference on Robotics and Automation (ICRA)'
 paperurl: 'https://joonlee16.github.io/files/maintaining.pdf'
 bibtexurl: 'https://joonlee16.github.io/files/maintaining.bib'
 authors: "Haejoon Lee, Dimitra Panagou"
+first_coauthors: false
 ---
 
