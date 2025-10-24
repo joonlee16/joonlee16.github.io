@@ -4,7 +4,7 @@
   category: conferences
   image: "/pics/construction.png"
   venue: "IEEE Conference on Decision and Control (CDC)"
-  pdf: "https://joonlee16.github.io/files/construction.pdf"
+  pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10886656"
   bibtexurl: "https://joonlee16.github.io/files/construction.bib"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
@@ -15,7 +15,7 @@
   category: conferences
   image: "/pics/maintaining.gif"
   venue: "IEEE International Conference on Robotics and Automation (ICRA)"
-  pdf: "https://joonlee16.github.io/files/maintaining.pdf"
+  pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11127420"
   bibtexurl: "https://joonlee16.github.io/files/maintaining.bib"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
@@ -27,7 +27,7 @@
   category: conferences
   image: "/pics/distributed.gif"
   venue: "IEEE Conference on Decision and Control (CDC)"
-  pdf: "https://joonlee16.github.io/files/distributed.pdf"
+  pdf: "https://arxiv.org/pdf/2504.03120"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
   code: "https://github.com/joonlee16/Distributed-Resilience-Aware-Control"
@@ -39,7 +39,7 @@
   category: journal
   image: "/pics/minimal.png"
   venue: "submitted and under review"
-  pdf: "https://joonlee16.github.io/files/minimal.pdf"
+  pdf: "https://arxiv.org/pdf/2507.00415"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
 
@@ -49,8 +49,7 @@
   category: manuscripts
   image: "/pics/optimal.png"
   venue: "Journal of Optimization Theory and Applications"
-  slidesurl: "https://joonlee16.github.io/files/slides3.pdf"
-  pdf: "https://joonlee16.github.io/files/paper3.pdf"
+  pdf: "https://arxiv.org/pdf/2205.00260"
   authors: "Tan H Cao, Nilson Chapagain, <strong>Haejoon Lee</strong>, Thi Phung, Nguyen Nang Thieu"
   first_coauthors: false
 
@@ -60,7 +59,7 @@
   category: manuscripts
   image: "/pics/reformulations.gif"
   venue: "submitted and under review"
-  pdf: "https://joonlee16.github.io/files/reformulations.pdf"
+  pdf: "https://arxiv.org/pdf/2508.18530"
   bibtexurl: "https://joonlee16.github.io/files/reformulations.bib"
   authors: "Devansh R. Agrawal, <strong>Haejoon Lee</strong>, Dimitra Panagou"
   code: "https://github.com/joonlee16/Lipschitz-controllers"
@@ -72,7 +71,7 @@
   category: manuscripts
   image: "/pics/combinatorial.gif"
   venue: "submitted and under review"
-  pdf: "https://joonlee16.github.io/files/combinatorial.pdf"
+  pdf: "https://arxiv.org/pdf/2509.10716"
   bibtexurl: "https://joonlee16.github.io/files/combinatorial.bib"
   code: "https://github.com/joonlee16/combinatorial_cbf"
   authors: "Pio Ong, <strong>Haejoon Lee</strong>, Tamas G Molnar, Dimitra Panagou, Aaron Ames"
@@ -84,7 +83,7 @@
   category: conferences
   image: "/pics/partial.png"
   venue: "submitted and under review"
-  pdf: "https://joonlee16.github.io/files/partial.pdf"
+  pdf: "https://arxiv.org/pdf/2510.01144"
   bibtexurl: "https://joonlee16.github.io/files/partial.bib"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   code: "https://github.com/joonlee16/partial_resilient_leader_follower_consensus"
@@ -96,7 +95,7 @@
   category: conferences
   image: "/pics/allocation.png"
   venue: 'submitted and under review' # IEEE Control Systems Letters (L-CSS)
-  paperurl: 'https://joonlee16.github.io/files/allocation.pdf'
+  pdf: 'https://arxiv.org/pdf/2509.22883'
   bibtexurl: 'https://joonlee16.github.io/files/allocation.bib'
   authors: "Kaleb Ben Naveed, <strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
