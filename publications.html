@@ -9,88 +9,68 @@ title: Publications
   {% assign pubs = site.data.publications %}
 
   <!-- Conferences Section -->
-  <h2>Conferences</h2>
-  {% assign conf_pubs = pubs | where: "type", "conferences" %}
-  {% assign conf_years = conf_pubs | map: "year" | uniq | sort | reverse %}
-  {% for y in conf_years %}
-    <h3>{{ y }}</h3>
-    {% for pub in conf_pubs %}
-      {% if pub.year == y %}
-        <div class="pub-entry">
-          <div class="pub-image">
-            <img src="{{ pub.image }}" alt="Thumbnail for {{ pub.title }}">
-          </div>
-          <div class="pub-text">
-            <div class="pub-title">{{ pub.title }}</div>
-            <div class="pub-authors">{{ pub.authors }}</div>
-            <div class="pub-coauthor"> 
-              {% if pub.first_coauthors %}  
-                <span style="font-style: italic; color: #555;"> 
-                  (*These authors contributed equally)  
-                </span>
-              {% endif %}
+  {% assign conf_pubs = pubs | where: "category", "conferences" %}
+  {% if conf_pubs.size > 0 %}
+    <h2>Conferences</h2>
+    {% assign conf_years = conf_pubs | map: "year" | uniq | sort | reverse %}
+    {% for y in conf_years %}
+      <h3>{{ y }}</h3>
+      {% for pub in conf_pubs %}
+        {% if pub.year == y %}
+          <div class="pub-entry">
+            <div class="pub-image">
+              <img src="{{ pub.image }}" alt="Thumbnail for {{ pub.title }}">
             </div>
-            <div class="pub-venue"><em>{{ pub.venue }}</em></div>
-            <div class="pub-links">
-              {% if pub.links.pdf %}
-                <a class="pub-btn" href="{{ pub.links.pdf }}" target="_blank" title="PDF">📄</a>
+            <div class="pub-text">
+              <div class="pub-title">{{ pub.title }}</div>
+              <div class="pub-authors">{{ pub.authors }}</div>
+              {% if pub.first_coauthors %}
+                <div class="pub-coauthor" style="font-style: italic; color: #555;">
+                  (*These authors contributed equally)
+                </div>
               {% endif %}
-              {% if pub.links.code %}
-                <a class="pub-btn" href="{{ pub.links.code }}" target="_blank" title="Code">💻</a>
-              {% endif %}
-              {% if pub.links.video %}
-                <a class="pub-btn" href="{{ pub.links.video }}" target="_blank" title="Video">📺</a>
-              {% endif %}
-              {% if pub.links.website %}
-                <a class="pub-btn" href="{{ pub.links.website }}" target="_blank">Paper Website</a>
-              {% endif %}
+              <div class="pub-venue"><em>{{ pub.venue }}</em></div>
+              <div class="pub-links">
+                {% if pub.links.pdf %}<a class="pub-btn" href="{{ pub.links.pdf }}" target="_blank">📄</a>{% endif %}
+                {% if pub.links.code %}<a class="pub-btn" href="{{ pub.links.code }}" target="_blank">💻</a>{% endif %}
+              </div>
             </div>
           </div>
-        </div>
-      {% endif %}
+        {% endif %}
+      {% endfor %}
     {% endfor %}
-  {% endfor %}
+  {% endif %}
 
   <!-- Journals Section -->
-  <h2>Journals</h2>
-  {% assign journal_pubs = pubs | where: "type", "journals" %}
-  {% assign journal_years = journal_pubs | map: "year" | uniq | sort | reverse %}
-  {% for y in journal_years %}
-    <h3>{{ y }}</h3>
-    {% for pub in journal_pubs %}
-      {% if pub.year == y %}
-        <div class="pub-entry">
-          <div class="pub-image">
-            <img src="{{ pub.image }}" alt="Thumbnail for {{ pub.title }}">
-          </div>
-          <div class="pub-text">
-            <div class="pub-title">{{ pub.title }}</div>
-            <div class="pub-authors">{{ pub.authors }}</div>
-            <div class="pub-coauthor"> 
-              {% if pub.first_coauthors %}  
-                <span style="font-style: italic; color: #555;"> 
-                  (*These authors contributed equally)  
-                </span>
-              {% endif %}
+  {% assign journal_pubs = pubs | where: "category", "journals" %}
+  {% if journal_pubs.size > 0 %}
+    <h2>Journals</h2>
+    {% assign journal_years = journal_pubs | map: "year" | uniq | sort | reverse %}
+    {% for y in journal_years %}
+      <h3>{{ y }}</h3>
+      {% for pub in journal_pubs %}
+        {% if pub.year == y %}
+          <div class="pub-entry">
+            <div class="pub-image">
+              <img src="{{ pub.image }}" alt="Thumbnail for {{ pub.title }}">
             </div>
-            <div class="pub-venue"><em>{{ pub.venue }}</em></div>
-            <div class="pub-links">
-              {% if pub.links.pdf %}
-                <a class="pub-btn" href="{{ pub.links.pdf }}" target="_blank" title="PDF">📄</a>
+            <div class="pub-text">
+              <div class="pub-title">{{ pub.title }}</div>
+              <div class="pub-authors">{{ pub.authors }}</div>
+              {% if pub.first_coauthors %}
+                <div class="pub-coauthor" style="font-style: italic; color: #555;">
+                  (*These authors contributed equally)
+                </div>
               {% endif %}
-              {% if pub.links.code %}
-                <a class="pub-btn" href="{{ pub.links.code }}" target="_blank" title="Code">💻</a>
-              {% endif %}
-              {% if pub.links.video %}
-                <a class="pub-btn" href="{{ pub.links.video }}" target="_blank" title="Video">📺</a>
-              {% endif %}
-              {% if pub.links.website %}
-                <a class="pub-btn" href="{{ pub.links.website }}" target="_blank">Paper Website</a>
-              {% endif %}
+              <div class="pub-venue"><em>{{ pub.venue }}</em></div>
+              <div class="pub-links">
+                {% if pub.links.pdf %}<a class="pub-btn" href="{{ pub.links.pdf }}" target="_blank">📄</a>{% endif %}
+                {% if pub.links.code %}<a class="pub-btn" href="{{ pub.links.code }}" target="_blank">💻</a>{% endif %}
+              </div>
             </div>
           </div>
-        </div>
-      {% endif %}
+        {% endif %}
+      {% endfor %}
     {% endfor %}
-  {% endfor %}
+  {% endif %}
 </main>
