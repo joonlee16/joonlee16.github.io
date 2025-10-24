@@ -1,69 +1,10 @@
-- year: 2024
-  title: "Construction of the Sparsest Maximally r-Robust Graphs"
+- year: 2025
+  title: "Multi-Robot Allocation for Information Gathering in Non-Uniform Spatiotemporal Environments"
   category: conferences
-  image: "/pics/construction.png"
-  venue: "IEEE Conference on Decision and Control (CDC)"
-  pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10886656"
-  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
-  first_coauthors: false
-
-- year: 2025
-  title: "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"
-  category: conferences
-  image: "/pics/maintaining.gif"
-  venue: "IEEE International Conference on Robotics and Automation (ICRA)"
-  pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11127420"
-  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
-  first_coauthors: false
-  code: "https://github.com/joonlee16/Resilient-Leader-Follower-CBF-QP"
-
-- year: 2025
-  title: "Distributed Resilience-Aware Control in Multi-Robot Networks"
-  category: conferences
-  image: "/pics/distributed.gif"
-  venue: "IEEE Conference on Decision and Control (CDC)"
-  pdf: "https://arxiv.org/pdf/2504.03120"
-  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
-  first_coauthors: false
-  code: "https://github.com/joonlee16/Distributed-Resilience-Aware-Control"
-
-
-- year: 2025
-  title: "Minimal Construction of Graphs with Maximum Robustness"
-  category: journal
-  image: "/pics/minimal.png"
-  venue: "submitted and under review"
-  pdf: "https://arxiv.org/pdf/2507.00415"
-  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
-  first_coauthors: false
-
-- year: 2025
-  title: "Optimal Control of Several Motion Models"
-  category: journal
-  image: "/pics/optimal.png"
-  venue: "Journal of Optimization Theory and Applications"
-  pdf: "https://arxiv.org/pdf/2205.00260"
-  authors: "Tan H Cao, Nilson Chapagain, <strong>Haejoon Lee</strong>, Thi Phung, Nguyen Nang Thieu"
-  first_coauthors: false
-
-- year: 2025
-  title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
-  category: journal
-  image: "/pics/reformulations.gif"
-  venue: "submitted and under review"
-  pdf: "https://arxiv.org/pdf/2508.18530"
-  authors: "Devansh R. Agrawal, <strong>Haejoon Lee</strong>, Dimitra Panagou"
-  code: "https://github.com/joonlee16/Lipschitz-controllers"
-  first_coauthors: true
-
-- year: 2025
-  title: "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
-  category: journal
-  image: "/pics/combinatorial.gif"
-  venue: "submitted and under review"
-  pdf: "https://arxiv.org/pdf/2509.10716"
-  code: "https://github.com/joonlee16/combinatorial_cbf"
-  authors: "Pio Ong, <strong>Haejoon Lee</strong>, Tamas G Molnar, Dimitra Panagou, Aaron Ames"
+  image: "/pics/allocation.png"
+  venue: 'submitted and under review' # IEEE Control Systems Letters (L-CSS)
+  pdf: 'https://arxiv.org/pdf/2509.22883'
+  authors: "Kaleb Ben Naveed, <strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
 
 - year: 2025
@@ -77,10 +18,68 @@
   first_coauthors: false
 
 - year: 2025
-  title: "Multi-Robot Allocation for Information Gathering in Non-Uniform Spatiotemporal Environments"
+  title: "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
+  category: journal
+  image: "/pics/combinatorial.gif"
+  venue: "submitted and under review"
+  pdf: "https://arxiv.org/pdf/2509.10716"
+  code: "https://github.com/joonlee16/combinatorial_cbf"
+  authors: "Pio Ong, <strong>Haejoon Lee</strong>, Tamas G Molnar, Dimitra Panagou, Aaron Ames"
+  first_coauthors: false
+
+- year: 2025
+  title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
+  category: journal
+  image: "/pics/reformulations.gif"
+  venue: "submitted and under review"
+  pdf: "https://arxiv.org/pdf/2508.18530"
+  authors: "Devansh R. Agrawal, <strong>Haejoon Lee</strong>, Dimitra Panagou"
+  code: "https://github.com/joonlee16/Lipschitz-controllers"
+  first_coauthors: true
+
+- year: 2025
+  title: "Optimal Control of Several Motion Models"
+  category: journal
+  image: "/pics/optimal.png"
+  venue: "Journal of Optimization Theory and Applications"
+  pdf: "https://arxiv.org/pdf/2205.00260"
+  authors: "Tan H Cao, Nilson Chapagain, <strong>Haejoon Lee</strong>, Thi Phung, Nguyen Nang Thieu"
+  first_coauthors: false
+
+- year: 2025
+  title: "Minimal Construction of Graphs with Maximum Robustness"
+  category: journal
+  image: "/pics/minimal.png"
+  venue: "submitted and under review"
+  pdf: "https://arxiv.org/pdf/2507.00415"
+  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
+  first_coauthors: false
+
+- year: 2025
+  title: "Distributed Resilience-Aware Control in Multi-Robot Networks"
   category: conferences
-  image: "/pics/allocation.png"
-  venue: 'submitted and under review' # IEEE Control Systems Letters (L-CSS)
-  pdf: 'https://arxiv.org/pdf/2509.22883'
-  authors: "Kaleb Ben Naveed, <strong>Haejoon Lee</strong>, Dimitra Panagou"
+  image: "/pics/distributed.gif"
+  venue: "IEEE Conference on Decision and Control (CDC)"
+  pdf: "https://arxiv.org/pdf/2504.03120"
+  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
+  first_coauthors: false
+  code: "https://github.com/joonlee16/Distributed-Resilience-Aware-Control"
+
+- year: 2025
+  title: "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"
+  category: conferences
+  image: "/pics/maintaining.gif"
+  venue: "IEEE International Conference on Robotics and Automation (ICRA)"
+  pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11127420"
+  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
+  first_coauthors: false
+  code: "https://github.com/joonlee16/Resilient-Leader-Follower-CBF-QP"
+
+- year: 2024
+  title: "Construction of the Sparsest Maximally r-Robust Graphs"
+  category: conferences
+  image: "/pics/construction.png"
+  venue: "IEEE Conference on Decision and Control (CDC)"
+  pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10886656"
+  authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
