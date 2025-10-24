@@ -21,7 +21,7 @@
 
 - year: 2025
   title: "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
-  category: journal
+  category: journals
   image: "/pics/combinatorial.gif"
   venue: "submitted and under review"
   authors: "Pio Ong, <strong>Haejoon Lee</strong>, Tamas G Molnar, Dimitra Panagou, Aaron Ames"
@@ -32,7 +32,7 @@
 
 - year: 2025
   title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
-  category: journal
+  category: journals
   image: "/pics/reformulations.gif"
   venue: "submitted and under review"
   authors: "Devansh R. Agrawal*, <strong>Haejoon Lee</strong>*, Dimitra Panagou"
@@ -43,7 +43,7 @@
 
 - year: 2025
   title: "Optimal Control of Several Motion Models"
-  category: journal
+  category: journals
   image: "/pics/optimal.png"
   venue: "Journal of Optimization Theory and Applications"
   authors: "Tan H Cao, Nilson Chapagain, <strong>Haejoon Lee</strong>, Thi Phung, Nguyen Nang Thieu"
@@ -54,7 +54,7 @@
 
 - year: 2025
   title: "Minimal Construction of Graphs with Maximum Robustness"
-  category: journal
+  category: journals
   image: "/pics/minimal.png"
   venue: "submitted and under review"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
