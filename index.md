@@ -5,10 +5,17 @@ title: "Home"
 
 <div style="display: flex; flex-direction: column; align-items: center; margin: 30px 20px;">
 
+  <!-- Background Video -->
+  <video autoplay muted loop playsinline
+         style="position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+                width: 100%; height: 100%; object-fit: cover; z-index: 0; border-radius: 14px;">
+    <source src="/pics/vid.mp4" type="video/mp4">
+  </video>
+
   <!-- Profile Card -->
-  <div style="display: flex; flex-direction: column; align-items: center; text-align: center; 
+  <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; 
               padding: 25px; max-width: 400px; border-radius: 14px; 
-              box-shadow: 0 6px 20px rgba(0,0,0,0.12); background-color: #ffffff; transition: transform 0.3s;">
+              box-shadow: 0 6px 20px rgba(0,0,0,0.12); background-color: rgba(255,255,255,0.85); transition: transform 0.3s;">
     
     <img src="/pics/haejoonlee.jpg" 
          alt="Haejoon Lee, PhD Candidate in Robotics" 
@@ -28,7 +35,7 @@ title: "Home"
   </div>
 
   <!-- About / Bio Section -->
-  <div style="max-width: 800px; margin-top: 40px; line-height: 1.7; font-size: 1rem; color: #333;">
+  <div style="max-width: 800px; margin-top: 40px; line-height: 1.7; font-size: 1rem; color: #333; position: relative; z-index:1;">
     <p>
       I am a third-year Robotics Ph.D. student in 
       <a href="https://dasc-lab.github.io/" target="_blank">The DASC Lab</a> at the 
