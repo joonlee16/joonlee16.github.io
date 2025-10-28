@@ -37,8 +37,8 @@ title: "Home"
   <!-- About / Bio Section -->
   <div style="max-width: 800px; margin-top: 200px; line-height: 1.7; font-size: 1rem; color: #333; position: relative; z-index:1;">
     <p>
-    I am a third-year Robotics Ph.D. student at 
-    <a href="https://dasc-lab.github.io/" target="_blank">The DASC Lab</a>, part of the 
+    I am a third-year Ph.D student at the
+    <a href="https://dasc-lab.github.io/" target="_blank">DASC Lab</a>, part of the 
     <a href="https://robotics.umich.edu/" target="_blank">Department of Robotics</a> at the University of Michigan, Ann Arbor. 
     I am advised by <a href="https://websites.umich.edu/~dpanagou/" target="_blank">Professor Dimitra Panagou</a>. 
     My research centers on <strong>safe, robust, and resilient multi-agent and autonomous systems</strong>, with a focus on multi-robot coordination, control, and planning in dynamic, uncertain, and potentially adversarial environments.
