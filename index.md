@@ -15,7 +15,7 @@ title: "Home"
   <!-- Profile Card -->
   <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; 
               padding: 25px; max-width: 400px; border-radius: 14px; 
-              box-shadow: 0 6px 20px rgba(0,0,0,0.12); background-color: rgba(255,255,255,0.85); transition: transform 0.3s;">
+              box-shadow: 0 6px 20px rgba(0,0,0,0.12); background-color: rgba(255,255,255,0.85); transition: transform 0.3s; margin-top: 80px;">
     
     <img src="/pics/haejoonlee.jpg" 
          alt="Haejoon Lee, PhD Candidate in Robotics" 
@@ -35,7 +35,7 @@ title: "Home"
   </div>
 
   <!-- About / Bio Section -->
-  <div style="max-width: 1000px; margin-top: 1000px; line-height: 1.7; font-size: 1rem; color: #333; position: relative; z-index:1;">
+  <div style="max-width: 800px; margin-top: 500px; line-height: 1.7; font-size: 1rem; color: #333; position: relative; z-index:1;">
     <p>
     I am a third-year Ph.D student at the
     <a href="https://dasc-lab.github.io/" target="_blank">DASC Lab</a>, part of the 
