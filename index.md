@@ -4,14 +4,14 @@ title: "Home"
 ---
 
 <!-- Page Container -->
-<div style="position: relative; overflow: hidden;">
+<div style="position: relative;">
 
   <!-- Background Video -->
-<video autoplay muted loop playsinline
-       style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-              object-fit: cover; z-index: -1;">
-  <source src="/pics/vid.mp4" type="video/mp4">
-</video>
+  <video autoplay muted loop playsinline
+         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                object-fit: cover; z-index: 0;">
+    <source src="/pics/vid.mp4" type="video/mp4">
+  </video>
 
   <!-- Foreground Content -->
   <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; padding: 60px 20px;">
