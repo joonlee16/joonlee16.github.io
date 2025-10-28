@@ -1,32 +1,8 @@
 ---
 layout: default
 title: Research
-slides:
-  - src: "/assets/dual_gatekeeper_full.png"
-  - src: "/assets/NST_Alg_fig4.png"
-  - src: "/assets/mEclares_block.png"
 ---
 
-<!-- ======= HERO SLIDER (full width, fits whole image) ======= -->
-<section class="hero" id="hero">
-  <div class="hero-track" id="hero-track">
-    {% for s in page.slides %}
-    <div class="hero-slide">
-      <img src="{{ s.src }}" alt="Research image">
-    </div>
-    {% endfor %}
-  </div>
-
-  <!-- Controls (no title overlay) -->
-  <button class="hero-nav prev" aria-label="Previous">⟨</button>
-  <button class="hero-nav next" aria-label="Next">⟩</button>
-
-  <div class="hero-dots" id="hero-dots">
-    {% for s in page.slides %}
-      <button class="dot{% if forloop.first %} active{% endif %}" aria-label="Go to slide {{ forloop.index }}"></button>
-    {% endfor %}
-  </div>
-</section>
 
 <!-- ======= CONTENT BELOW THE HERO ======= -->
 <div class="content-wrap">
