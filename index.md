@@ -8,8 +8,7 @@ title: "Home"
 
   <!-- Background Video -->
   <video autoplay muted loop playsinline
-         style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-          transform: translateX(-25%);
+         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
                 object-fit: cover; z-index: 0;">
     <source src="/pics/vid.mp4" type="video/mp4">
   </video>
