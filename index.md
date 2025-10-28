@@ -7,7 +7,7 @@ title: "Home"
 
   <!-- Background Video -->
   <video autoplay muted loop playsinline
-         style="position: absolute; top: 0; left: 50%; transform: translateX(-20%);
+         style="position: absolute; top: 50px; left: 50%; transform: translateX(-50%);
                 width: 90%; height: auto%; object-fit: cover; z-index: 0; border-radius: 14px;">
     <source src="/pics/vid.mp4" type="video/mp4">
   </video>
@@ -35,7 +35,7 @@ title: "Home"
   </div>
 
   <!-- About / Bio Section -->
-  <div style="max-width: 800px; margin-top: 100px; line-height: 1.7; font-size: 1rem; color: #333; position: relative; z-index:1;">
+  <div style="max-width: 800px; margin-top: 200px; line-height: 1.7; font-size: 1rem; color: #333; position: relative; z-index:1;">
     <p>
       I am a third-year Robotics Ph.D. student in 
       <a href="https://dasc-lab.github.io/" target="_blank">The DASC Lab</a> at the 
