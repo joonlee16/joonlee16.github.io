@@ -35,7 +35,7 @@ title: "Home"
   </div>
 
   <!-- About / Bio Section -->
-  <div style="max-width: 800px; margin-top: 500px; line-height: 1.7; font-size: 1rem; color: #333; position: relative; z-index:1;">
+  <div style="max-width: 800px; margin-top: 400px; line-height: 1.7; font-size: 1rem; color: #333; position: relative; z-index:1;">
     <p>
     I am a third-year Ph.D student at the
     <a href="https://dasc-lab.github.io/" target="_blank">DASC Lab</a>, part of the 
