@@ -23,7 +23,7 @@
   title: "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
   category: journals
   image: "/pics/combinatorial.gif"
-  venue: "submitted and under review"
+  venue: "submitted and in revision"
   authors: "Pio Ong, <strong>Haejoon Lee</strong>, Tamas G Molnar, Dimitra Panagou, Aaron Ames"
   first_coauthors: false
   links:
@@ -34,7 +34,7 @@
   title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
   category: journals
   image: "/pics/reformulations.gif"
-  venue: "submitted and under review"
+  venue: "IEEE Control Systems Letters (L-CSS)"
   authors: "Devansh R. Agrawal*, <strong>Haejoon Lee</strong>*, Dimitra Panagou"
   first_coauthors: true
   links:
@@ -56,7 +56,7 @@
   title: "Minimal Construction of Graphs with Maximum Robustness"
   category: journals
   image: "/pics/minimal.png"
-  venue: "submitted and under review"
+  venue: "submitted and in revision"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
   links:
