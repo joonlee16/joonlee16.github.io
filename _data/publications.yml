@@ -2,17 +2,17 @@
   title: "Multi-Robot Allocation for Information Gathering in Non-Uniform Spatiotemporal Environments"
   category: conferences
   image: "/pics/allocation.png"
-  venue: 'submitted and under review' # IEEE Control Systems Letters (L-CSS)
+  venue: "2026 IEEE American Control Conference (ACC)"
   authors: "Kaleb Ben Naveed, <strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
   links:
     pdf: 'https://arxiv.org/pdf/2509.22883'
 
-- year: 2025
+- year: 2026
   title: "Partial Resilient Leader-Follower Consensus in Time-Varying Graphs"
   category: conferences
   image: "/pics/partial.png"
-  venue: "submitted and under review"
+  venue: "2026 IEEE American Control Conference (ACC)"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
   links:
@@ -23,7 +23,7 @@
   title: "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
   category: journals
   image: "/pics/combinatorial.gif"
-  venue: "IEEE Control Systems Letters (L-CSS)"
+  venue: "2025 IEEE Control Systems Letters (L-CSS)"
   authors: "Pio Ong, <strong>Haejoon Lee</strong>, Tamas G Molnar, Dimitra Panagou, Aaron Ames"
   first_coauthors: false
   links:
@@ -34,7 +34,7 @@
   title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
   category: journals
   image: "/pics/reformulations.gif"
-  venue: "IEEE Control Systems Letters (L-CSS)"
+  venue: "2025 IEEE Control Systems Letters (L-CSS)"
   authors: "Devansh R. Agrawal*, <strong>Haejoon Lee</strong>*, Dimitra Panagou"
   first_coauthors: true
   links:
