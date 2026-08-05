@@ -7,7 +7,7 @@
   first_coauthors: false
   links:
     pdf: "https://arxiv.org/pdf/2607.20992"
-    webpage: "https://distributed-mbd.github.io/dmbd.github.io/"
+    webpage: "https://distributed-mbd.github.io/dmbd.github.io"
     code: "https://github.com/distributed-mbd/dmbd"
 
 
@@ -20,7 +20,7 @@
   first_coauthors: true
   links:
     pdf: "https://arxiv.org/pdf/2605.12974"
-    webpage: "https://dcherenson.github.io/drs-gk/"
+    webpage: "https://dcherenson.github.io/drs-gk"
 
 
 - year: 2026
@@ -38,22 +38,22 @@
   title: "Robust Multi-Agent LLMs Under Byzantine Faults"
   category: conferences
   image: "/pics/robust_llms.png"
-  venue: 'submitted and under review' 
+  venue: "submitted and under review"
   authors: " <strong>Haejoon Lee</strong>*, Vincent-Daniel Yun*, Dimitra Panagou, Sai Praneeth Karimireddy"
   first_coauthors: true
   links:
-    pdf: 'https://arxiv.org/pdf/2605.09076'
+    pdf: "https://arxiv.org/pdf/2605.09076"
 
 
 - year: 2026
   title: "Fully Byzantine-Resilient Distributed Multi-Agent Q-Learning"
   category: conferences
   image: "/pics/fully_byzantine_resilient.png"
-  venue: '2026 IEEE Conference on Decision and Control (CDC)' 
+  venue: "2026 IEEE Conference on Decision and Control (CDC)" 
   authors: " <strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
   links:
-    pdf: 'https://arxiv.org/pdf/2604.02791'
+    pdf: "https://arxiv.org/pdf/2604.02791" 
 
 
 - year: 2026
@@ -64,7 +64,7 @@
   authors: "Kaleb Ben Naveed, <strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
   links:
-    pdf: 'https://arxiv.org/pdf/2509.22883'
+    pdf: "https://arxiv.org/pdf/2509.22883"
 
 - year: 2026
   title: "Partial Resilient Leader-Follower Consensus in Time-Varying Graphs"
