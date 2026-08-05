@@ -7,7 +7,7 @@
   first_coauthors: false
   links:
     pdf: "https://arxiv.org/pdf/2607.20992"
-    website: "https://distributed-mbd.github.io/dmbd.github.io/"
+    webpage: "https://distributed-mbd.github.io/dmbd.github.io/"
     code: "https://github.com/distributed-mbd/dmbd"
 
 
@@ -20,7 +20,7 @@
   first_coauthors: true
   links:
     pdf: "https://arxiv.org/pdf/2605.12974"
-    website: "https://dcherenson.github.io/drs-gk/"
+    webpage: "https://dcherenson.github.io/drs-gk/"
 
 
 - year: 2026
