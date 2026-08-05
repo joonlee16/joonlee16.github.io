@@ -1,5 +1,4 @@
 - year: 2026
-<<<<<<< HEAD
   title: "Distributed Model-Based Diffusion For Scalable Multi-Robot Trajectory Optimization"
   category: conferences
   image: "/pics/dmbd.gif"
@@ -10,7 +9,6 @@
     pdf: "https://arxiv.org/pdf/2607.20992"
     website: "https://distributed-mbd.github.io/dmbd.github.io/"
     code: "https://github.com/distributed-mbd/dmbd"
-
 
 
 - year: 2026
@@ -60,8 +58,6 @@
 
 
 - year: 2026
-=======
->>>>>>> 35776a14b9361319c129a2bf4fdecb04f7e48ab5
   title: "Multi-Robot Allocation for Information Gathering in Non-Uniform Spatiotemporal Environments"
   category: conferences
   image: "/pics/allocation.png"
