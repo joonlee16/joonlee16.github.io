@@ -1,18 +1,78 @@
-- year: 2025
+- year: 2026
+  title: "Distributed Model-Based Diffusion For Scalable Multi-Robot Trajectory Optimization"
+  category: conferences
+  image: "/pics/dmbd.gif"
+  venue: "submitted and under review"
+  authors: "<strong>Haejoon Lee</strong>, Xinyi Wang, Taekyung Kim, Dimitra Panagou"
+  first_coauthors: false
+  links:
+    pdf: "https://arxiv.org/pdf/2607.20992"
+    website: "https://distributed-mbd.github.io/dmbd.github.io/"
+    code: "https://github.com/distributed-mbd/dmbd"
+
+
+
+- year: 2026
+  title: "Distributionally Robust Safety Under Arbitrary Uncertainties: A Safety Filtering Approach"
+  category: journals
+  image: "/pics/distributionally_robust.gif"
+  venue: "submitted and in revision"
+  authors: "Daniel M. Cherenson*, <strong>Haejoon Lee</strong>*, Taekyung Kim,Dimitra Panagou"
+  first_coauthors: true
+  links:
+    pdf: "https://arxiv.org/pdf/2605.12974"
+    website: "https://dcherenson.github.io/drs-gk/"
+
+
+
+- year: 2026
+  title: "Feasibility Analysis and Constraint Selection in Optimization-Based Controllers"
+  category: journals
+  image: "/pics/feasibility.tex"
+  venue: "submitted and under review"
+  authors: "Panagiotis Rousseas, <strong>Haejoon Lee</strong>, Dimos V. Dimarogonas, Dimitra Panagou"
+  first_coauthors: false
+  links:
+    pdf: "https://arxiv.org/pdf/2505.05502"
+
+
+- year: 2026
+  title: "Robust Multi-Agent LLMs Under Byzantine Faults"
+  category: conferences
+  image: "/pics/robust_llms.pdf"
+  venue: 'submitted and under review' 
+  authors: " <strong>Haejoon Lee</strong>*, Vincent-Daniel Yun*, Dimitra Panagou, Sai Praneeth Karimireddy"
+  first_coauthors: true
+  links:
+    pdf: 'https://arxiv.org/pdf/2605.09076'
+
+
+- year: 2026
+  title: "Fully Byzantine-Resilient Distributed Multi-Agent Q-Learning"
+  category: conferences
+  image: "/pics/fully_byzantine_resilient.pdf"
+  venue: '2026 IEEE Conference on Decision and Control (CDC)' 
+  authors: " <strong>Haejoon Lee</strong>, Dimitra Panagou"
+  first_coauthors: false
+  links:
+    pdf: 'https://arxiv.org/pdf/2604.02791'
+
+
+- year: 2026
   title: "Multi-Robot Allocation for Information Gathering in Non-Uniform Spatiotemporal Environments"
   category: conferences
   image: "/pics/allocation.png"
-  venue: 'submitted and under review' # IEEE Control Systems Letters (L-CSS)
+  venue: "2026 IEEE American Control Conference (ACC)"
   authors: "Kaleb Ben Naveed, <strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
   links:
     pdf: 'https://arxiv.org/pdf/2509.22883'
 
-- year: 2025
+- year: 2026
   title: "Partial Resilient Leader-Follower Consensus in Time-Varying Graphs"
   category: conferences
   image: "/pics/partial.png"
-  venue: "submitted and under review"
+  venue: "2026 IEEE American Control Conference (ACC)"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
   links:
