@@ -23,11 +23,10 @@
     website: "https://dcherenson.github.io/drs-gk/"
 
 
-
 - year: 2026
   title: "Feasibility Analysis and Constraint Selection in Optimization-Based Controllers"
   category: journals
-  image: "/pics/feasibility.tex"
+  image: "/pics/feasibility.png"
   venue: "submitted and under review"
   authors: "Panagiotis Rousseas, <strong>Haejoon Lee</strong>, Dimos V. Dimarogonas, Dimitra Panagou"
   first_coauthors: false
@@ -38,7 +37,7 @@
 - year: 2026
   title: "Robust Multi-Agent LLMs Under Byzantine Faults"
   category: conferences
-  image: "/pics/robust_llms.pdf"
+  image: "/pics/robust_llms.png"
   venue: 'submitted and under review' 
   authors: " <strong>Haejoon Lee</strong>*, Vincent-Daniel Yun*, Dimitra Panagou, Sai Praneeth Karimireddy"
   first_coauthors: true
@@ -49,7 +48,7 @@
 - year: 2026
   title: "Fully Byzantine-Resilient Distributed Multi-Agent Q-Learning"
   category: conferences
-  image: "/pics/fully_byzantine_resilient.pdf"
+  image: "/pics/fully_byzantine_resilient.png"
   venue: '2026 IEEE Conference on Decision and Control (CDC)' 
   authors: " <strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
