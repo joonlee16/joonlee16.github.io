@@ -14,8 +14,8 @@
 - year: 2026
   title: "Distributionally Robust Safety Under Arbitrary Uncertainties: A Safety Filtering Approach"
   category: journals
-  image: "/pics/distributionally_robust.gif"
-  venue: "submitted and in revision"
+  image: "/pics/sgk.gif"
+  venue: "IEEE Robotics and Automation Letters (RA-L) 2026"
   authors: "Daniel M. Cherenson*, <strong>Haejoon Lee</strong>*, Taekyung Kim, Dimitra Panagou"
   first_coauthors: true
   links:
@@ -38,7 +38,7 @@
   title: "Robust Multi-Agent LLMs Under Byzantine Faults"
   category: conferences
   image: "/pics/robust_llms.png"
-  venue: "submitted and under review"
+  venue: "Empirical Methods in Natural Language Processing (EMNLP) 2026"
   authors: " <strong>Haejoon Lee</strong>*, Vincent-Daniel Yun*, Dimitra Panagou, Sai Praneeth Karimireddy"
   first_coauthors: true
   links:
@@ -114,7 +114,7 @@
   title: "Minimal Construction of Graphs with Maximum Robustness"
   category: journals
   image: "/pics/minimal.png"
-  venue: "submitted and in revision"
+  venue: "Transactions on Automatic Control (TAC) 2027"
   authors: "<strong>Haejoon Lee</strong>, Dimitra Panagou"
   first_coauthors: false
   links:
