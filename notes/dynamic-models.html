@@ -1,0 +1,500 @@
+---
+layout: default
+title: Common dynamic models
+---
+
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      tags: 'none'
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+.nb {
+  --ink: #16181d;
+  --muted: #5b6572;
+  --accent: #0b5fc1;
+  --accent-soft: #eef4fc;
+  --rule: #e2e6ec;
+  --panel: #f7f8fa;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+
+  max-width: 1160px;
+  margin: 2rem auto 4.5rem;
+  padding: 0 20px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.68;
+}
+
+/* ---------- page head ---------- */
+.nb-crumb {
+  font-family: var(--sans);
+  font-size: .82rem;
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+}
+.nb-crumb a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.nb-crumb a:hover { color: var(--accent); border-color: var(--accent); }
+
+.nb-title {
+  font-family: var(--sans);
+  font-size: 2.1rem;
+  font-weight: 650;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  margin: 0 0 .6rem;
+}
+.nb-deck {
+  color: var(--muted);
+  font-size: 1.05rem;
+  margin: 0 0 1.6rem;
+  max-width: 62ch;
+}
+.nb-rule { border: 0; border-top: 1px solid var(--rule); margin: 0 0 2.2rem; }
+
+/* ---------- two-column shell ---------- */
+.nb-grid { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 52px; align-items: start; }
+.nb-body { min-width: 0; }
+
+.nb-toc { position: sticky; top: 24px; font-family: var(--sans); font-size: .85rem; }
+.nb-toc-head { font-weight: 650; margin-bottom: .6rem; font-size: .8rem; color: var(--ink); }
+.nb-toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+.nb-toc li { margin: 0 0 .38rem; padding-left: 1.5rem; text-indent: -1.5rem; }
+.nb-toc li::before {
+  counter-increment: toc; content: counter(toc) ". ";
+  color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.nb-toc a { color: var(--muted); text-decoration: none; }
+.nb-toc a:hover { color: var(--accent); }
+
+/* ---------- typography ---------- */
+.nb-body { counter-reset: sec; }
+.nb-body > h2 {
+  font-family: var(--sans);
+  font-size: 1.32rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  margin: 3rem 0 .9rem;
+  padding-top: .2rem;
+  scroll-margin-top: 20px;
+}
+.nb-body > h2::before {
+  counter-increment: sec;
+  content: counter(sec) ".";
+  color: var(--accent);
+  margin-right: .5rem;
+  font-variant-numeric: tabular-nums;
+}
+.nb-body > h2:first-child { margin-top: 0; }
+.nb-body h3 {
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  font-weight: 650;
+  margin: 1.9rem 0 .5rem;
+}
+.nb-body p { margin: 0 0 1rem; max-width: 72ch; }
+.nb-body ul, .nb-body ol { max-width: 70ch; padding-left: 1.35rem; margin: 0 0 1.1rem; }
+.nb-body li { margin-bottom: .38rem; }
+.nb-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+.nb-body a:hover { border-bottom-color: var(--accent); }
+.nb-body strong { font-weight: 600; }
+.nb-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em; background: var(--panel); padding: .1em .35em; border-radius: 3px;
+}
+
+/* ---------- blocks ---------- */
+.nb-key {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  padding: .85rem 1.1rem;
+  margin: 1.4rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.nb-key p { margin: 0; }
+.nb-key p + p { margin-top: .6rem; }
+
+.nb-eg {
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: .9rem 1.1rem .3rem;
+  margin: 1.4rem 0;
+  background: #fff;
+}
+.nb-eg-label {
+  font-family: var(--sans); font-size: .78rem; font-weight: 650;
+  color: var(--muted); margin-bottom: .5rem;
+}
+
+/* ---------- figures ---------- */
+.nb-fig { margin: 1.9rem 0; }
+.nb-fig svg { display: block; width: 100%; height: auto; max-width: 620px; margin: 0 auto; }
+.nb-fig figcaption {
+  font-family: var(--sans); font-size: .82rem; color: var(--muted);
+  margin-top: .7rem; text-align: center; max-width: 60ch; margin-left: auto; margin-right: auto;
+}
+.nb-fig text { font-family: var(--sans); }
+
+/* ---------- tables ---------- */
+.nb-table-wrap { overflow-x: auto; margin: 1.6rem 0; }
+.nb-body table { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: .87rem; }
+.nb-body th, .nb-body td {
+  text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top;
+}
+.nb-body th { font-weight: 650; border-bottom: 1.5px solid var(--ink); white-space: nowrap; }
+.nb-body tbody tr:last-child td { border-bottom: none; }
+
+/* ---------- math ---------- */
+mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+
+/* ---------- prev / next ---------- */
+.nb-pager {
+  display: flex; justify-content: space-between; gap: 1rem;
+  margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: .88rem;
+}
+.nb-pager a { color: var(--accent); text-decoration: none; }
+.nb-pager a:hover { text-decoration: underline; }
+.nb-pager span { color: #b9c0c9; }
+
+@media (max-width: 900px) {
+  .nb { font-size: 16px; }
+  .nb-grid { grid-template-columns: 1fr; gap: 0; }
+  .nb-toc {
+    position: static; order: -1; border: 1px solid var(--rule);
+    border-radius: 5px; padding: .9rem 1.1rem; margin-bottom: 2rem; background: var(--panel);
+  }
+  .nb-title { font-size: 1.72rem; }
+}
+</style>
+
+{% raw %}
+<div class="nb">
+
+  <div class="nb-crumb"><a href="../notes.html">Notes</a> &middot; Common dynamic models</div>
+  <h1 class="nb-title">Common dynamic models</h1>
+  <p class="nb-deck">The models most robotics problems are actually written in, from the single integrator to a quadrotor on SO(3), with what each one assumes.</p>
+  <hr class="nb-rule">
+
+  <div class="nb-grid">
+    <div class="nb-body">
+      <p>A small library of models covers most of robotics. They are worth knowing by heart,
+      not because any of them is exactly right, but because choosing among them is the first
+      real design decision in a project: the model fixes what your controller can reason
+      about and how expensive that reasoning will be.</p>
+
+      <p>Every model below is written in the continuous-time form \(\dot x = f(x,u)\), with the
+      state dimension, input dimension, and classification stated alongside.</p>
+
+      <h2 id="single-integrator">Single integrator</h2>
+
+      <p>The simplest useful model. You command velocity directly.</p>
+
+      $$x = \begin{bmatrix} p_x \\ p_y \end{bmatrix} \in \mathbb{R}^2, \qquad
+        u = \begin{bmatrix} u_x \\ u_y \end{bmatrix} \in \mathbb{R}^2, \qquad
+        \dot{x} = u.$$
+
+      <p>Linear, fully actuated, and about as easy as control gets: \(A = 0\), \(B = I\).
+      It is the workhorse of multi-agent coordination, because consensus, formation, and
+      coverage results are cleanest here and the graph structure — not the dynamics — is the
+      interesting part.</p>
+
+      <p>The catch is that no physical robot is a single integrator. Velocity commands are
+      tracked by a lower-level loop with finite bandwidth, so results proven for integrators
+      transfer only if that inner loop is much faster than the outer one.</p>
+
+      <h2 id="double-integrator">Double integrator</h2>
+
+      <p>One step up: you command acceleration, and velocity becomes a state.</p>
+
+      $$x = \begin{bmatrix} p \\ v \end{bmatrix} \in \mathbb{R}^{2d}, \qquad
+        u = a \in \mathbb{R}^{d}, \qquad
+        \dot{x} = \begin{bmatrix} 0 & I \\ 0 & 0 \end{bmatrix} x
+                + \begin{bmatrix} 0 \\ I \end{bmatrix} u.$$
+
+      <p>Still linear and still fully actuated, but now the robot has momentum, which is what
+      makes collision avoidance and braking distance meaningful. It is Newton's second law with
+      unit mass, and it is the right minimal model whenever inertia matters and orientation
+      does not.</p>
+
+      <div class="nb-key">
+        <p>The jump from single to double integrator is the jump from "where do I want to be"
+        to "can I stop in time". Safety constraints that are trivially enforceable on a single
+        integrator become relative-degree-two problems on a double integrator.</p>
+      </div>
+
+      <h2 id="unicycle">Unicycle</h2>
+
+      <p>The standard model for a wheeled robot that drives forward along its heading and
+      turns, but cannot slide sideways.</p>
+
+      $$x = \begin{bmatrix} p_x \\ p_y \\ \psi \end{bmatrix} \in \mathbb{R}^3, \qquad
+        u = \begin{bmatrix} v \\ \omega \end{bmatrix} \in \mathbb{R}^2, \qquad
+        \dot{x} = \begin{bmatrix} v\cos\psi \\ v\sin\psi \\ \omega \end{bmatrix}.$$
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 208" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Unicycle robot showing position, heading angle and forward velocity">
+          <line x1="55" y1="172" x2="470" y2="172" stroke="#c8cfd8" stroke-width="1"/>
+          <line x1="70" y1="24" x2="70" y2="172" stroke="#c8cfd8" stroke-width="1"/>
+          <text x="470" y="190" font-size="12" fill="#5b6572">x</text>
+          <text x="56" y="24" font-size="12" fill="#5b6572">y</text>
+          <line x1="250" y1="104" x2="250" y2="172" stroke="#c8cfd8" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="70" y1="104" x2="250" y2="104" stroke="#c8cfd8" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="243" y="190" font-size="12" fill="#5b6572">p</text><text x="250" y="194" font-size="9" fill="#5b6572">x</text>
+          <text x="44" y="108" font-size="12" fill="#5b6572">p</text><text x="51" y="112" font-size="9" fill="#5b6572">y</text>
+          <line x1="250" y1="104" x2="330" y2="104" stroke="#c8cfd8" stroke-width="1" stroke-dasharray="3 3"/>
+          <path d="M 288 104 A 38 38 0 0 0 282.9 84.3" fill="none" stroke="#5b6572" stroke-width="1.2"/>
+          <text x="298" y="94" font-size="12.5" fill="#5b6572">&#968;</text>
+          <line x1="250" y1="104" x2="331" y2="57" stroke="#0b5fc1" stroke-width="2.2"/>
+          <path d="M 331 57 l -10.4 0.6 l 4.4 7.6 z" fill="#0b5fc1"/>
+          <text x="340" y="52" font-size="12.5" fill="#0b5fc1">v</text>
+          <circle cx="250" cy="104" r="9" fill="#fff" stroke="#16181d" stroke-width="2.2"/>
+          <path d="M 234.4 113 A 18 18 0 0 0 234.4 95" fill="none" stroke="#0b5fc1" stroke-width="1.6"/>
+          <path d="M 234.4 95 l -1.6 7.6 l 7 -3.6 z" fill="#0b5fc1"/>
+          <text x="212" y="94" font-size="12.5" fill="#0b5fc1">&#969;</text>
+        </svg>
+        <figcaption>Three states, two inputs. The robot can go forward and turn, but the sideways direction is unreachable at any instant.</figcaption>
+      </figure>
+
+      <p>Nonlinear because of \(\cos\psi\) and \(\sin\psi\), and control-affine:</p>
+
+      $$\dot{x} = \underbrace{\begin{bmatrix} 0 \\ 0 \\ 0 \end{bmatrix}}_{f(x)}
+        + \underbrace{\begin{bmatrix} \cos\psi & 0 \\ \sin\psi & 0 \\ 0 & 1 \end{bmatrix}}_{g(x)}
+          \begin{bmatrix} v \\ \omega \end{bmatrix}.$$
+
+      <p>Two inputs for three states makes it underactuated, and the inability to move
+      sideways is a nonholonomic constraint, \(\dot p_x \sin\psi - \dot p_y \cos\psi = 0\).
+      Brockett's condition shows there is no smooth time-invariant feedback that stabilises
+      the unicycle to a point — parallel parking is genuinely hard, and the standard fixes are
+      time-varying or discontinuous laws, or the trick below.</p>
+
+      <div class="nb-eg">
+        <div class="nb-eg-label">Near-identity diffeomorphism</div>
+        <p>Control a point a distance \(\ell &gt; 0\) ahead of the wheel axis instead of the
+        axis itself. That point obeys single-integrator dynamics, and the required unicycle
+        inputs come from</p>
+        $$\begin{bmatrix} v \\ \omega \end{bmatrix} =
+          \begin{bmatrix} \cos\psi & \sin\psi \\ -\tfrac{1}{\ell}\sin\psi & \tfrac{1}{\ell}\cos\psi \end{bmatrix}
+          \begin{bmatrix} \dot p_x^{\text{des}} \\ \dot p_y^{\text{des}} \end{bmatrix}.$$
+        <p>This is how single-integrator multi-robot results get run on real differential-drive
+        hardware. The cost is that you control the offset point, not the robot, and orientation
+        is left to take care of itself.</p>
+      </div>
+
+      <h2 id="diff-drive">Differential drive</h2>
+
+      <p>The same robot, with the inputs written as what the motors actually receive. For
+      wheel radius \(r\) and axle length \(L\), with wheel speeds \(\omega_R, \omega_L\),</p>
+
+      $$v = \frac{r(\omega_R + \omega_L)}{2}, \qquad \omega = \frac{r(\omega_R - \omega_L)}{L}.$$
+
+      <p>The dynamics are the unicycle's; only the input parametrisation changed. This matters
+      for constraints: a box constraint on wheel speeds, \(|\omega_R| \le \bar\omega\) and
+      \(|\omega_L| \le \bar\omega\), is a diamond in \((v,\omega)\) space, not a box. Saturating
+      \(v\) and \(\omega\) separately can command wheel speeds the motors cannot deliver.</p>
+
+      <h2 id="bicycle">Kinematic and dynamic bicycle</h2>
+
+      <p>Cars steer rather than turn in place, so the unicycle is the wrong model. The
+      <strong>kinematic bicycle</strong> lumps each axle into a single wheel:</p>
+
+      $$x = \begin{bmatrix} p_x \\ p_y \\ \psi \\ v\end{bmatrix}, \qquad
+        u = \begin{bmatrix} a \\ \delta \end{bmatrix}, \qquad
+        \dot{x} = \begin{bmatrix} v\cos\psi \\ v\sin\psi \\ \dfrac{v}{L}\tan\delta \\ a \end{bmatrix},$$
+
+      <p>where \(\delta\) is the steering angle and \(L\) the wheelbase. The turn rate now
+      depends on speed, and the steering limit \(|\delta| \le \delta_{\max}\) enforces a
+      minimum turning radius \(R_{\min} = L/\tan\delta_{\max}\).</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Kinematic bicycle model showing wheelbase and steering angle">
+          <line x1="150" y1="98" x2="370" y2="98" stroke="#16181d" stroke-width="2.4"/>
+          <rect x="135" y="89" width="30" height="9" rx="2.5" fill="#16181d"/>
+          <g transform="rotate(-27 370 98)">
+            <rect x="355" y="89" width="30" height="9" rx="2.5" fill="#0b5fc1"/>
+          </g>
+          <circle cx="150" cy="98" r="3.8" fill="#fff" stroke="#16181d" stroke-width="1.6"/>
+          <circle cx="370" cy="98" r="3.8" fill="#fff" stroke="#16181d" stroke-width="1.6"/>
+          <line x1="370" y1="98" x2="452" y2="98" stroke="#c8cfd8" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="370" y1="98" x2="443" y2="61" stroke="#0b5fc1" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <path d="M 412 98 A 42 42 0 0 0 407.4 78.9" fill="none" stroke="#0b5fc1" stroke-width="1.2"/>
+          <text x="419" y="86" font-size="12.5" fill="#0b5fc1">&#948;</text>
+          <g stroke="#5b6572" stroke-width="1">
+            <line x1="150" y1="128" x2="370" y2="128"/>
+            <line x1="150" y1="124" x2="150" y2="132"/>
+            <line x1="370" y1="124" x2="370" y2="132"/>
+          </g>
+          <text x="260" y="145" text-anchor="middle" font-size="12.5" fill="#5b6572">L</text>
+          <line x1="150" y1="86" x2="150" y2="56" stroke="#c8cfd8" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="150" y="46" text-anchor="middle" font-size="12" fill="#5b6572">rear axle</text>
+          <text x="370" y="46" text-anchor="middle" font-size="12" fill="#0b5fc1">steered front wheel</text>
+        </svg>
+        <figcaption>The kinematic bicycle assumes the wheels roll without slipping — a good assumption at parking-lot speeds and a bad one on a racetrack.</figcaption>
+      </figure>
+
+      <p>That no-slip assumption is exactly what fails at speed. The <strong>dynamic
+      bicycle</strong> replaces it with body-frame velocities and tire forces: the state grows
+      to include longitudinal and lateral velocity \(v_x, v_y\) and yaw rate \(r\), slip angles
+      are computed at each axle,</p>
+
+      $$\alpha_f = \delta - \arctan\!\left(\frac{v_y + \ell_f r}{v_x}\right), \qquad
+        \alpha_r = -\arctan\!\left(\frac{v_y - \ell_r r}{v_x}\right),$$
+
+      <p>and lateral forces follow a tire model — linear \(F_y = -C_\alpha \alpha\) for modest
+      slip, or a Pacejka-style saturating curve near the friction limit. The planar dynamics
+      are then</p>
+
+      $$m(\dot v_x - v_y r) = F_{x}, \qquad
+        m(\dot v_y + v_x r) = F_{y,f}\cos\delta + F_{y,r}, \qquad
+        I_z \dot{r} = \ell_f F_{y,f}\cos\delta - \ell_r F_{y,r}.$$
+
+      <p>Two practical warnings: the model is singular at \(v_x = 0\) because slip angles divide
+      by speed, so implementations blend to the kinematic model at low speed; and the friction
+      coefficient \(\mu\) is rarely known, which makes it a natural place for adaptive or robust
+      methods.</p>
+
+      <h2 id="pendulum">Pendulum, cart-pole, and friends</h2>
+
+      <p>The canonical underactuated benchmarks. The <strong>pendulum</strong> with torque input:</p>
+
+      $$m\ell^2\ddot\theta = u - b\dot\theta - mg\ell\sin\theta.$$
+
+      <p>Nonlinear, control-affine, one DOF and one input — fully actuated, and interesting only
+      because of the \(\sin\theta\) and torque limits: if \(|u| &lt; mg\ell\) the pendulum cannot
+      be lifted directly and must be swung up, which is already a nontrivial nonlinear problem.</p>
+
+      <p>The <strong>cart-pole</strong> has configuration \(q = (p, \theta)\) and a single
+      horizontal force on the cart. It is the standard example of underactuation: the pole angle
+      has no actuator of its own and is steered only through cart acceleration. The
+      <strong>Acrobot</strong> and <strong>Pendubot</strong> are the two-link versions with one
+      motor, and legged robots in flight phase share the same structure.</p>
+
+      <h2 id="quadrotor">Quadrotor</h2>
+
+      <p>A rigid body with four rotors. State: position \(p \in \mathbb{R}^3\), velocity
+      \(v \in \mathbb{R}^3\), attitude \(R \in SO(3)\), body angular velocity
+      \(\Omega \in \mathbb{R}^3\). Inputs: total thrust \(F \in \mathbb{R}\) and body moment
+      \(M \in \mathbb{R}^3\).</p>
+
+      $$\dot p = v, \qquad
+        m\dot v = mg e_3 - F R e_3, \qquad
+        \dot R = R\hat\Omega, \qquad
+        J\dot\Omega + \Omega \times J\Omega = M,$$
+
+      <p>where \(\hat\Omega\) is the skew-symmetric matrix with \(\hat\Omega a = \Omega \times a\)
+      and \(e_3\) is the vertical unit vector.</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 186" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A tilted quadrotor showing thrust along the body axis decomposed into vertical and horizontal components">
+          <g transform="rotate(-22 260 110)">
+            <line x1="196" y1="110" x2="324" y2="110" stroke="#16181d" stroke-width="3"/>
+            <ellipse cx="196" cy="110" rx="20" ry="4.5" fill="none" stroke="#16181d" stroke-width="2"/>
+            <ellipse cx="324" cy="110" rx="20" ry="4.5" fill="none" stroke="#16181d" stroke-width="2"/>
+          </g>
+          <line x1="260" y1="110" x2="222" y2="26" stroke="#0b5fc1" stroke-width="2.4"/>
+          <path d="M 222 26 l 1.4 10.3 l 7.6 -4.4 z" fill="#0b5fc1"/>
+          <text x="206" y="52" text-anchor="end" font-size="12.5" fill="#0b5fc1">F R e&#8323;</text>
+          <line x1="260" y1="110" x2="260" y2="26" stroke="#5b6572" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <line x1="260" y1="26" x2="222" y2="26" stroke="#5b6572" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <text x="268" y="72" font-size="11.5" fill="#5b6572">holds it up</text>
+          <text x="241" y="16" text-anchor="middle" font-size="11.5" fill="#5b6572">moves it sideways</text>
+          <line x1="260" y1="110" x2="260" y2="164" stroke="#5b6572" stroke-width="2"/>
+          <path d="M 260 164 l -4.4 -7.6 l 8.8 0 z" fill="#5b6572"/>
+          <text x="268" y="152" font-size="12.5" fill="#5b6572">mg</text>
+          <circle cx="260" cy="110" r="3.4" fill="#16181d"/>
+        </svg>
+        <figcaption>Thrust only ever points along the body axis. Horizontal motion has to be bought with attitude, which is what makes the quadrotor underactuated.</figcaption>
+      </figure>
+
+      <p>Six configuration degrees of freedom against four inputs. The rotational subsystem is
+      fully actuated and fast; the translational subsystem is underactuated and slow, which is
+      why almost every quadrotor stack is a cascade: an outer position loop picks a desired
+      thrust vector, that vector defines a desired attitude, and an inner attitude loop tracks
+      it at high rate.</p>
+
+      <p>Two modelling choices worth flagging. Parametrising attitude with Euler angles is
+      convenient but introduces gimbal singularities; working directly on \(SO(3)\) with
+      rotation matrices, or with quaternions, avoids them at the cost of a slightly less
+      familiar controller. And quadrotor dynamics are <em>differentially flat</em> in
+      \((p_x, p_y, p_z, \psi)\) — every state and input can be written in terms of those four
+      outputs and their derivatives — which is what makes minimum-snap trajectory generation
+      so effective.</p>
+
+      <h2 id="discrete">Discrete-time versions</h2>
+
+      <p>Any of these becomes a discrete-time model once you fix a sample time. For the linear
+      ones, use exact discretisation; the double integrator with sample time \(\Delta t\) is</p>
+
+      $$x_{k+1} = \begin{bmatrix} I & \Delta t\, I \\ 0 & I \end{bmatrix} x_k
+                + \begin{bmatrix} \tfrac{1}{2}\Delta t^2 I \\ \Delta t\, I \end{bmatrix} u_k,$$
+
+      <p>which is exact under a zero-order hold, not an approximation. For the nonlinear ones,
+      RK4 is the usual choice inside an MPC prediction model; Euler is acceptable for the
+      unicycle at 50 Hz or faster but noticeably degrades the bicycle model during hard
+      cornering.</p>
+
+      <p>If you add process noise, the stochastic discrete-time form is
+      \(x_{k+1} = F(x_k,u_k) + w_k\) with \(w_k\) zero-mean and covariance \(Q\) — the model an
+      EKF or a particle filter expects.</p>
+
+      <h2 id="compare">Side by side</h2>
+
+      <div class="nb-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Model</th><th>\(n\)</th><th>\(m\)</th><th>Linear</th><th>Actuation</th><th>Typical use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Single integrator</td><td>2&ndash;3</td><td>2&ndash;3</td><td>yes</td><td>full</td><td>Multi-agent coordination, coverage, consensus</td></tr>
+          <tr><td>Double integrator</td><td>4&ndash;6</td><td>2&ndash;3</td><td>yes</td><td>full</td><td>Collision avoidance, trajectory planning with inertia</td></tr>
+          <tr><td>Unicycle</td><td>3</td><td>2</td><td>no</td><td>under</td><td>Ground robots, differential-drive platforms</td></tr>
+          <tr><td>Kinematic bicycle</td><td>4</td><td>2</td><td>no</td><td>under</td><td>Low-speed autonomous driving, parking</td></tr>
+          <tr><td>Dynamic bicycle</td><td>6&ndash;7</td><td>2&ndash;3</td><td>no</td><td>under</td><td>High-speed driving, racing, stability control</td></tr>
+          <tr><td>Cart-pole</td><td>4</td><td>1</td><td>no</td><td>under</td><td>Benchmark for underactuated control</td></tr>
+          <tr><td>Quadrotor</td><td>12&ndash;13</td><td>4</td><td>no</td><td>under</td><td>Aerial robotics, aggressive flight</td></tr>
+          <tr><td>Manipulator</td><td>2k</td><td>k</td><td>no</td><td>full</td><td>Arms, computed torque, task-space control</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="nb-key">
+        <p>Pick the simplest model whose failure mode you cannot tolerate. A single integrator
+        is enough to study a formation; it is not enough to promise that two robots will not
+        collide at speed. Most projects use more than one — a coarse model for planning, a
+        finer one for tracking, and a finer one still for simulation.</p>
+      </div>
+
+
+      <div class="nb-pager">
+        <a href="system-modelling.html">&larr; System modelling</a>
+        <a href="control-design.html">Control law design &rarr;</a>
+      </div>
+    </div>
+
+    <nav class="nb-toc" aria-label="On this page">
+      <div class="nb-toc-head">On this page</div>
+      <ol>
+      <li><a href="#single-integrator">Single integrator</a></li>
+      <li><a href="#double-integrator">Double integrator</a></li>
+      <li><a href="#unicycle">Unicycle</a></li>
+      <li><a href="#diff-drive">Differential drive</a></li>
+      <li><a href="#bicycle">Bicycle models</a></li>
+      <li><a href="#pendulum">Pendulum and cart-pole</a></li>
+      <li><a href="#quadrotor">Quadrotor</a></li>
+      <li><a href="#discrete">Discrete-time versions</a></li>
+      <li><a href="#compare">Side by side</a></li>
+      </ol>
+    </nav>
+  </div>
+
+</div>
+{% endraw %}

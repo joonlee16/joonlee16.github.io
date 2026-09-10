@@ -1,18 +1,242 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>TBH Page</title>
-</head>
-<body>
-  <div id="output"></div>
+---
+layout: default
+title: Notes
+---
 
-  <script>
-    // When the page loads, display "tbh"
-    document.addEventListener("DOMContentLoaded", function() {
-      const outputDiv = document.getElementById("output");
-      outputDiv.textContent = "Under Construction";
-    });
-  </script>
-</body>
-</html>
+<style>
+.nb {
+  --ink: #16181d;
+  --muted: #5b6572;
+  --accent: #0b5fc1;
+  --accent-soft: #eef4fc;
+  --rule: #e2e6ec;
+  --panel: #f7f8fa;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+
+  max-width: 1160px;
+  margin: 2rem auto 4.5rem;
+  padding: 0 20px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.68;
+}
+
+/* ---------- page head ---------- */
+.nb-crumb {
+  font-family: var(--sans);
+  font-size: .82rem;
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+}
+.nb-crumb a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.nb-crumb a:hover { color: var(--accent); border-color: var(--accent); }
+
+.nb-title {
+  font-family: var(--sans);
+  font-size: 2.1rem;
+  font-weight: 650;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  margin: 0 0 .6rem;
+}
+.nb-deck {
+  color: var(--muted);
+  font-size: 1.05rem;
+  margin: 0 0 1.6rem;
+  max-width: 62ch;
+}
+.nb-rule { border: 0; border-top: 1px solid var(--rule); margin: 0 0 2.2rem; }
+
+/* ---------- two-column shell ---------- */
+.nb-grid { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 52px; align-items: start; }
+.nb-body { min-width: 0; }
+
+.nb-toc { position: sticky; top: 24px; font-family: var(--sans); font-size: .85rem; }
+.nb-toc-head { font-weight: 650; margin-bottom: .6rem; font-size: .8rem; color: var(--ink); }
+.nb-toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+.nb-toc li { margin: 0 0 .38rem; padding-left: 1.5rem; text-indent: -1.5rem; }
+.nb-toc li::before {
+  counter-increment: toc; content: counter(toc) ". ";
+  color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.nb-toc a { color: var(--muted); text-decoration: none; }
+.nb-toc a:hover { color: var(--accent); }
+
+/* ---------- typography ---------- */
+.nb-body { counter-reset: sec; }
+.nb-body > h2 {
+  font-family: var(--sans);
+  font-size: 1.32rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  margin: 3rem 0 .9rem;
+  padding-top: .2rem;
+  scroll-margin-top: 20px;
+}
+.nb-body > h2::before {
+  counter-increment: sec;
+  content: counter(sec) ".";
+  color: var(--accent);
+  margin-right: .5rem;
+  font-variant-numeric: tabular-nums;
+}
+.nb-body > h2:first-child { margin-top: 0; }
+.nb-body h3 {
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  font-weight: 650;
+  margin: 1.9rem 0 .5rem;
+}
+.nb-body p { margin: 0 0 1rem; max-width: 72ch; }
+.nb-body ul, .nb-body ol { max-width: 70ch; padding-left: 1.35rem; margin: 0 0 1.1rem; }
+.nb-body li { margin-bottom: .38rem; }
+.nb-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+.nb-body a:hover { border-bottom-color: var(--accent); }
+.nb-body strong { font-weight: 600; }
+.nb-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em; background: var(--panel); padding: .1em .35em; border-radius: 3px;
+}
+
+/* ---------- blocks ---------- */
+.nb-key {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  padding: .85rem 1.1rem;
+  margin: 1.4rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.nb-key p { margin: 0; }
+.nb-key p + p { margin-top: .6rem; }
+
+.nb-eg {
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: .9rem 1.1rem .3rem;
+  margin: 1.4rem 0;
+  background: #fff;
+}
+.nb-eg-label {
+  font-family: var(--sans); font-size: .78rem; font-weight: 650;
+  color: var(--muted); margin-bottom: .5rem;
+}
+
+/* ---------- figures ---------- */
+.nb-fig { margin: 1.9rem 0; }
+.nb-fig svg { display: block; width: 100%; height: auto; max-width: 620px; margin: 0 auto; }
+.nb-fig figcaption {
+  font-family: var(--sans); font-size: .82rem; color: var(--muted);
+  margin-top: .7rem; text-align: center; max-width: 60ch; margin-left: auto; margin-right: auto;
+}
+.nb-fig text { font-family: var(--sans); }
+
+/* ---------- tables ---------- */
+.nb-table-wrap { overflow-x: auto; margin: 1.6rem 0; }
+.nb-body table { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: .87rem; }
+.nb-body th, .nb-body td {
+  text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top;
+}
+.nb-body th { font-weight: 650; border-bottom: 1.5px solid var(--ink); white-space: nowrap; }
+.nb-body tbody tr:last-child td { border-bottom: none; }
+
+/* ---------- math ---------- */
+mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+
+/* ---------- prev / next ---------- */
+.nb-pager {
+  display: flex; justify-content: space-between; gap: 1rem;
+  margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: .88rem;
+}
+.nb-pager a { color: var(--accent); text-decoration: none; }
+.nb-pager a:hover { text-decoration: underline; }
+.nb-pager span { color: #b9c0c9; }
+
+@media (max-width: 900px) {
+  .nb { font-size: 16px; }
+  .nb-grid { grid-template-columns: 1fr; gap: 0; }
+  .nb-toc {
+    position: static; order: -1; border: 1px solid var(--rule);
+    border-radius: 5px; padding: .9rem 1.1rem; margin-bottom: 2rem; background: var(--panel);
+  }
+  .nb-title { font-size: 1.72rem; }
+}
+</style>
+
+{% raw %}
+<div class="nb">
+
+  <h1 class="nb-title">Notes</h1>
+  <p class="nb-deck">Working notes on modelling and control for robotic systems &mdash;
+  the vocabulary I keep coming back to, written down so I stop re-deriving it. They are
+  organised as an overview rather than a course: enough to place a problem, with pointers
+  to what to read next.</p>
+  <hr class="nb-rule">
+
+  <div class="nb-index">
+    <a class="nb-card" href="notes/system-modelling.html">
+      <div class="nb-card-row">
+        <div class="nb-card-num">01</div>
+        <div>
+          <div class="nb-card-title">System modelling</div>
+          <p class="nb-card-desc">What a model is made of and the handful of distinctions that decide which controllers are available to you: linear or nonlinear, continuous or discrete time, fully actuated or underactuated, nominal or uncertain.</p>
+          <div class="nb-card-topics">state and input &middot; degrees of freedom &middot; discretisation &middot; linearization &middot; control-affine form &middot; disturbance models &middot; observability</div>
+        </div>
+      </div>
+    </a>
+    <a class="nb-card" href="notes/dynamic-models.html">
+      <div class="nb-card-row">
+        <div class="nb-card-num">02</div>
+        <div>
+          <div class="nb-card-title">Common dynamic models</div>
+          <p class="nb-card-desc">The small library of models that covers most of robotics, written in a common form with their dimensions, structure, and the assumptions that break them.</p>
+          <div class="nb-card-topics">single and double integrator &middot; unicycle &middot; differential drive &middot; kinematic and dynamic bicycle &middot; cart-pole &middot; quadrotor on SO(3)</div>
+        </div>
+      </div>
+    </a>
+    <a class="nb-card" href="notes/control-design.html">
+      <div class="nb-card-row">
+        <div class="nb-card-num">03</div>
+        <div>
+          <div class="nb-card-title">Control law design</div>
+          <p class="nb-card-desc">How the standard controllers are built, what each one assumes, and what it promises &mdash; through to designing under disturbance, unknown parameters, and hard safety constraints.</p>
+          <div class="nb-card-topics">PID &middot; pole placement &middot; LQR and LQG &middot; feedback linearization &middot; CLF-QP &middot; control barrier functions &middot; MPC &middot; robust and stochastic design</div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <p class="nb-foot">Corrections and suggestions are welcome by
+  <a href="mailto:haejoonl@umich.edu">email</a>.</p>
+
+</div>
+
+<style>
+.nb-index { display: grid; gap: 0; max-width: 760px; }
+.nb-card {
+  display: block; padding: 1.5rem 0; border-top: 1px solid var(--rule);
+  text-decoration: none; color: inherit; border-bottom: 0;
+}
+.nb-card:last-child { border-bottom: 1px solid var(--rule); }
+.nb-card:hover .nb-card-title { color: var(--accent); }
+.nb-card-row { display: flex; gap: 1.1rem; align-items: baseline; }
+.nb-card-num {
+  font-family: var(--sans); font-size: .95rem; color: var(--accent);
+  font-variant-numeric: tabular-nums; flex: 0 0 auto;
+}
+.nb-card-title {
+  font-family: var(--sans); font-size: 1.18rem; font-weight: 650;
+  letter-spacing: -.01em; margin: 0 0 .35rem;
+}
+.nb-card-desc { margin: 0 0 .6rem; color: var(--ink); max-width: 62ch; }
+.nb-card-topics { font-family: var(--sans); font-size: .82rem; color: var(--muted); }
+.nb-foot { font-family: var(--sans); font-size: .86rem; color: var(--muted); margin-top: 2.5rem; }
+.nb-foot a { color: var(--accent); text-decoration: none; }
+.nb-foot a:hover { text-decoration: underline; }
+@media (max-width: 640px) {
+  .nb-card-row { gap: .8rem; }
+}
+</style>
+{% endraw %}
