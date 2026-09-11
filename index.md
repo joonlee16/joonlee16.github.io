@@ -42,7 +42,7 @@ title: "Home"
     <!-- Bio Section -->
     <div style="max-width: 800px; margin-top: 40px; line-height: 1.7; font-size: 1rem; color: #333; background-color: rgba(255,255,255,0.85); padding: 20px; border-radius: 14px;">
       <p>
-      I am a third-year Ph.D student at the
+      I am a fourth-year Ph.D student at the
       <a href="https://dasc-lab.github.io/" target="_blank">DASC Lab</a>, part of the 
       <a href="https://robotics.umich.edu/" target="_blank">Department of Robotics</a> at the University of Michigan, Ann Arbor. 
       I am advised by <a href="https://websites.umich.edu/~dpanagou/" target="_blank">Professor Dimitra Panagou</a>. 

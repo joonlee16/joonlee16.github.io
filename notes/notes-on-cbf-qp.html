@@ -1,0 +1,546 @@
+---
+layout: default
+title: CBF-QP
+---
+
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      tags: 'none'
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+.nb {
+  --ink: #16181d;
+  --muted: #5b6572;
+  --accent: #0b5fc1;
+  --accent-soft: #eef4fc;
+  --rule: #e2e6ec;
+  --panel: #f7f8fa;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+
+  max-width: 1160px;
+  margin: 2rem auto 4.5rem;
+  padding: 0 20px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.68;
+}
+
+/* ---------- page head ---------- */
+.nb-crumb {
+  font-family: var(--sans);
+  font-size: .82rem;
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+}
+.nb-crumb a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.nb-crumb a:hover { color: var(--accent); border-color: var(--accent); }
+
+.nb-title {
+  font-family: var(--sans);
+  font-size: 2.1rem;
+  font-weight: 650;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  margin: 0 0 .6rem;
+}
+.nb-deck {
+  color: var(--muted);
+  font-size: 1.05rem;
+  margin: 0 0 1.6rem;
+  max-width: 62ch;
+}
+.nb-rule { border: 0; border-top: 1px solid var(--rule); margin: 0 0 2.2rem; }
+
+/* ---------- two-column shell ---------- */
+.nb-grid { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 52px; align-items: start; }
+.nb-body { min-width: 0; }
+
+.nb-toc { position: sticky; top: 24px; font-family: var(--sans); font-size: .85rem; }
+.nb-toc-head { font-weight: 650; margin-bottom: .6rem; font-size: .8rem; color: var(--ink); }
+.nb-toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+.nb-toc li { margin: 0 0 .38rem; padding-left: 1.5rem; text-indent: -1.5rem; }
+.nb-toc li::before {
+  counter-increment: toc; content: counter(toc) ". ";
+  color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.nb-toc a { color: var(--muted); text-decoration: none; }
+.nb-toc a:hover { color: var(--accent); }
+
+/* ---------- typography ---------- */
+.nb-body { counter-reset: sec; }
+.nb-body > h2 {
+  font-family: var(--sans);
+  font-size: 1.32rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  margin: 3rem 0 .9rem;
+  padding-top: .2rem;
+  scroll-margin-top: 20px;
+}
+.nb-body > h2::before {
+  counter-increment: sec;
+  content: counter(sec) ".";
+  color: var(--accent);
+  margin-right: .5rem;
+  font-variant-numeric: tabular-nums;
+}
+.nb-body > h2:first-child { margin-top: 0; }
+.nb-body h3 {
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  font-weight: 650;
+  margin: 1.9rem 0 .5rem;
+}
+.nb-body p { margin: 0 0 1rem; max-width: 72ch; }
+.nb-body ul, .nb-body ol { max-width: 70ch; padding-left: 1.35rem; margin: 0 0 1.1rem; }
+.nb-body li { margin-bottom: .38rem; }
+.nb-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+.nb-body a:hover { border-bottom-color: var(--accent); }
+.nb-body strong { font-weight: 600; }
+.nb-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em; background: var(--panel); padding: .1em .35em; border-radius: 3px;
+}
+
+/* ---------- blocks ---------- */
+.nb-key {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  padding: .85rem 1.1rem;
+  margin: 1.4rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.nb-key p { margin: 0; }
+.nb-key p + p { margin-top: .6rem; }
+
+.nb-eg {
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: .9rem 1.1rem .3rem;
+  margin: 1.4rem 0;
+  background: #fff;
+}
+.nb-eg-label {
+  font-family: var(--sans); font-size: .78rem; font-weight: 650;
+  color: var(--muted); margin-bottom: .5rem;
+}
+
+.nb-src { font-family: var(--sans); font-size: .78rem; color: var(--muted); margin-top: .55rem !important; }
+
+/* ---------- figures ---------- */
+.nb-fig { margin: 1.9rem 0; }
+.nb-fig svg, .nb-fig img {
+  display: block; width: 100%; height: auto; max-width: 620px; margin: 0 auto;
+}
+.nb-fig img { border: 1px solid var(--rule); border-radius: 4px; }
+.nb-fig figcaption {
+  font-family: var(--sans); font-size: .82rem; color: var(--muted);
+  margin-top: .7rem; text-align: center; max-width: 60ch; margin-left: auto; margin-right: auto;
+}
+.nb-fig text { font-family: var(--sans); }
+
+/* ---------- tables ---------- */
+.nb-table-wrap { overflow-x: auto; margin: 1.6rem 0; }
+.nb-body table { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: .87rem; }
+.nb-body th, .nb-body td {
+  text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top;
+}
+.nb-body th { font-weight: 650; border-bottom: 1.5px solid var(--ink); white-space: nowrap; }
+.nb-body tbody tr:last-child td { border-bottom: none; }
+
+/* ---------- math ---------- */
+mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+
+/* ---------- prev / next ---------- */
+.nb-pager {
+  display: flex; justify-content: space-between; gap: 1rem;
+  margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: .88rem;
+}
+.nb-pager a { color: var(--accent); text-decoration: none; }
+.nb-pager a:hover { text-decoration: underline; }
+.nb-pager span { color: #b9c0c9; }
+
+@media (max-width: 900px) {
+  .nb { font-size: 16px; }
+  .nb-grid { grid-template-columns: 1fr; gap: 0; }
+  .nb-toc {
+    position: static; order: -1; border: 1px solid var(--rule);
+    border-radius: 5px; padding: .9rem 1.1rem; margin-bottom: 2rem; background: var(--panel);
+  }
+  .nb-title { font-size: 1.72rem; }
+}
+</style>
+
+{% raw %}
+<div class="nb">
+
+  <div class="nb-crumb"><a href="../notes.html">Notes</a> &middot; CBF-QP</div>
+  <h1 class="nb-title">CBF-QP: three clarifications</h1>
+  <p class="nb-deck">Some clarifications regarding cbf-qp.</p>
+  <hr class="nb-rule">
+
+  <div class="nb-grid">
+    <div class="nb-body">
+
+      <h2 id="setup">Setup and the definitions</h2>
+
+      <p>Throughout, the system is control-affine,</p>
+
+      $$\dot{x} = f(x) + g(x)u, \qquad x \in D \subset \mathbb{R}^n, \quad u \in U \subset \mathbb{R}^m,$$
+
+      <p>with \(f\) and \(g\) locally Lipschitz and \(U\) the admissible input set. The safe
+      set is the zero-superlevel set of a continuously differentiable \(h : D \to \mathbb{R}\):</p>
+
+      $$\mathcal{C} = \{x \in D : h(x) \ge 0\}, \quad
+        \partial\mathcal{C} = \{x \in D : h(x) = 0\}, \quad
+        \mathrm{Int}(\mathcal{C}) = \{x \in D : h(x) > 0\}.$$
+
+      <p>Note that \(\mathcal{C} \subset D\): the domain on which \(h\) is defined is strictly
+      larger than the safe set. That containment is the whole subject of section 2.</p>
+
+      <div class="nb-key">
+        <p><strong>Definition 2 (control barrier function).</strong> Let
+        \(\mathcal{C} \subset D \subset \mathbb{R}^n\) be the zero-superlevel set of a
+        continuously differentiable \(h : D \to \mathbb{R}\). Then \(h\) is a
+        <em>control barrier function</em> if there exists an extended class
+        \(\mathcal{K}_\infty\) function \(\alpha\) such that</p>
+        $$\sup_{u \in U}\big[\, L_f h(x) + L_g h(x)\,u \,\big] \ \ge\ -\alpha\big(h(x)\big)
+          \qquad \textbf{for all } x \in D .$$
+        <p class="nb-src">Ames, Coogan, Egerstedt, Notomista, Sreenath, Tabuada,
+        <a href="https://arxiv.org/abs/1903.11199v1">Control Barrier Functions: Theory and
+        Applications</a>, Definition 2. Statements here are restated; see the paper for the
+        originals.</p>
+      </div>
+
+
+      <p>The pointwise set of inputs satisfying the condition is</p>
+
+      $$K_{\mathrm{cbf}}(x) = \big\{ u \in U : L_f h(x) + L_g h(x)\,u + \alpha(h(x)) \ge 0 \big\},$$
+
+      <p>which is affine in \(u\), hence the quadratic program</p>
+
+      $$u(x) = \underset{u \in \mathbb{R}^m}{\arg\min} \ \tfrac{1}{2}\|u - k(x)\|^2
+        \quad \text{s.t.} \quad L_f h(x) + L_g h(x)\,u \ge -\alpha(h(x)) .$$
+
+      <div class="nb-key">
+        <p><strong>Theorem 2 (sufficiency).</strong> Let \(\mathcal{C}\) be the zero-superlevel
+        set of a continuously differentiable \(h : D \to \mathbb{R}\). If \(h\) is a control
+        barrier function <em>on \(D\)</em> and
+        \(\frac{\partial h}{\partial x}(x) \neq 0\) for all \(x \in \partial\mathcal{C}\), then
+        any Lipschitz continuous controller \(u(x) \in K_{\mathrm{cbf}}(x)\) renders
+        \(\mathcal{C}\) safe. Additionally, \(\mathcal{C}\) is asymptotically stable in
+        \(D\).</p>
+        <p><strong>Theorem 3 (necessity).</strong> Let \(\mathcal{C}\) be <em>compact</em>, the
+        zero-superlevel set of a continuously differentiable \(h : D \to \mathbb{R}\), with
+        \(\frac{\partial h}{\partial x}(x) \neq 0\) for all \(x \in \partial\mathcal{C}\). If
+        some control law \(u = k(x)\) renders \(\mathcal{C}\) safe, then the restriction
+        \(h|_{\mathcal{C}} : \mathcal{C} \to \mathbb{R}\) is a control barrier function
+        <em>on \(\mathcal{C}\)</em>.</p>
+        <p class="nb-src">Same source, Theorems 2 and 3.</p>
+      </div>
+
+      <p>Sufficiency
+      asks for the condition on \(D\) and returns safety <em>plus</em> asymptotic stability.
+      Necessity starts from CBF <em>on \(\mathcal{C}\)</em> and gets safety only.
+      The gap between the hypotheses is exactly the gap between the conclusions.</p>
+
+      <h2 id="domain">Why the condition lives on D, not on C</h2>
+
+      <p>Notice that the definition of a CBF itself (Definition 2) says nothing
+      about \(\nabla h\) on the boundary - the gradient is allowed to vanish there. The
+      regularity requirement \(\frac{\partial h}{\partial x} \neq 0\) on
+      \(\partial\mathcal{C}\) appears only as a separate hypothesis in Theorems 2 and 3, and
+      it is not decorative. It is equivalent to \(0\) being a regular value of \(h\), and it is
+      what Nagumo's theorem needs.</p>
+
+      <p>Here is why it matters. At a boundary point where \(\nabla h(x) = 0\), both
+      \(L_f h(x)\) and \(L_g h(x)\) vanish, so the CBF condition reads \(0 \ge 0\). It is
+      satisfied by <em>every</em> input, including inputs that make the system leave the safe set.</p>
+
+      <div class="nb-eg">
+        <div class="nb-eg-label">A concrete failure</div>
+        <p>Scalar integrator \(\dot x = u\) on \(D = \mathbb{R}\) with \(U = \mathbb{R}\), the
+        simplest possible \(\alpha(r) = r\), and</p>
+        $$h(x) = -x^2, \qquad \mathcal{C} = \{0\}, \qquad h'(x) = -2x .$$
+        <p>Regularity fails at the only boundary point: \(h'(0) = 0\).</p>
+        <p>Impose the CBF condition on \(\mathcal{C}\) alone. There is one point to check, and
+        there it reads</p>
+        $$0 \cdot u \ \ge\ -\alpha(h(0)) = 0 ,$$
+        <p>which every input satisfies. So \(K_{\mathrm{cbf}}(0) = \mathbb{R}\) and
+        \(h|_{\mathcal{C}}\) is a control barrier function on \(\mathcal{C}\).</p>
+        <p>Now take \(u \equiv 1\) - constant, hence Lipschitz, and a member of
+        \(K_{\mathrm{cbf}}(x)\) at every point of \(\mathcal{C}\). From \(x(0) = 0\) it gives
+        \(x(t) = t\), so \(h(x(t)) = -t^2 &lt; 0\) for every \(t &gt; 0\). The state is unsafe
+        immediately, and \(\mathcal{C}\) is not forward invariant.</p>
+      </div>
+
+
+      <h2 id="invariance">Controlled invariance is not forward invariance</h2>
+
+      <p>These two get used interchangeably in conversation and they are not the same kind of
+      object. One is a property of a set, the other a property of a closed loop.</p>
+
+      <div class="nb-key">
+        <p><strong>Controlled invariance</strong> is a property of the set (together with the
+        dynamics). \(\mathcal{C}\) is controlled invariant if from every state in
+        \(\mathcal{C}\) there <em>exists</em> an admissible input keeping the state in
+        \(\mathcal{C}\). No controller is named. In CBF language this is the pointwise
+        statement \(K_{\mathrm{cbf}}(x) \neq \emptyset\), which is what the supremum in
+        Definition 2 asserts.</p>
+        <p><strong>Forward invariance</strong> is a property of a closed-loop system. Given a
+        specific \(u = k(x)\), the set \(\mathcal{C}\) is forward invariant for
+        \(\dot x = f(x) + g(x)k(x)\) if every trajectory starting in \(\mathcal{C}\) stays in
+        \(\mathcal{C}\) on its maximal interval of existence. Definition 1 of the paper calls
+        the system <em>safe</em> when this holds.</p>
+      </div>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 216" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A cone of admissible velocities at a boundary point versus one velocity chosen by a controller">
+          <line x1="262" y1="18" x2="262" y2="196" stroke="#e2e6ec" stroke-width="1"/>
+          <ellipse cx="132" cy="104" rx="76" ry="58" fill="#f7f8fa" stroke="#16181d" stroke-width="1.8"/>
+          <path d="M 208 104 L 152 72 A 64 64 0 0 0 152 136 Z" fill="#eef4fc"/>
+          <g stroke="#0b5fc1" stroke-width="1.6">
+            <line x1="208" y1="104" x2="154" y2="73"/>
+            <line x1="208" y1="104" x2="142" y2="104"/>
+            <line x1="208" y1="104" x2="154" y2="135"/>
+          </g>
+          <g fill="#0b5fc1">
+            <path d="M 154 73 l 9.2 2.4 l -2.6 -7.4 z"/>
+            <path d="M 142 104 l 8 -4.4 v 8.8 z"/>
+            <path d="M 154 135 l 6.6 -3.2 l 2.6 7.4 z"/>
+          </g>
+          <circle cx="208" cy="104" r="5" fill="#0b5fc1"/>
+          <text x="88" y="70" font-size="12.5" fill="#5b6572">C</text>
+          <text x="132" y="186" text-anchor="middle" font-size="12" fill="#16181d">controlled invariance</text>
+          <text x="132" y="202" text-anchor="middle" font-size="11.5" fill="#5b6572">some u works: K(x) &#8800; &#8709;</text>
+          <ellipse cx="386" cy="104" rx="76" ry="58" fill="#f7f8fa" stroke="#16181d" stroke-width="1.8"/>
+          <line x1="462" y1="104" x2="404" y2="86" stroke="#0b5fc1" stroke-width="2.6"/>
+          <path d="M 404 86 l 8.6 4.2 l -0.2 -8.8 z" fill="#0b5fc1"/>
+          <circle cx="462" cy="104" r="5" fill="#0b5fc1"/>
+          <text x="342" y="70" font-size="12.5" fill="#5b6572">C</text>
+          <text x="386" y="186" text-anchor="middle" font-size="12" fill="#16181d">forward invariance</text>
+          <text x="386" y="202" text-anchor="middle" font-size="11.5" fill="#5b6572">this u works, for this closed loop</text>
+        </svg>
+        <figcaption>Left: a question about the set. Right: a question about a particular controller. The CBF condition answers the first; a Lipschitz selection from it answers the second.</figcaption>
+      </figure>
+
+
+      <ul>
+        <li>Existence of a CBF is the <em>set</em>-level statement. It certifies that a safe
+        input exists at every state, which is why CBF conditions can be checked without ever
+        committing to a controller.</li>
+        <li>Getting from one to the other requires a <em>selection</em>: you must pick
+        \(u(x) \in K_{\mathrm{cbf}}(x)\) at every \(x\), and the selection must be regular
+        enough that the closed loop has solutions at all. Theorem 2 asks for Lipschitz. That
+        requirement is where the next section starts, because the QP does not always
+        oblige.</li>
+      </ul>
+
+
+      <h2 id="regularity">The QP solution need not be Lipschitz</h2>
+
+      <p>Theorem 2 does not say "any controller in \(K_{\mathrm{cbf}}(x)\)". It says any
+      <em>Lipschitz continuous</em> one. The reason is basic: \(f_{\mathrm{cl}} = f + gk\) has
+      to be locally Lipschitz for the closed-loop ODE to have a unique solution, and without a
+      solution there is nothing for forward invariance to be a property of. Lipschitz
+      continuity also bounds the controller's sensitivity to state perturbations, which is what
+      keeps noise and numerical error from turning into chattering.</p>
+
+      <h3>The problem, written out</h3>
+
+      <p>Strip the control theory away and what remains is a <strong>parametric quadratic
+      program</strong>. With parameter \(x \in \mathcal{X} \subset \mathbb{R}^n\),</p>
+
+      $$\pi(x) \ =\ \underset{u \in \mathbb{R}^m}{\arg\min} \ \big\| u - \pi_{\mathrm{des}}(x) \big\|^2
+        \qquad \text{s.t.} \qquad u \in K(x),$$
+
+      <p>where the feasible set is the polyhedron</p>
+
+      $$K(x) = \big\{ u \in \mathbb{R}^m : A(x)\,u \le b(x) \big\}, \qquad
+        A : \mathcal{X} \to \mathbb{R}^{p \times m}, \quad b : \mathcal{X} \to \mathbb{R}^{p},$$
+
+      <p>and \(a_i(x)^\top\), \(b_i(x)\) denote the \(i\)-th row of each. The CBF-QP is this
+      problem with \(\pi_{\mathrm{des}} = k\), one row per barrier,
+      \(a_i(x) = -L_g h_i(x)^\top\) and \(b_i(x) = L_f h_i(x) + \alpha_i(h_i(x))\), plus extra
+      rows for input bounds.</p>
+
+      <p>Because the objective is strongly convex and \(K(x)\) is convex, the minimiser is
+      <em>unique</em> whenever \(K(x) \neq \emptyset\), so \(\pi\) is a well-defined function
+      rather than a set-valued map. Uniqueness is not continuity, and continuity is not
+      Lipschitz continuity. The question is how the map \(x \mapsto \pi(x)\) behaves, and that
+      depends on how the feasible set moves.</p>
+
+      <h3>The easy case</h3>
+
+      <p>With no input bounds and a single CBF constraint, \(K(x)\) is a half-space and the QP
+      is a projection onto it, with the closed-form min-norm solution</p>
+
+      $$\pi(x) = k(x) + \frac{\max\{0,\, -\psi(x)\}}{\|L_g h(x)\|^2}\, L_g h(x)^\top,
+        \qquad \psi(x) = L_f h + L_g h\,k(x) + \alpha(h),$$
+
+      <p>which is locally Lipschitz wherever the data are and \(L_g h(x) \neq 0\). The
+      \(\max\{0,\cdot\}\) introduces a kink, not a jump. This is the case people have in mind
+      when they say the CBF-QP is Lipschitz, and it is the only case where it is free.</p>
+
+      <h3>Two constraint qualifications</h3>
+
+      <p>In general, regularity of \(\pi\) is not automatic and has to be bought with a
+      <em>constraint qualification</em>. Two matter here.</p>
+
+      <div class="nb-key">
+        <p><strong>Slater's condition</strong> holds at \(x\) if there exists \(u\) with
+        \(a_i(x)^\top u &lt; b_i(x)\) for every \(i\) - that is, \(K(x)\) is
+        <em>strictly</em> feasible, so it has nonempty interior.</p>
+        <p><strong>LICQ</strong> holds at \(x\) if the gradients with respect to \(u\) of the
+        constraints active at \(\pi(x)\) are linearly independent. Since constraint \(i\) is
+        \(a_i(x)^\top u - b_i(x) \le 0\), its gradient in \(u\) is just \(a_i(x)\), so LICQ is
+        the statement that the active rows of \(A(x)\) are linearly independent.</p>
+      </div>
+
+      <p>Slater's condition is sufficient for the continuity of \(\pi\). LICQ is a sufficient condition for Lipschitz continuity of \(\pi\).
+         Where they fail, they fail hard - and, importantly,
+      they can fail while \(A\), \(b\) and \(\pi_{\mathrm{des}}\) are all as smooth as you
+      like. Smoothness of the problem <em>data</em> says nothing about regularity of the
+      <em>solution</em>.</p>
+
+      <h3>A worked example</h3>
+
+      <div class="nb-eg">
+        <div class="nb-eg-label">Example - a two-row QP that jumps</div>
+        <p>Take \(x \in \mathcal{X} = \mathbb{R}\), \(u \in \mathbb{R}^2\), and</p>
+        $$\pi_{\mathrm{qp}}(x) = \underset{u \in \mathbb{R}^2}{\arg\min}
+          \left\| u - \begin{bmatrix} -2 \\ 0 \end{bmatrix} \right\|^2
+          \quad \text{s.t.} \quad
+          \begin{bmatrix} 1 & 0 \\ -1 & -x \end{bmatrix} u
+          \le \begin{bmatrix} 1 \\ -(1+x) \end{bmatrix},$$
+        <p>that is, \(u_1 \le 1\) and \(u_1 + x\,u_2 \ge 1 + x\). Every entry of \(A\), \(b\)
+        and \(\pi_{\mathrm{des}}\) is a polynomial in \(x\), so the data could not be smoother.
+        The solution works out to</p>
+        $$\pi_{\mathrm{qp}}(x) =
+          \begin{cases}
+            \begin{bmatrix} 1 & 1 \end{bmatrix}^\top, & x \in (0, \tfrac{1}{3}], \\[6pt]
+            \begin{bmatrix} \dfrac{1 + x - 2x^2}{1 + x^2} & \dfrac{3x + x^2}{1 + x^2} \end{bmatrix}^\top,
+              & \text{otherwise,}
+          \end{cases}$$
+        <p>and it is <strong>discontinuous at \(x = 0\)</strong>. Approaching from the left the
+        solution tends to \((1, 0)\), which is also its value at \(x = 0\); approaching from
+        the right it tends to \((1, 1)\). The second component jumps by exactly \(1\).</p>
+        <p class="nb-src">Agrawal, Lee, Panagou,
+        <a href="https://arxiv.org/abs/2508.18530">Reformulations of Quadratic Programs for
+        Lipschitz Continuity</a>, Example 1.</p>
+      </div>
+
+      <p>It is worth watching the feasible set to see why. For \(x &gt; 0\) the two rows carve
+      out a wedge with its apex at \((1,1)\): rearranging, \(u_1 \le 1\) and
+      \(u_2 \ge 1 + (1 - u_1)/x\). At height \(u_2\) the wedge has width \(x\,(u_2 - 1)\), so
+      as \(x \downarrow 0\) it collapses onto the ray \(\{u_1 = 1,\ u_2 \ge 1\}\). The
+      objective pulls toward \(u_2 = 0\), so the minimiser sits at the apex \((1,1)\) and stays
+      there no matter how small \(x\) gets.</p>
+
+      <p>At \(x = 0\) exactly, the second row degenerates from \(u_1 + x u_2 \ge 1+x\) to
+      \(u_1 \ge 1\). Together with \(u_1 \le 1\) the feasible set becomes the entire
+      <em>line</em> \(\{u_1 = 1\}\) - including all the points with \(u_2 &lt; 1\) that were
+      unreachable a moment earlier. The constraint on \(u_2\) evaporates, the objective is free
+      to pull it to zero, and the solution drops to \((1, 0)\).</p>
+
+      <figure class="nb-fig">
+        <img src="../pics/reformulations.gif" alt="Animation of the QP feasible set collapsing at x equals zero next to the SOCP ball reformulation, which varies smoothly">
+        <figcaption>The QP feasible set \(K(x)\) of the example above, next to a ball \(\Phi(x) \subset K(x)\) centred on a Lipschitz feasible point. The ball shrinks to a point at \(x=0\) instead of the solution jumping.</figcaption>
+      </figure>
+
+      <h3>Which qualification failed</h3>
+      <ul>
+        <li><strong>Slater fails at \(x = 0\).</strong> Strict feasibility would need a \(u\)
+        with \(u_1 &lt; 1\) and \(u_1 &gt; 1\) simultaneously. There is none: \(K(0)\) is a
+        line in \(\mathbb{R}^2\), so its interior is empty and its volume is zero. Everywhere
+        else the wedge has interior, and Slater holds. The failure is isolated, and one
+        isolated failure is enough to destroy continuity.</li>
+        <li><strong>LICQ fails at \(x = 0\).</strong> Both constraints are active at the
+        solution, and their gradients with respect to \(u\) are</li>
+      </ul>
+
+      $$a_1(0) = \begin{bmatrix} 1 \\ 0 \end{bmatrix}, \qquad
+        a_2(0) = \begin{bmatrix} -1 \\ 0 \end{bmatrix} = -a_1(0),$$
+
+      <p>which are linearly dependent. For any \(x \neq 0\) the second gradient is
+      \((-1, -x)^\top\), which is independent of the first, so LICQ holds - the dependence
+      appears only in the limit. This is exactly the mechanism: as two active constraint
+      normals become parallel, the direction along which the solution can slide becomes
+      unbounded in sensitivity, and the active set changes abruptly.</p>
+
+      <div class="nb-key">
+        <p>None of this is specific to barrier functions. It is a property of parametric
+        quadratic programs, and it shows up in any optimization-based controller with more than
+        one constraint. Slater can also hold everywhere and the solution still fail to be
+        Lipschitz (Robinson's counterexample and Example 2 of the same paper).</p>
+      </div>
+
+      <h3>Where this bites in CBF-QPs</h3>
+
+      <p><strong>Multiple barriers.</strong> No guarantee that LICQ can hold.</p>
+
+      <p><strong>Input bounds, with a single barrier.</strong> Adding \(u \in U\) for a box
+      \(U\) turns one constraint into multiple constraints. </p>
+
+      <div class="nb-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Situation</th><th>Status of \(\pi\)</th><th>Usual remedy</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>One constraint, \(U = \mathbb{R}^m\), \(L_g h \neq 0\)</td><td>locally Lipschitz</td><td>nothing needed</td></tr>
+          <tr><td>One constraint, \(L_g h \to 0\)</td><td>sensitivity blows up</td><td>high relative degree treatment</td></tr>
+          <tr><td>One barrier plus input bounds</td><td>Slater or LICQ can fail on a box face</td><td>shrink \(\mathcal{C}\) to be compatible with \(U\)</td></tr>
+          <tr><td>Several barriers</td><td>LICQ fails where gradients align</td><td>SOCP reformulation, smoothing, or nonsmooth analysis</td></tr>
+          <tr><td>Slater holds everywhere</td><td>still only Hölder in general</td><td>a qualification-free construction</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+
+      <h2 id="reading">Reference</h2>
+
+      <p>Definitions and theorems above are restated from A. D. Ames, S. Coogan, M. Egerstedt,
+      G. Notomista, K. Sreenath, P. Tabuada, &ldquo;Control Barrier Functions: Theory and
+      Applications,&rdquo; ECC 2019
+      (<a href="https://arxiv.org/abs/1903.11199v1">arXiv:1903.11199v1</a>), Definition 2 and
+      Theorems 2 and 3. The counterexample and the reading of the \(D\) versus
+      \(\mathcal{C}\) distinction are mine.</p>
+
+      <p>The parametric QP in section 4, the discontinuous example, and the SOCP reformulation
+      are from D. R. Agrawal, H. Lee, D. Panagou, &ldquo;Reformulations of Quadratic Programs
+      for Lipschitz Continuity&rdquo;
+      (<a href="https://arxiv.org/abs/2508.18530">arXiv:2508.18530</a>); code at
+      <a href="https://github.com/joonlee16/Lipschitz-controllers">joonlee16/Lipschitz-controllers</a>.</p>
+
+      <div class="nb-pager">
+        <a href="control-design.html">&larr; Control law design</a>
+        <a href="r-robustness.html">r-robustness &rarr;</a>
+      </div>
+    </div>
+
+    <nav class="nb-toc" aria-label="On this page">
+      <div class="nb-toc-head">On this page</div>
+      <ol>
+        <li><a href="#setup">Setup and definitions</a></li>
+        <li><a href="#domain">Why the condition lives on D</a></li>
+        <li><a href="#invariance">Controlled vs forward invariance</a></li>
+        <li><a href="#regularity">Regularity of the QP</a></li>
+        <li><a href="#reading">Reference</a></li>
+      </ol>
+    </nav>
+  </div>
+
+</div>
+{% endraw %}
