@@ -252,20 +252,20 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       <p>Sufficiency
       asks for the condition on \(D\) and returns safety <em>plus</em> asymptotic stability.
-      Necessity starts from CBF <em>on \(\mathcal{C}\)</em> and gets safety only.
+      Necessity starts from safety on <em>\(\mathcal{C}\)</em> to get CBF.
       The gap between the hypotheses is exactly the gap between the conclusions.</p>
 
-      <h2 id="domain">Why the condition lives on D, not on C</h2>
+      <h2 id="domain">Confusion with the Defintion and Theorems</h2>
 
       <p>Notice that the definition of a CBF itself (Definition 2) says nothing
       about \(\nabla h\) on the boundary - the gradient is allowed to vanish there. The
       regularity requirement \(\frac{\partial h}{\partial x} \neq 0\) on
-      \(\partial\mathcal{C}\) appears only as a separate hypothesis in Theorems 2 and 3, and
-      it is not decorative. It is equivalent to \(0\) being a regular value of \(h\), and it is
-      what Nagumo's theorem needs.</p>
+      \(\partial\mathcal{C}\) appears only as a separate hypothesis in Theorems 2 and 3.</p>
 
-      <p>Here is why it matters. At a boundary point where \(\nabla h(x) = 0\), both
-      \(L_f h(x)\) and \(L_g h(x)\) vanish, so the CBF condition reads \(0 \ge 0\). It is
+      <p>Here is why these matter. CBF only gives us the <em>existence</em> of an input to remain safe.
+         However, to ensure safety with <em>any</em> control input, we need to ensure that the CBF condition does not disappear at every point of the boundary.
+        At a boundary point where \(\nabla h(x) = 0\), both
+      \(L_f h(x)\) and \(L_g h(x)\) vanish, so the CBF condition reads \(0 \ge 0\). This is trivially
       satisfied by <em>every</em> input, including inputs that make the system leave the safe set.</p>
 
       <div class="nb-eg">
@@ -285,6 +285,9 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         immediately, and \(\mathcal{C}\) is not forward invariant.</p>
       </div>
 
+    <p>So the reason why CBF defined on \(D\) is for the sufficiency of safety and stability. 
+        Even if we have a CBF on \(\mathcal C\) and \(\nabla h(x)\neq 0\) on 
+        the boundary \(\partial\mathcal C\), we can still ensure safety. </p>
 
       <h2 id="invariance">Controlled invariance is not forward invariance</h2>
 
