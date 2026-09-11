@@ -187,10 +187,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
   <div class="nb-grid">
     <div class="nb-body">
-      <p>A small library of models covers most of robotics. They are worth knowing by heart,
-      not because any of them is exactly right, but because choosing among them is the first
-      real design decision in a project: the model fixes what your controller can reason
-      about and how expensive that reasoning will be.</p>
+      <p>In this section, we will explore a variety of common dynamic models used in robotics. </p>
 
       <p>Every model below is written in the continuous-time form \(\dot x = f(x,u)\), with the
       state dimension, input dimension, and classification stated alongside.</p>
@@ -204,13 +201,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         \dot{x} = u.$$
 
       <p>Linear, fully actuated, and about as easy as control gets: \(A = 0\), \(B = I\).
-      It is the workhorse of multi-agent coordination, because consensus, formation, and
-      coverage results are cleanest here and the graph structure — not the dynamics — is the
-      interesting part.</p>
-
-      <p>The catch is that no physical robot is a single integrator. Velocity commands are
-      tracked by a lower-level loop with finite bandwidth, so results proven for integrators
-      transfer only if that inner loop is much faster than the outer one.</p>
+      Very very common in multi-robot coordination. Simple to analyze and implement but sometimes too coarse to represent the actual systems.</p>
 
       <h2 id="double-integrator">Double integrator</h2>
 
@@ -222,15 +213,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
                 + \begin{bmatrix} 0 \\ I \end{bmatrix} u.$$
 
       <p>Still linear and still fully actuated, but now the robot has momentum, which is what
-      makes collision avoidance and braking distance meaningful. It is Newton's second law with
-      unit mass, and it is the right minimal model whenever inertia matters and orientation
-      does not.</p>
-
-      <div class="nb-key">
-        <p>The jump from single to double integrator is the jump from "where do I want to be"
-        to "can I stop in time". Safety constraints that are trivially enforceable on a single
-        integrator become relative-degree-two problems on a double integrator.</p>
-      </div>
+      makes collision avoidance and braking distance meaningful. Common in safety-critical control papers</p>
 
       <h2 id="unicycle">Unicycle</h2>
 
@@ -272,10 +255,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
           \begin{bmatrix} v \\ \omega \end{bmatrix}.$$
 
       <p>Two inputs for three states makes it underactuated, and the inability to move
-      sideways is a nonholonomic constraint, \(\dot p_x \sin\psi - \dot p_y \cos\psi = 0\).
-      Brockett's condition shows there is no smooth time-invariant feedback that stabilises
-      the unicycle to a point — parallel parking is genuinely hard, and the standard fixes are
-      time-varying or discontinuous laws, or the trick below.</p>
+      sideways is a nonholonomic constraint, \(\dot p_x \sin\psi - \dot p_y \cos\psi = 0\).</p>
 
       <div class="nb-eg">
         <div class="nb-eg-label">Near-identity diffeomorphism</div>
@@ -290,17 +270,15 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         is left to take care of itself.</p>
       </div>
 
-      <h2 id="diff-drive">Differential drive</h2>
+     <h2 id="dubins">Dubins car</h2>
 
-      <p>The same robot, with the inputs written as what the motors actually receive. For
-      wheel radius \(r\) and axle length \(L\), with wheel speeds \(\omega_R, \omega_L\),</p>
+      <p>The Dubins car is a simple kinematic model of a vehicle that moves forward with a constant speed and can control its heading rate:</p>
 
-      $$v = \frac{r(\omega_R + \omega_L)}{2}, \qquad \omega = \frac{r(\omega_R - \omega_L)}{L}.$$
-
-      <p>The dynamics are the unicycle's; only the input parametrisation changed. This matters
-      for constraints: a box constraint on wheel speeds, \(|\omega_R| \le \bar\omega\) and
-      \(|\omega_L| \le \bar\omega\), is a diamond in \((v,\omega)\) space, not a box. Saturating
-      \(v\) and \(\omega\) separately can command wheel speeds the motors cannot deliver.</p>
+      $$x = \begin{bmatrix} p_x \\ p_y \\ \psi \end{bmatrix} \in \mathbb{R}^3, \qquad
+        u = \omega \in \mathbb{R}, \qquad
+        \dot{x} = \begin{bmatrix} v\cos\psi \\ v\sin\psi \\ \omega \end{bmatrix}, \qquad
+        v>0.$$
+      <p>Here, \((p_x,p_y)\) denotes the position, \(\psi\) the heading angle, \(v\) the forward speed, and \(\omega\) the steering or angular velocity. Since the vehicle cannot move sideways and is constrained to move forward, the Dubins car is an underactuated, nonholonomic system. Common to represent an aircraft in 2D flight.</p>
 
       <h2 id="bicycle">Kinematic and dynamic bicycle</h2>
 
@@ -421,18 +399,11 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       thrust vector, that vector defines a desired attitude, and an inner attitude loop tracks
       it at high rate.</p>
 
-      <p>Two modelling choices worth flagging. Parametrising attitude with Euler angles is
-      convenient but introduces gimbal singularities; working directly on \(SO(3)\) with
-      rotation matrices, or with quaternions, avoids them at the cost of a slightly less
-      familiar controller. And quadrotor dynamics are <em>differentially flat</em> in
-      \((p_x, p_y, p_z, \psi)\) — every state and input can be written in terms of those four
-      outputs and their derivatives — which is what makes minimum-snap trajectory generation
-      so effective.</p>
 
       <h2 id="discrete">Discrete-time versions</h2>
 
       <p>Any of these becomes a discrete-time model once you fix a sample time. For the linear
-      ones, use exact discretisation; the double integrator with sample time \(\Delta t\) is</p>
+      ones, use exact discretization; the double integrator with sample time \(\Delta t\) is</p>
 
       $$x_{k+1} = \begin{bmatrix} I & \Delta t\, I \\ 0 & I \end{bmatrix} x_k
                 + \begin{bmatrix} \tfrac{1}{2}\Delta t^2 I \\ \Delta t\, I \end{bmatrix} u_k,$$
@@ -461,18 +432,9 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
           <tr><td>Dynamic bicycle</td><td>6&ndash;7</td><td>2&ndash;3</td><td>no</td><td>under</td><td>High-speed driving, racing, stability control</td></tr>
           <tr><td>Cart-pole</td><td>4</td><td>1</td><td>no</td><td>under</td><td>Benchmark for underactuated control</td></tr>
           <tr><td>Quadrotor</td><td>12&ndash;13</td><td>4</td><td>no</td><td>under</td><td>Aerial robotics, aggressive flight</td></tr>
-          <tr><td>Manipulator</td><td>2k</td><td>k</td><td>no</td><td>full</td><td>Arms, computed torque, task-space control</td></tr>
         </tbody>
       </table>
       </div>
-
-      <div class="nb-key">
-        <p>Pick the simplest model whose failure mode you cannot tolerate. A single integrator
-        is enough to study a formation; it is not enough to promise that two robots will not
-        collide at speed. Most projects use more than one — a coarse model for planning, a
-        finer one for tracking, and a finer one still for simulation.</p>
-      </div>
-
 
       <div class="nb-pager">
         <a href="system-modelling.html">&larr; System modelling</a>
@@ -486,7 +448,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       <li><a href="#single-integrator">Single integrator</a></li>
       <li><a href="#double-integrator">Double integrator</a></li>
       <li><a href="#unicycle">Unicycle</a></li>
-      <li><a href="#diff-drive">Differential drive</a></li>
+      <li><a href="#dubins">Differential drive</a></li>
       <li><a href="#bicycle">Bicycle models</a></li>
       <li><a href="#pendulum">Pendulum and cart-pole</a></li>
       <li><a href="#quadrotor">Quadrotor</a></li>

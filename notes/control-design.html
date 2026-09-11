@@ -187,9 +187,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
   <div class="nb-grid">
     <div class="nb-body">
-      <p>A control law is a rule that turns what you know into what you command. Everything
-      else — stability proofs, tuning, constraint handling — is about which rule to pick and
-      what you can promise about it.</p>
+      <p>A control law is a rule that determines the control input based on the current state of the system.</p>
 
       <h2 id="what">What a control law is</h2>
 
@@ -198,10 +196,9 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       $$u = \pi(x, t), \qquad \text{or with a reference} \qquad u = \pi(x, x_d, t).$$
 
       <p><strong>Open-loop</strong> control computes \(u(t)\) ahead of time from the model
-      alone. It is fine when the model is exact and nothing disturbs the system, which is to
-      say never. <strong>Feedback</strong> measures the state and reacts, which is what buys
-      robustness to model error and disturbance. In practice most controllers combine the
-      two: a feedforward term from a planned trajectory, plus feedback on the tracking error.</p>
+      alone without any correction. It is fine when the model is exact and nothing disturbs the system.
+       <strong>Feedback</strong> measures the actual state and reacts, which is what allows the systme to correct the model error and disturbance. In practice most controllers combine the
+      two: a feedforward term from a planned trajectory, plus feedback on thes error.</p>
 
       <figure class="nb-fig">
         <svg viewBox="0 0 520 182" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Block diagram of a feedback control loop with disturbance and measurement">
@@ -251,7 +248,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       <h2 id="pid">PID</h2>
 
-      <p>The model-free baseline. On a scalar error \(e = x_d - x\),</p>
+      <p>A super-duper common control strategy. The model-free baseline. On a scalar error \(e = x_d - x\),</p>
 
       $$u = k_p e + k_i \int_0^t e(\tau)\,d\tau + k_d \dot{e}.$$
 
@@ -260,88 +257,50 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       whole appeal, and it remains the right answer for well-behaved single-input loops:
       motor speed, altitude hold, heading hold.</p>
 
-      <p>Its limits are equally clear. It does not know about constraints, it handles coupled
-      multi-input systems only by tuning loops one at a time and hoping they do not interact,
-      and it has no notion of prediction. Two implementation details that cause most real
-      problems: integrator windup during saturation (fix with clamping or back-calculation),
-      and derivative kick on step references (differentiate the measurement, not the error,
-      and filter it).</p>
+      <p>No explicit safety or constraint handling, and typically myopic.</p>
 
       <div class="nb-key">
-        <p>A cascade of PID loops — fast inner loop on rate, slower outer loop on position —
-        is still the most widely deployed architecture in robotics. Model-based methods
-        usually replace the outer loop first.</p>
+        <p>A cascade of PID loops - fast inner loop on rate, slower outer loop on position -
+        is still the most widely deployed architecture in robotics. </p>
       </div>
 
-      <h2 id="state-feedback">State feedback and pole placement</h2>
 
-      <p>For \(\dot x = Ax + Bu\), the natural law is linear state feedback \(u = -Kx\), giving
-      closed-loop dynamics \(\dot x = (A - BK)x\). Stability is now entirely a question of
-      where the eigenvalues of \(A - BK\) sit.</p>
+      <p><strong>Linear quadratic regulation (LQR)</strong> is a feedback controller by solving an
+      optimal control problem for a linear dynamical system. For</p>
 
-      <p>You can place them anywhere you like precisely when the pair \((A,B)\) is
-      <strong>controllable</strong>:</p>
+      $$\dot{x}=Ax+Bu,$$
 
-      $$\operatorname{rank}\begin{bmatrix} B & AB & A^2B & \cdots & A^{n-1}B \end{bmatrix} = n.$$
+      <p>the infinite-horizon LQR problem minimizes the cost</p>
 
-      <p>Controllability is a yes/no property of the model, and a failure of it is a modelling
-      or hardware problem, not a tuning problem — no controller will recover a direction the
-      input genuinely cannot reach.</p>
+      $$J=\int_0^\infty \left(x^\top Qx+u^\top Ru\right)dt,\qquad Q\succeq0,\ R\succ0.$$
 
-      <p>Pole placement is direct but unforgiving: fast poles demand large gains, large gains
-      demand large inputs and amplify sensor noise, and the map from pole locations to
-      behaviour is not intuitive above second order. Which is the argument for letting an
-      optimisation choose the gains instead.</p>
+      <p>The matrix \(Q\) penalizes deviations of the state, while \(R\) penalizes control effort.
+      The resulting optimal controller is a linear state-feedback law</p>
 
-      <h2 id="lqr">LQR and LQG</h2>
+      $$u=-Kx,$$
 
-      <p>Rather than placing poles, penalise what you care about. The infinite-horizon
-      linear quadratic regulator minimises</p>
+      <p>where</p>
 
-      $$J = \int_0^\infty \left( x^\top Q x + u^\top R u \right) dt, \qquad Q \succeq 0,\ R \succ 0,$$
+      $$K=R^{-1}B^\top P,$$
 
-      <p>and the optimal law is static state feedback \(u = -Kx\) with \(K = R^{-1}B^\top P\),
-      where \(P\) solves the algebraic Riccati equation</p>
+      <p>and \(P\) is the positive-semidefinite solution of the algebraic Riccati equation</p>
 
-      $$A^\top P + PA - PBR^{-1}B^\top P + Q = 0.$$
+      $$A^\top P+PA-PBR^{-1}B^\top P+Q=0.$$
 
-      <p>The discrete-time version is the same idea with a discrete Riccati equation, and is
-      what you actually implement. Tuning moves from abstract pole locations to interpretable
-      weights: \(Q\) says which state errors hurt, \(R\) says how expensive control is. LQR is
-      also robust by construction in the single-input case — at least 60&deg; of phase margin
-      and infinite gain margin.</p>
+      <p>Thus, rather than specifying a desired closed-loop behavior directly, LQR specifies a
+      tradeoff between state regulation and control effort and computes the corresponding
+      optimal feedback law.</p>
 
-      <p>With noisy partial measurements, combine LQR with a Kalman filter and you get
-      <strong>LQG</strong>. For linear systems the <em>separation principle</em> guarantees the
-      combination is stable even though each half was designed alone. Worth knowing:
-      LQG has no guaranteed robustness margins — the LQR margins do not survive the observer,
-      which is what motivated loop transfer recovery and later \(H_\infty\) design.</p>
+      <p>In practice, the discrete-time formulation is often used for implementation. For tracking
+      a time-varying reference trajectory, LQR can also be extended to a finite-horizon,
+      time-varying form by linearizing the dynamics along the nominal trajectory and solving a
+      Riccati equation backward in time.</p>
 
-      <p>Two extensions used constantly in robotics: <strong>finite-horizon time-varying LQR</strong>
-      for tracking a trajectory (linearize along it, solve the Riccati equation backwards), and
-      <strong>iLQR/DDP</strong>, which iterates that process on the true nonlinear dynamics.</p>
+      <p>When the state is not directly available and measurements are noisy, an LQR controller
+      can be combined with a <strong>Kalman filter</strong> to estimate the state. This gives
+      <strong>linear quadratic Gaussian (LQG)</strong> control.</p>
 
-      <h2 id="feedback-lin">Feedback linearization and computed torque</h2>
-
-      <p>For a control-affine system \(\dot x = f(x) + g(x)u\), if \(g\) is invertible you can
-      choose the input to cancel the nonlinearity outright:</p>
-
-      $$u = g(x)^{-1}\big(v - f(x)\big) \quad \Longrightarrow \quad \dot{x} = v,$$
-
-      <p>leaving a linear system in the new input \(v\), which you then close with LQR or PD.
-      For manipulators this is <strong>computed torque</strong>:</p>
-
-      $$u = M(q)\big(\ddot q_d - K_d \dot{e} - K_p e\big) + C(q,\dot q)\dot q + G(q),$$
-
-      <p>which reduces tracking to \(\ddot e + K_d \dot e + K_p e = 0\) — a linear, decoupled
-      error system.</p>
-
-      <p>Three caveats. It requires full actuation, or at least an invertible input map, so it
-      does not apply to quadrotors or cars in this form (partial feedback linearization does).
-      It cancels the model, so it inherits every model error directly. And when the system has
-      internal dynamics that are not linearized away, those <em>zero dynamics</em> must be
-      stable on their own — cancelling what you can see is no help if what you cannot see
-      diverges.</p>
+      <p>For nonlinear systems, related methods such as <strong>iterative LQR (iLQR)</strong> are used.</p>
 
       <h2 id="lyapunov">Lyapunov design and CLF-QP</h2>
 
@@ -407,28 +366,24 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         <figcaption>The filter changes the command only when the safety constraint is about to bind, which keeps the performance controller free the rest of the time.</figcaption>
       </figure>
 
-      <p>The modular structure is the appeal: any nominal controller — PID, MPC, a learned
-      policy — can be wrapped, and the filter intervenes minimally. The open problems are the
-      ones that show up immediately in practice: choosing \(h\) so the safe set is actually
-      invariant given input limits, handling constraints of relative degree greater than one
-      (a position constraint on a double integrator does not depend on \(u\) at first
-      differentiation), guaranteeing the QP stays feasible when safety and input limits
-      conflict, keeping the resulting law Lipschitz so the closed loop is well posed, and
-      composing many barriers without over-constraining the input.</p>
+      <p>The modular structure is nice: any nominal controller - PID, MPC, a learned
+      policy - can be wrapped, and the filter intervenes minimally. The open problem is the
+      how can we verify that \(h\) is a CBF. Also, we use CBF-QP as a controller, which is myopic.</p>
 
       <h2 id="mpc">Model predictive control</h2>
 
-      <p>Rather than a fixed feedback law, solve an optimal control problem online at every
-      step and apply only its first move:</p>
+      <p>Rather than using a fixed feedback law, solve an optimal control problem online at each
+      step, apply only the first control input, and repeat the process at the next step
+      (<strong>receding horizon</strong>).</p>
 
       $$\begin{aligned}
-        \min_{u_{0:N-1}} \quad & \sum_{k=0}^{N-1} \ell(x_k, u_k) + V_f(x_N) \\
+        \min_{u_{0:N-1}} \quad & \sum_{k=0}^{N-1} \ell(x_k, u_k) + \ell_f(x_N) \\
         \text{s.t.} \quad & x_{k+1} = F(x_k, u_k), \quad x_0 = x(t), \\
         & x_k \in \mathcal{X}, \quad u_k \in \mathcal{U}, \quad x_N \in \mathcal{X}_f.
       \end{aligned}$$
 
       <p>Apply \(u_0\), advance one step, re-measure, re-solve. That receding horizon is what
-      turns an open-loop optimisation into feedback.</p>
+      turns an open-loop optimization into feedback.</p>
 
       <figure class="nb-fig">
         <svg viewBox="0 0 520 194" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Receding horizon: a past trajectory, a shaded prediction window, and a planned future">
@@ -452,101 +407,10 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         <figcaption>The whole plan is discarded at the next timestep. Recomputing from the new measurement is where the feedback comes from.</figcaption>
       </figure>
 
-      <p>MPC is the natural choice when constraints matter, because they appear explicitly in
-      the problem rather than being patched on afterwards. It handles multi-input coupling
-      without loop-by-loop tuning, and it anticipates: it will slow down before a corner
-      because it can see the corner.</p>
+      <p>MPC is the natural choice when constraints (and input bounds) matter, because they appear explicitly in
+      the problem.</p>
 
-      <p>The costs are computational and theoretical. Linear dynamics with convex constraints
-      give a QP that solves reliably at kilohertz rates; nonlinear dynamics give a nonconvex
-      program that may return a local solution, or none, within the time budget. Stability is
-      not automatic — it comes from a terminal cost \(V_f\) and terminal set
-      \(\mathcal{X}_f\) chosen so the horizon cost is a Lyapunov function — and recursive
-      feasibility, the guarantee that a solution existing now implies one exists next step,
-      has to be designed in rather than assumed.</p>
-
-      <h2 id="uncertain">Control under uncertainty</h2>
-
-      <p>Every method above assumed the model. The extensions differ in what they assume about
-      the error and what they promise in return.</p>
-
-      <h3>Robust: bounded disturbance, worst-case guarantee</h3>
-
-      <p>With \(d \in \mathcal{D}\) bounded, ask for a property that holds for every admissible
-      disturbance. <strong>Input-to-state stability</strong> is the standard weakening of
-      asymptotic stability: the state is driven to a neighbourhood of the target whose size is
-      proportional to \(\|d\|_\infty\). <strong>Tube MPC</strong> plans a nominal trajectory,
-      bounds the error set that any disturbance realisation can produce, and tightens the
-      constraints by that set so the true state stays inside a tube around the plan.
-      <strong>Sliding mode</strong> control uses a discontinuous law to reject matched
-      disturbances exactly, at the price of chattering. <strong>Robust CBFs</strong> tighten
-      the barrier condition by the worst-case disturbance term.</p>
-
-      <p>The universal cost is conservatism: you pay for the worst case at all times.</p>
-
-      <h3>Stochastic: known statistics, probabilistic guarantee</h3>
-
-      <p>If the disturbance is random with known distribution, replace hard constraints with
-      chance constraints \(\Pr[x_k \in \mathcal{X}] \ge 1 - \epsilon\) and minimise expected
-      cost. Less conservative than robust design and often far more usable, but the guarantee
-      is different in kind — a 99% chance constraint means a 1% violation rate, which may or
-      may not be acceptable depending on what the violation is.</p>
-
-      <h3>Adaptive: unknown parameters</h3>
-
-      <p>When the uncertainty is a constant unknown \(\theta\) — a payload mass, a friction
-      coefficient — estimate it online and feed the estimate to the controller. Model reference
-      adaptive control and \(\mathcal{L}_1\) adaptive control are the classical routes.
-      Adaptation improves tracking but does not by itself guarantee parameter convergence
-      unless the signal is persistently exciting, which regulation tasks generally are not.</p>
-
-      <h3>Learning: unknown structure</h3>
-
-      <p>When the model is unknown or too complex to write down, fit the residual dynamics from
-      data (Gaussian processes give calibrated uncertainty; neural networks give capacity) and
-      either plan with the learned model or learn the policy directly. The design question is
-      how much you are willing to trust the learned component. The common answer in safety-
-      critical settings is: not much on its own, so wrap it in a filter or a robust MPC built
-      on a model you do trust.</p>
-
-      <h3>Estimation is part of the loop</h3>
-
-      <p>If you do not measure the full state, an observer sits between sensors and controller —
-      Luenberger for linear systems, EKF or UKF for nonlinear ones, moving-horizon estimation
-      when constraints on the state matter. For linear systems you may design the two halves
-      separately. For nonlinear systems you may not, and estimation error should be treated as
-      another uncertainty the controller must tolerate.</p>
-
-      <h2 id="choosing">Choosing a controller</h2>
-
-      <div class="nb-table-wrap">
-      <table>
-        <thead>
-          <tr><th>Situation</th><th>Reach for</th><th>Because</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Single loop, no model, no constraints</td><td>PID</td><td>Cheap, well understood, usually enough</td></tr>
-          <tr><td>Linear model, coupled states, no constraints</td><td>LQR</td><td>Optimal gains from interpretable weights</td></tr>
-          <tr><td>Linear model, noisy partial measurement</td><td>LQG / Kalman + LQR</td><td>Separation principle applies</td></tr>
-          <tr><td>Fully actuated manipulator</td><td>Computed torque</td><td>Cancels dynamics, leaves linear error system</td></tr>
-          <tr><td>Nonlinear, control-affine, need a proof</td><td>CLF-QP</td><td>Lyapunov condition is linear in \(u\)</td></tr>
-          <tr><td>Hard safety constraints</td><td>CBF safety filter</td><td>Set invariance, modular over any nominal law</td></tr>
-          <tr><td>Constraints plus prediction</td><td>MPC</td><td>Constraints handled explicitly, anticipates ahead</td></tr>
-          <tr><td>Bounded disturbance, worst case matters</td><td>Tube MPC, robust CBF, ISS design</td><td>Guarantee holds for every admissible disturbance</td></tr>
-          <tr><td>Random disturbance, some risk acceptable</td><td>Stochastic MPC</td><td>Chance constraints avoid worst-case conservatism</td></tr>
-          <tr><td>Unknown constant parameters</td><td>Adaptive control</td><td>Estimates online while controlling</td></tr>
-          <tr><td>Underactuated, aggressive motion</td><td>Trajectory optimization, iLQR, flatness</td><td>Must exploit dynamics rather than cancel them</td></tr>
-        </tbody>
-      </table>
-      </div>
-
-      <div class="nb-key">
-        <p>Two habits worth keeping. First, name the guarantee you want before choosing the
-        method — "stable", "safe with probability 0.99", and "safe for all bounded
-        disturbances" lead to different designs. Second, check that the guarantee survives
-        implementation: sampling, input saturation, estimation error, and solver time limits
-        each break proofs that were valid on paper.</p>
-      </div>
+<p>For linear systems with convex constraints, very fast and globally optimal, with stability and recursive feasibility under appropriate conditions; for nonlinear systems and/or non-convex constraints, more computationally intensive and may be suboptimal.</p>
 
 
       <div class="nb-pager">
@@ -560,14 +424,10 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       <ol>
       <li><a href="#what">What a control law is</a></li>
       <li><a href="#pid">PID</a></li>
-      <li><a href="#state-feedback">State feedback</a></li>
       <li><a href="#lqr">LQR and LQG</a></li>
-      <li><a href="#feedback-lin">Feedback linearization</a></li>
       <li><a href="#lyapunov">Lyapunov and CLF-QP</a></li>
       <li><a href="#cbf">Safety filters</a></li>
       <li><a href="#mpc">Model predictive control</a></li>
-      <li><a href="#uncertain">Control under uncertainty</a></li>
-      <li><a href="#choosing">Choosing a controller</a></li>
       </ol>
     </nav>
   </div>

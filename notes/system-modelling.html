@@ -187,15 +187,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
   <div class="nb-grid">
     <div class="nb-body">
-      <p>Almost everything in control begins with the same object: a mathematical
-      description of how a system's state changes over time. Before choosing a
-      controller you have to say what the system <em>is</em> — how many variables
-      describe it, what you are allowed to command, whether the equations are linear,
-      whether time runs continuously, and how badly the model can be wrong. Those
-      choices decide which tools are available to you later.</p>
-
-      <p>These notes give the vocabulary. They are deliberately short on proofs and
-      long on the distinctions that change what you can do.</p>
+      <p>This is a brief overview of the key concepts in system modelling, which we will use for control law design.</p>
 
       <figure class="nb-fig">
         <svg viewBox="0 0 520 262" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five questions that classify a system model">
@@ -248,9 +240,9 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       <h2 id="state-input-dynamics">State, input, dynamics</h2>
 
-      <p>A model has three pieces. The <strong>state</strong> \(x \in \mathbb{R}^n\) is the
-      smallest set of numbers that summarises the past well enough to predict the future.
-      The <strong>input</strong> \(u \in \mathbb{R}^m\) is what you are allowed to command —
+      <p>A model has three pieces. The <strong>state</strong> \(x \in \mathbb{R}^n\) is a
+      set of variables that describe the system at a given time and allow you to predict its future.
+      The <strong>input</strong> \(u \in \mathbb{R}^m\) is what you are allowed to command -
       a force, a torque, a thrust, a wheel speed. The <strong>dynamics</strong> \(f\) tie them
       together:</p>
 
@@ -258,11 +250,10 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       <p>The defining property of a state is sufficiency: if you know \(x(t_0)\) and the
       whole input signal \(u(\cdot)\) on \([t_0, t]\), you can compute \(x(t)\) without
-      knowing anything else about what happened before \(t_0\). Anything you need to
-      remember belongs in \(x\); anything you don't, doesn't.</p>
+      knowing anything else about what happened before \(t_0\).</p>
 
       <div class="nb-eg">
-        <div class="nb-eg-label">Example — a mass on a line</div>
+        <div class="nb-eg-label">Example - a mass on a line</div>
         <p>Let \(p\) be position and \(v\) velocity, and let the input be acceleration.
         Position alone is not a state: knowing where the mass is tells you nothing about
         where it goes next. Position and velocity together are.</p>
@@ -271,31 +262,10 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       </div>
 
       <div class="nb-key">
-        <p>Choosing the state is a modelling decision, not a fact about the world. Adding
-        states buys fidelity (motor lag, tire slip, an integrator on the error) and costs
-        you dimension, identification effort, and often controller tractability.</p>
+        <p>Choosing the state is a modelling decision. Adding
+        states increaes fidelity of the model it represents (motor lag, tire slip, an integrator on the error), but at the same time it costs
+        extra dimension, identification effort, and often controlability.</p>
       </div>
-
-      <h2 id="dof">Configuration and degrees of freedom</h2>
-
-      <p>For mechanical systems it is usually cleaner to split the state into
-      <strong>configuration</strong> \(q \in \mathbb{R}^k\) — joint angles, positions,
-      orientations — and its velocity \(\dot q\):</p>
-
-      $$x = \begin{bmatrix} q \\ \dot q \end{bmatrix} \in \mathbb{R}^{2k}.$$
-
-      <p>The number \(k\) of independent configuration coordinates is the number of
-      <strong>degrees of freedom</strong>. A pendulum has one (\(q = \theta\)). A cart-pole
-      has two (cart position and pole angle). A planar mobile robot has three
-      (\(p_x, p_y, \psi\)). A free rigid body in 3D has six.</p>
-
-      <p>Written this way, Lagrangian mechanics gives the standard manipulator form</p>
-
-      $$M(q)\,\ddot q + C(q,\dot q)\,\dot q + G(q) = B(q)\,u,$$
-
-      <p>with \(M\) the inertia matrix, \(C\) the Coriolis and centrifugal terms, \(G\)
-      gravity, and \(B\) the map from inputs to generalised forces. The shape of \(B\) is
-      what decides actuation, which is the subject of section 7.</p>
 
       <h2 id="time">Continuous time and discrete time</h2>
 
@@ -308,7 +278,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       $$x_{k+1} = F(x_k, u_k),$$
 
-      <p>where \(x_k \approx x(k\Delta t)\) and the input is held constant between samples.
+      <p>where the input is held constant between the sampling time \(\Delta t\).
       Both descriptions of the same robot coexist: you analyse in continuous time and
       implement in discrete time, or you discretise once and do everything discretely.</p>
 
@@ -341,11 +311,8 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       <p>Three ways to get \(F\) from \(f\), in increasing order of cost and accuracy:</p>
 
       <ul>
-        <li><strong>Forward Euler.</strong> \(x_{k+1} = x_k + \Delta t\, f(x_k, u_k)\).
-        One evaluation, local error \(O(\Delta t^2)\). Fine for fast sample rates and gentle
-        dynamics; it will quietly inject energy into oscillatory systems.</li>
-        <li><strong>Runge–Kutta 4.</strong> Four evaluations per step, local error
-        \(O(\Delta t^5)\). The usual default for simulation and for MPC prediction models.</li>
+        <li><strong>Forward Euler.</strong> \(x_{k+1} = x_k + \Delta t\, f(x_k, u_k)\). 1st order prediction, common.</li>
+        <li><strong>Runge-Kutta 4.</strong> Four evaluations per step. 4th order prediction, more accurate.</li>
         <li><strong>Exact discretisation (linear systems only).</strong> For \(\dot x = Ax + Bu\)
         with \(u\) held constant over each interval,
         $$A_d = e^{A\Delta t}, \qquad B_d = \left(\int_0^{\Delta t} e^{A\tau}\,d\tau\right) B,$$
@@ -353,33 +320,61 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       </ul>
 
       <div class="nb-key">
-        <p>Discretisation is not cosmetic. A controller proven stable in continuous time can
-        go unstable when sampled too slowly, and constraints enforced only at sample instants
-        can be violated between them. If you rely on a guarantee, check that it survives
-        sampling.</p>
+        <p>A controller proven stable or safe in continuous time may not be so in discrete time.</p>
       </div>
 
       <h2 id="linear">Linear and nonlinear systems</h2>
 
-      <p>A system is <strong>linear</strong> (LTI, if also time-invariant) when it can be
+      <p>A system is <strong>linear</strong> when it can be
       written as</p>
+
+      $$\dot{x} = A(t) x(t) + B(t) u, \qquad y = C(t) x + D(t) u.$$
+
+      <p>inear systems are commonly divided into <strong>linear time-invariant (LTI)</strong> and <strong>linear time-varying (LTV)</strong> systems.</p>
+        <h3>LTI systems</h3>
+
+        <p>A linear system is <strong>time-invariant</strong> when its system matrices are constant:</p>
 
       $$\dot{x} = A x + B u, \qquad y = C x + D u.$$
 
-      <p>Equivalently, it obeys superposition: the response to \(\alpha u_1 + \beta u_2\)
-      is \(\alpha\) times the response to \(u_1\) plus \(\beta\) times the response to
-      \(u_2\). Anything else — \(\sin x\), \(x^2\), \(x_1 x_2\), \(xu\), \(\|x\|x\) — is
-      <strong>nonlinear</strong>, and the general form is just \(\dot x = f(x,u)\).</p>
 
-      <p>Two quick tests. Products of states with each other or with the input are
-      nonlinear. A constant term (\(\dot x = Ax + Bu + c\)) is <em>affine</em>, not linear,
-      though it is usually made linear by shifting coordinates to the equilibrium.</p>
+
+      <p>The matrices \(A,B,C,D\) do not explicitly depend on time. Consequently, the same relationship between the state and input applies at every time. LTI systems have particularly convenient analytical properties and are the standard setting for many classical control methods, including LQR.</p>
+
+      <h3>LTV systems</h3>
+
+      <p>A linear system is <strong>time-varying</strong> when its system matrices depend explicitly on time:</p>
+
+      $$\dot{x}=A(t)x+B(t)u, \qquad y=C(t)x+D(t)u.$$
+
+      <p>The system is still linear in \(x\) and \(u\), but its dynamics change with time. For example, a robot following a time-varying reference trajectory may be described by an LTV model obtained by linearizing nonlinear dynamics along that trajectory.</p>
+
+      <p>The distinction can therefore be summarized as</p>
+
+      $$
+      \begin{array}{lll}
+      \text{LTI:} & \dot{x}=Ax+Bu, & A,B\text{ are constant},\[1mm]
+      \text{LTV:} & \dot{x}=A(t)x+B(t)u, & A(t),B(t)\text{ vary with time}.
+      \end{array}
+      $$
+
+      <p>Both are <strong>linear systems</strong>; the difference is whether their system matrices are constant or time-dependent.</p>
+
+
+      <h2 id="nonlinear">Nonlinear and control-affine systems</h2>
+
+      <p>A general continuous-time <strong>nonlinear system</strong> is written as</p>
+
+      $$\dot{x}=f(x,u),\qquad y=h(x,u),$$
+
+      <p>where \(f\) and \(h\) are generally nonlinear functions of the state \(x\) and control input \(u\). Unlike linear systems, the dynamics may contain terms such as \(x^2\), \(xu\), \(\sin(x)\), or other nonlinear functions.</p>
+
 
       <p>The distinction matters because linearity buys an enormous amount:</p>
 
       <ul>
         <li>Closed-form solutions, transfer functions, frequency response.</li>
-        <li>Stability decided entirely by the eigenvalues of \(A\) — global, not local.</li>
+        <li>Stability analysis is straightforward and well-developed for linear systems.</li>
         <li>Controllability and observability reduced to rank tests on a single matrix.</li>
         <li>Optimal control that solves in closed form (LQR) and convex MPC.</li>
       </ul>
@@ -394,12 +389,12 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       $$\dot{x} = f(x) + g(x)\,u.$$
 
-      <p>The state may enter as badly as it likes, but the input enters linearly. Here
+      <p>The state may enter as nonlinearly as it likes, but the input enters linearly. Here
       \(f(x)\) is the drift (what the system does with \(u = 0\)) and \(g(x)\) is the
       control-input matrix.</p>
 
       <div class="nb-eg">
-        <div class="nb-eg-label">Example — pendulum</div>
+        <div class="nb-eg-label">Example - pendulum</div>
         <p>With \(x_1 = \theta\), \(x_2 = \dot\theta\) and torque input \(u\):</p>
         $$\dot{x} =
           \begin{bmatrix} x_2 \\[2pt] -\dfrac{g}{\ell}\sin x_1 - \dfrac{b}{m\ell^2}x_2 \end{bmatrix}
@@ -408,12 +403,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       </div>
 
       <div class="nb-key">
-        <p>Control-affine structure is why so much of modern safe control works. Because
-        \(\dot V\) and \(\dot h\) are affine in \(u\), conditions like a control Lyapunov
-        function decrease condition or a control barrier function condition become
-        <em>linear inequalities in \(u\)</em>. That turns controller synthesis into a
-        quadratic program you can solve at every timestep.</p>
-      </div>
+      <p>Control-affine structure provides a useful middle ground: it can capture nonlinear system dynamics while maintaining a linear dependence on the control input. This structure enables the use of many powerful nonlinear control techniques, including control Lyapunov functions and control barrier functions.</p>      </div>
 
       <h2 id="linearization">Linearization</h2>
 
@@ -425,7 +415,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         A = \left.\frac{\partial f}{\partial x}\right|_{(x^\star,u^\star)}, \qquad
         B = \left.\frac{\partial f}{\partial u}\right|_{(x^\star,u^\star)}.$$
 
-      <p>If \((x^\star, u^\star)\) is an equilibrium — \(f(x^\star,u^\star) = 0\) — then
+      <p>If \((x^\star, u^\star)\) is an equilibrium - \(f(x^\star,u^\star) = 0\) - then
       Lyapunov's indirect method applies: if every eigenvalue of \(A\) has strictly negative
       real part, the nonlinear system is locally asymptotically stable there. If any has
       strictly positive real part, it is unstable. Eigenvalues exactly on the imaginary axis
@@ -454,11 +444,9 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       <h2 id="actuation">Fully actuated and underactuated systems</h2>
 
-      <p>Count the independent inputs against the degrees of freedom. A system is
-      <strong>fully actuated</strong> in a configuration \(q\) when the input can produce
-      an arbitrary instantaneous acceleration \(\ddot q\) — for the manipulator form above,
-      when \(\operatorname{rank} B(q) = k\). It is <strong>underactuated</strong> when the
-      rank is lower: some accelerations are simply not commandable at that instant.</p>
+      <p>A system is
+      <strong>fully actuated</strong> when the dimension of input equals the number of degrees of freedom. It is <strong>underactuated</strong> when the
+      dimension of input is less than the number of degrees of freedom.</p>
 
       <figure class="nb-fig">
         <svg viewBox="0 0 520 212" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A two-link arm with two motors compared with a cart-pole with one force input">
@@ -492,34 +480,12 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         <figcaption>Left: every joint has its own motor. Right: the pole angle can only be influenced by moving the cart underneath it.</figcaption>
       </figure>
 
-      <p>The consequences are large. For fully actuated systems you can cancel the dynamics
-      outright — computed torque, \(u = B^{-1}(M\,\ddot q_{\text{des}} + C\dot q + G)\) — and
-      reduce tracking to a linear problem. Underactuated systems give you no such option.
-      You have to exploit the dynamics rather than override them, and desirable motions may
-      be reachable only through a detour.</p>
+      <p>Importantly, underactuated does not mean uncontrollable.An underactuated system can still be controllable; it simply cannot independently command every degree of freedom at every instant.</p>
 
-      <p>Common underactuated systems: quadrotors (6 DOF, 4 inputs — to translate sideways
+      <p>Common underactuated systems: quadrotors (6 DOF, 4 inputs - to translate sideways
       a quadrotor must first tilt), cart-poles, Acrobots, legged robots during flight phases,
       fixed-wing aircraft, and any car with nonholonomic constraints.</p>
 
-      <div class="nb-key">
-        <p>Underactuation is not the same as nonholonomy. Underactuation is a shortage of
-        inputs; nonholonomy is a constraint on velocities that cannot be integrated into a
-        constraint on configurations. A unicycle has as many inputs as it needs to move, but
-        it cannot slide sideways — that is nonholonomy.</p>
-      </div>
-
-      <h2 id="time-varying">Time-invariant and time-varying systems</h2>
-
-      <p>A system is <strong>time-invariant</strong> when \(f\) has no explicit dependence on
-      \(t\): shifting an experiment an hour later gives an identically shifted response.
-      It is <strong>time-varying</strong> when it does, \(\dot x = f(x,u,t)\) — a rocket
-      burning fuel, a manipulator with changing payload, a system linearized about a
-      trajectory.</p>
-
-      <p>For linear time-varying systems, eigenvalues of \(A(t)\) are <em>not</em> a stability
-      test. Fixed at every frozen instant, \(A(t)\) can be Hurwitz for all \(t\) while the
-      system diverges. You need the state transition matrix or a Lyapunov argument instead.</p>
 
       <h2 id="uncertainty">Modelling uncertainty</h2>
 
@@ -531,7 +497,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       $$\dot{x} = f(x,u) + d, \qquad d \in \mathcal{D},\ \ \|d\| \le \bar{d}.$$
 
       <p>The disturbance is unknown but confined to a known set. This supports worst-case
-      guarantees — robust control, tube MPC, input-to-state stability, robust CBFs — at the
+      guarantees - robust control, tube MPC, input-to-state stability, robust CBFs - at the
       cost of conservatism, since you design against the worst member of \(\mathcal D\)
       whether or not it ever occurs.</p>
 
@@ -541,36 +507,8 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       <p>The disturbance is a random process with known statistics. Guarantees become
       probabilistic: expected cost, chance constraints \(\Pr[x \in \mathcal{X}] \ge 1-\epsilon\),
-      covariance bounds. Less conservative, but a stochastic guarantee is not a worst-case one.</p>
+      etc. Less conservative, but a probabilistic guarantee.</p>
 
-      <h3>Parametric and structural uncertainty</h3>
-
-      <p>\(\dot x = f(x,u;\theta)\) with \(\theta\) unknown but constant — masses, inertias,
-      friction coefficients, the tire-road friction \(\mu\). This is what adaptive control and
-      system identification address. Distinguish it from <em>unmodelled dynamics</em>:
-      structure you left out entirely (actuator lag, flexible modes), which no amount of
-      parameter fitting will recover.</p>
-
-      <h3>Matched vs unmatched</h3>
-
-      <p>A disturbance is <strong>matched</strong> if it enters through the same channel as
-      the input, \(\dot x = f(x) + g(x)(u + d)\). Matched disturbances can in principle be
-      cancelled by the controller. <strong>Unmatched</strong> disturbances act in directions
-      the input cannot reach and are strictly harder.</p>
-
-      <figure class="nb-fig">
-        <svg viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A nominal trajectory surrounded by a tube of possible trajectories">
-          <path d="M 60 126 C 170 126 220 40 460 34 L 460 78 C 220 84 170 170 60 170 Z" fill="#eef4fc"/>
-          <path d="M 60 148 C 170 148 220 62 460 56" fill="none" stroke="#0b5fc1" stroke-width="2"/>
-          <path d="M 60 148 C 168 142 216 84 460 48" fill="none" stroke="#5b6572" stroke-width="1" stroke-dasharray="3 3"/>
-          <path d="M 60 148 C 174 154 224 92 460 66" fill="none" stroke="#5b6572" stroke-width="1" stroke-dasharray="3 3"/>
-          <circle cx="60" cy="148" r="4" fill="#0b5fc1"/>
-          <text x="300" y="118" font-size="12.5" fill="#0b5fc1">nominal prediction</text>
-          <text x="300" y="30" font-size="12.5" fill="#5b6572">reachable set under &#8214;d&#8214; &#8804; d&#772;</text>
-          <text x="46" y="182" font-size="11.5" fill="#5b6572">x(0)</text>
-        </svg>
-        <figcaption>Under bounded disturbance the prediction is a set, not a curve. Robust design keeps the whole set out of trouble.</figcaption>
-      </figure>
 
       <h2 id="outputs">Outputs and estimation</h2>
 
@@ -587,8 +525,8 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       $$\operatorname{rank} \begin{bmatrix} C \\ CA \\ \vdots \\ CA^{n-1}\end{bmatrix} = n,$$
 
-      <p>the dual of controllability. If a system is observable you can build an observer —
-      a Luenberger observer, a Kalman filter, a moving-horizon estimator — and feed its
+      <p>the dual of controllability. If a system is observable you can build an observer -
+      a Luenberger observer, a Kalman filter, a moving-horizon estimator - and feed its
       estimate \(\hat x\) to a controller designed as if the state were measured. For LTI
       systems the <em>separation principle</em> says designing the controller and observer
       independently still yields a stable closed loop; for nonlinear systems it generally
@@ -639,14 +577,6 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       </table>
       </div>
 
-      <div class="nb-key">
-        <p>The single most common modelling mistake is over-fidelity: writing down every
-        effect you can think of, then discovering the model is too heavy to control with and
-        too poorly identified to trust. Start with the coarsest model that captures the
-        behaviour you care about, and add terms only when a specific failure demands them.</p>
-      </div>
-
-
       <div class="nb-pager">
         <span></span>
         <a href="dynamic-models.html">Common dynamic models &rarr;</a>
@@ -657,13 +587,12 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       <div class="nb-toc-head">On this page</div>
       <ol>
       <li><a href="#state-input-dynamics">State, input, dynamics</a></li>
-      <li><a href="#dof">Configuration and DOF</a></li>
       <li><a href="#time">Continuous vs discrete time</a></li>
-      <li><a href="#linear">Linear vs nonlinear</a></li>
+      <li><a href="#linear">Linear system</a></li>
+      <li><a href="#nonlinear">Nonlinear system</a></li>
       <li><a href="#affine">Control-affine form</a></li>
       <li><a href="#linearization">Linearization</a></li>
       <li><a href="#actuation">Actuation</a></li>
-      <li><a href="#time-varying">Time dependence</a></li>
       <li><a href="#uncertainty">Uncertainty</a></li>
       <li><a href="#outputs">Outputs and estimation</a></li>
       <li><a href="#summary">Classifying a model</a></li>
