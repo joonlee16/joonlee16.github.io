@@ -316,7 +316,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
           <text x="150" y="46" text-anchor="middle" font-size="12" fill="#5b6572">rear axle</text>
           <text x="370" y="46" text-anchor="middle" font-size="12" fill="#0b5fc1">steered front wheel</text>
         </svg>
-        <figcaption>The kinematic bicycle assumes the wheels roll without slipping — a good assumption at parking-lot speeds and a bad one on a racetrack.</figcaption>
+        <figcaption>The kinematic bicycle assumes the wheels roll without slipping - a good assumption at parking-lot speeds and a bad one on a racetrack.</figcaption>
       </figure>
 
       <p>That no-slip assumption is exactly what fails at speed. The <strong>dynamic
@@ -327,7 +327,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       $$\alpha_f = \delta - \arctan\!\left(\frac{v_y + \ell_f r}{v_x}\right), \qquad
         \alpha_r = -\arctan\!\left(\frac{v_y - \ell_r r}{v_x}\right),$$
 
-      <p>and lateral forces follow a tire model — linear \(F_y = -C_\alpha \alpha\) for modest
+      <p>and lateral forces follow a tire model - linear \(F_y = -C_\alpha \alpha\) for modest
       slip, or a Pacejka-style saturating curve near the friction limit. The planar dynamics
       are then</p>
 
@@ -346,7 +346,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       $$m\ell^2\ddot\theta = u - b\dot\theta - mg\ell\sin\theta.$$
 
-      <p>Nonlinear, control-affine, one DOF and one input — fully actuated, and interesting only
+      <p>Nonlinear, control-affine, one DOF and one input - fully actuated, and interesting only
       because of the \(\sin\theta\) and torque limits: if \(|u| &lt; mg\ell\) the pendulum cannot
       be lifted directly and must be swung up, which is already a nontrivial nonlinear problem.</p>
 
@@ -414,7 +414,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       cornering.</p>
 
       <p>If you add process noise, the stochastic discrete-time form is
-      \(x_{k+1} = F(x_k,u_k) + w_k\) with \(w_k\) zero-mean and covariance \(Q\) — the model an
+      \(x_{k+1} = F(x_k,u_k) + w_k\) with \(w_k\) zero-mean and covariance \(Q\) - the model an
       EKF or a particle filter expects.</p>
 
       <h2 id="compare">Side by side</h2>

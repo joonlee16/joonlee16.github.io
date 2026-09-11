@@ -1,0 +1,491 @@
+---
+layout: default
+title: r-robustness
+---
+
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      tags: 'none'
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+.nb {
+  --ink: #16181d;
+  --muted: #5b6572;
+  --accent: #0b5fc1;
+  --accent-soft: #eef4fc;
+  --rule: #e2e6ec;
+  --panel: #f7f8fa;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+
+  max-width: 1160px;
+  margin: 2rem auto 4.5rem;
+  padding: 0 20px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.68;
+}
+
+/* ---------- page head ---------- */
+.nb-crumb {
+  font-family: var(--sans);
+  font-size: .82rem;
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+}
+.nb-crumb a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.nb-crumb a:hover { color: var(--accent); border-color: var(--accent); }
+
+.nb-title {
+  font-family: var(--sans);
+  font-size: 2.1rem;
+  font-weight: 650;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  margin: 0 0 .6rem;
+}
+.nb-deck {
+  color: var(--muted);
+  font-size: 1.05rem;
+  margin: 0 0 1.6rem;
+  max-width: 62ch;
+}
+.nb-rule { border: 0; border-top: 1px solid var(--rule); margin: 0 0 2.2rem; }
+
+/* ---------- two-column shell ---------- */
+.nb-grid { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 52px; align-items: start; }
+.nb-body { min-width: 0; }
+
+.nb-toc { position: sticky; top: 24px; font-family: var(--sans); font-size: .85rem; }
+.nb-toc-head { font-weight: 650; margin-bottom: .6rem; font-size: .8rem; color: var(--ink); }
+.nb-toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+.nb-toc li { margin: 0 0 .38rem; padding-left: 1.5rem; text-indent: -1.5rem; }
+.nb-toc li::before {
+  counter-increment: toc; content: counter(toc) ". ";
+  color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.nb-toc a { color: var(--muted); text-decoration: none; }
+.nb-toc a:hover { color: var(--accent); }
+
+/* ---------- typography ---------- */
+.nb-body { counter-reset: sec; }
+.nb-body > h2 {
+  font-family: var(--sans);
+  font-size: 1.32rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  margin: 3rem 0 .9rem;
+  padding-top: .2rem;
+  scroll-margin-top: 20px;
+}
+.nb-body > h2::before {
+  counter-increment: sec;
+  content: counter(sec) ".";
+  color: var(--accent);
+  margin-right: .5rem;
+  font-variant-numeric: tabular-nums;
+}
+.nb-body > h2:first-child { margin-top: 0; }
+.nb-body h3 {
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  font-weight: 650;
+  margin: 1.9rem 0 .5rem;
+}
+.nb-body p { margin: 0 0 1rem; max-width: 72ch; }
+.nb-body ul, .nb-body ol { max-width: 70ch; padding-left: 1.35rem; margin: 0 0 1.1rem; }
+.nb-body li { margin-bottom: .38rem; }
+.nb-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+.nb-body a:hover { border-bottom-color: var(--accent); }
+.nb-body strong { font-weight: 600; }
+.nb-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em; background: var(--panel); padding: .1em .35em; border-radius: 3px;
+}
+
+/* ---------- blocks ---------- */
+.nb-key {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  padding: .85rem 1.1rem;
+  margin: 1.4rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.nb-key p { margin: 0; }
+.nb-key p + p { margin-top: .6rem; }
+
+.nb-eg {
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: .9rem 1.1rem .3rem;
+  margin: 1.4rem 0;
+  background: #fff;
+}
+.nb-eg-label {
+  font-family: var(--sans); font-size: .78rem; font-weight: 650;
+  color: var(--muted); margin-bottom: .5rem;
+}
+
+/* ---------- figures ---------- */
+.nb-fig { margin: 1.9rem 0; }
+.nb-fig svg { display: block; width: 100%; height: auto; max-width: 620px; margin: 0 auto; }
+.nb-fig figcaption {
+  font-family: var(--sans); font-size: .82rem; color: var(--muted);
+  margin-top: .7rem; text-align: center; max-width: 60ch; margin-left: auto; margin-right: auto;
+}
+.nb-fig text { font-family: var(--sans); }
+
+/* ---------- tables ---------- */
+.nb-table-wrap { overflow-x: auto; margin: 1.6rem 0; }
+.nb-body table { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: .87rem; }
+.nb-body th, .nb-body td {
+  text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top;
+}
+.nb-body th { font-weight: 650; border-bottom: 1.5px solid var(--ink); white-space: nowrap; }
+.nb-body tbody tr:last-child td { border-bottom: none; }
+
+/* ---------- math ---------- */
+mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+
+/* ---------- prev / next ---------- */
+.nb-pager {
+  display: flex; justify-content: space-between; gap: 1rem;
+  margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: .88rem;
+}
+.nb-pager a { color: var(--accent); text-decoration: none; }
+.nb-pager a:hover { text-decoration: underline; }
+.nb-pager span { color: #b9c0c9; }
+
+@media (max-width: 900px) {
+  .nb { font-size: 16px; }
+  .nb-grid { grid-template-columns: 1fr; gap: 0; }
+  .nb-toc {
+    position: static; order: -1; border: 1px solid var(--rule);
+    border-radius: 5px; padding: .9rem 1.1rem; margin-bottom: 2rem; background: var(--panel);
+  }
+  .nb-title { font-size: 1.72rem; }
+}
+</style>
+
+{% raw %}
+<div class="nb">
+
+  <div class="nb-crumb"><a href="../notes.html">Notes</a> &middot; r-robustness</div>
+  <h1 class="nb-title">r-robustness</h1>
+  <p class="nb-deck">Why resilient consensus needs a (2F+1)-robust graph rather than a well-connected one, why the exact value is coNP-complete to compute, and what to use instead.</p>
+  <hr class="nb-rule">
+
+  <div class="nb-grid">
+    <div class="nb-body">
+      <p>In the presence of adversarial or faulty agents, the agents locally cannot figure out which agents are reliable.
+        In that case, the agents cannot perform distributed algorithms effectively. However, if the network is <strong>\(r\)-robust</strong>, then the agents can still perform distributed algorithms effectively.
+
+      <p>Throughout, \(\mathcal{G} = (\mathcal{V}, \mathcal{E})\) is a graph on \(n\) nodes and
+      \(\mathcal{N}_i\) is the neighbour set of node \(i\). For digraphs, read
+      \(\mathcal{N}_i\) as the set of <em>in</em>-neighbours everywhere below.</p>
+
+      <h2 id="definitions">The definitions</h2>
+
+      <div class="nb-key">
+        <p><strong>\(r\)-reachable set.</strong> A subset
+        \(\mathcal{S} \subset \mathcal{V}\) is \(r\)-reachable if</p>
+        $$\exists\, i \in \mathcal{S} \ \text{ such that } \
+          \big|\mathcal{N}_i \setminus \mathcal{S}\big| \ \ge\ r.$$
+        <p><strong>\(r\)-robust graph.</strong> \(G\) is \(r\)-robust if for every pair of
+        nonempty, disjoint subsets \(\mathcal{S}_1, \mathcal{S}_2 \subset \mathcal{V}\), at
+        least one of them is \(r\)-reachable.</p>
+      </div>
+
+      <p>Reachability is a property that <em>one</em> node can talk to the outside of a subset. 
+        Robustness means that agents are able to communicate outside of any subsets. This ensures that agents have enough redundnacy in communication.</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 212" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A set S containing a node with three neighbours outside the set">
+          <ellipse cx="150" cy="108" rx="104" ry="74" fill="#f7f8fa" stroke="#c8cfd8" stroke-width="1.3" stroke-dasharray="5 4"/>
+          <g stroke="#c8cfd8" stroke-width="1.3">
+            <line x1="100" y1="70" x2="118" y2="142"/>
+            <line x1="100" y1="70" x2="216" y2="108"/>
+            <line x1="118" y1="142" x2="216" y2="108"/>
+          </g>
+          <g stroke="#0b5fc1" stroke-width="1.8">
+            <line x1="216" y1="108" x2="330" y2="52"/>
+            <line x1="216" y1="108" x2="344" y2="112"/>
+            <line x1="216" y1="108" x2="330" y2="168"/>
+          </g>
+          <g fill="#fff" stroke="#16181d" stroke-width="1.8">
+            <circle cx="100" cy="70" r="6"/><circle cx="118" cy="142" r="6"/>
+            <circle cx="330" cy="52" r="6"/><circle cx="344" cy="112" r="6"/><circle cx="330" cy="168" r="6"/>
+          </g>
+          <circle cx="216" cy="108" r="7.5" fill="#0b5fc1"/>
+          <text x="216" y="88" text-anchor="middle" font-size="12.5" fill="#0b5fc1">i</text>
+          <text x="72" y="36" font-size="13" fill="#5b6572">S</text>
+          <text x="372" y="112" font-size="12" fill="#16181d">3 neighbours</text>
+          <text x="372" y="128" font-size="12" fill="#16181d">outside S</text>
+          <text x="260" y="202" text-anchor="middle" font-size="11.5" fill="#5b6572">S is 3-reachable, because of node i alone</text>
+        </svg>
+        <figcaption>The other members of the set contribute nothing to its reachability.</figcaption>
+      </figure>
+
+      <p>One structural detail matters later: the quantifier ranges over every possible <em>pair</em> of nonempty, disjoint subsets. 
+        This makes the condition expensive to check.</p>
+
+      <h2 id="wmsr">The W-MSR algorithm</h2>
+
+      <p>Weighted Mean Subsequence Reduced (W-MSR)is the standard resilient consensus rule. At each
+      step, normal node \(i\) collects its neighbours' values, discards the \(F\) largest
+      that are strictly greater than \(x_i[k]\) and the \(F\) smallest that are strictly less,
+      and updates as a convex combination of its own value and the retained set
+      \(\mathcal{R}_i[k]\):</p>
+
+      $$x_i[k+1] = w_{ii}[k]\,x_i[k] + \sum_{j \in \mathcal{R}_i[k]} w_{ij}[k]\,x_j[k],$$
+
+      <p>with all weights bounded below by some \(\alpha > 0\) and summing to one. Nobody has
+      to identify the adversaries. Under the \(F\)-<strong>local</strong> model - at most
+      \(F\) adversaries in any normal node's neighbourhood - the filter alone does the work.</p>
+
+      <p>Then the agents can perform within the "safe regions" (within the convex hull of their initial values) and reach a consensus.</p>
+
+      <h2 id="safety">Why filtering is safe</h2>
+
+      <p>Local Perspective: you have possibly \(F\) adversaries in your neighbourhood. You discard the \(F\) largest and \(F\) smallest values, so you are guaranteed to have values within the convex hull of the normal values.</p>
+    
+      <p>Global Perspective: r-robustness ensures that the network remains connected even every node loses r-1 edges.
+        So, if the network is (2F+1)-robust, then the network remains connected even each agent loses 2F edges (which happens by filtering at most 2F values out).
+      </p>
+
+      <div class="nb-key">
+        <p>W-MSR it completely local and easy to use. However, it requires a certain level of robustness in the network to function effectively. 
+            Also, it only guarnatees performance within the convex hull of the initial values.</p>
+      </div>
+
+
+      <div class="nb-key">
+        <p><strong>Theorem.</strong> If \(G\) is \(r\)-robust and edges are deleted so that no
+        node loses more than \(r-1\) of its incident edges, the graph remains connected. The
+        same holds for node deletions: if \(\mathcal{S}\) is \((r-1)\)-<em>local</em>, meaning
+        \(|\mathcal{N}_i \cap \mathcal{S}| \le r-1\) for every \(i \notin \mathcal{S}\), then
+        deleting \(\mathcal{S}\) leaves a connected graph.</p>
+      </div>
+
+      <p>The proof is three lines. Suppose the surviving graph were disconnected and let
+      \(\mathcal{S}_1, \mathcal{S}_2\) be two of its components. They are nonempty and
+      disjoint, so robustness gives a node \(v\) in one of them with \(r\) neighbours outside
+      it. At most \(r-1\) of those were deleted. So \(v\) still reaches outside, and it was
+      never a component. Contradiction.</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 232" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A node with three outside neighbours keeps one link after two of them are deleted">
+          <ellipse cx="118" cy="112" rx="86" ry="66" fill="#f7f8fa" stroke="#c8cfd8" stroke-width="1.3" stroke-dasharray="5 4"/>
+          <ellipse cx="408" cy="112" rx="80" ry="66" fill="#f7f8fa" stroke="#c8cfd8" stroke-width="1.3" stroke-dasharray="5 4"/>
+          <text x="58" y="46" font-size="13" fill="#5b6572">S&#8321;</text>
+          <text x="452" y="46" font-size="13" fill="#5b6572">S&#8322;</text>
+          <g stroke="#c8cfd8" stroke-width="1.3">
+            <line x1="72" y1="84" x2="86" y2="146"/>
+            <line x1="72" y1="84" x2="182" y2="112"/>
+            <line x1="86" y1="146" x2="182" y2="112"/>
+            <line x1="366" y1="72" x2="360" y2="150"/>
+            <line x1="366" y1="72" x2="444" y2="116"/>
+            <line x1="360" y1="150" x2="444" y2="116"/>
+          </g>
+          <g stroke="#b9c0c9" stroke-width="1.5" stroke-dasharray="4 3">
+            <line x1="182" y1="112" x2="268" y2="54"/>
+            <line x1="182" y1="112" x2="268" y2="172"/>
+          </g>
+          <line x1="182" y1="112" x2="366" y2="72" stroke="#0b5fc1" stroke-width="2.4"/>
+          <g fill="#fff" stroke="#16181d" stroke-width="1.8">
+            <circle cx="72" cy="84" r="6"/><circle cx="86" cy="146" r="6"/>
+            <circle cx="360" cy="150" r="6"/><circle cx="444" cy="116" r="6"/>
+          </g>
+          <g fill="#f2f4f6" stroke="#b9c0c9" stroke-width="1.6">
+            <circle cx="268" cy="54" r="8"/><circle cx="268" cy="172" r="8"/>
+          </g>
+          <g stroke="#8b939d" stroke-width="1.6">
+            <line x1="263" y1="49" x2="273" y2="59"/><line x1="273" y1="49" x2="263" y2="59"/>
+            <line x1="263" y1="167" x2="273" y2="177"/><line x1="273" y1="167" x2="263" y2="177"/>
+          </g>
+          <circle cx="182" cy="112" r="7.5" fill="#0b5fc1"/>
+          <circle cx="366" cy="72" r="7.5" fill="#0b5fc1"/>
+          <text x="182" y="94" text-anchor="middle" font-size="12.5" fill="#0b5fc1">v</text>
+          <text x="278" y="122" text-anchor="middle" font-size="11.5" fill="#0b5fc1">survives</text>
+          <text x="260" y="216" text-anchor="middle" font-size="11.5" fill="#5b6572">r = 3, so at most 2 of v&#8217;s outside neighbours can be gone</text>
+        </svg>
+        <figcaption>Give every node \(r\) ways out and it can afford to lose \(r-1\) of them. Under W-MSR, \(2F\) of them are lost by design.</figcaption>
+      </figure>
+
+      <div class="nb-key">
+        <p>So \(2F+1\) is not a magic constant. It is <em>the adversary can cost me \(F\)
+        links, the filter costs me \(F\) more, and I need one left over</em>.</p>
+      </div>
+
+      <p>Note how different this accounting is from connectivity. \(r\)-connectivity tolerates
+      \(r-1\) edge removals <em>in total</em>. Robustness tolerates \(r-1\) removals <em>from every
+      agent</em>.</p>
+
+      <h2 id="rs">The (\(r,s)\)-robustness</h2>
+
+      <p>If instead at most \(F\) agents are adversarial in the whole network, we can have better conditiosn and guarantees.
+         Write</p>
+
+      $$\mathcal{X}^r_{\mathcal{S}} = \big\{ i \in \mathcal{S} \ :\
+        |\mathcal{N}_i \setminus \mathcal{S}| \ge r \big\}$$
+
+      <p>for the nodes of \(\mathcal{S}\) that are individually \(r\)-reachable. Then \(G\) is
+      \((r,s)\)-<strong>robust</strong> if for every nonempty disjoint pair at least one of</p>
+
+      $$\big|\mathcal{X}^r_{\mathcal{S}_1}\big| = |\mathcal{S}_1|, \qquad
+        \big|\mathcal{X}^r_{\mathcal{S}_2}\big| = |\mathcal{S}_2|, \qquad
+        \big|\mathcal{X}^r_{\mathcal{S}_1}\big| + \big|\mathcal{X}^r_{\mathcal{S}_2}\big| \ge s$$
+
+      <p>holds. Ordinary \(r\)-robustness is the case \((r,1)\). For W-MSR under the
+      \(F\)-total malicious model, \((F+1, F+1)\)-robustness is necessary and sufficient.</p>
+
+      <h2 id="complexity">Why r is hard to compute</h2>
+
+      <p>The decision problem is: given \(G\) and an integer \(r\), is \(G\) \(r\)-robust? The
+      two possible answers are lopsided.</p>
+
+      <p><strong>"Not robust" is cheap to certify.</strong> Exhibit one pair
+      \((\mathcal{S}_1, \mathcal{S}_2)\) in which neither set is \(r\)-reachable. Verifying it
+      means counting outside neighbours for the nodes in those two sets, which is linear in
+      the graph. So the complement problem is in NP, which puts \(r\)-robustness in
+      <strong>coNP</strong>.</p>
+
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A short verification bar for a no answer and a very long one for a yes answer">
+          <text x="0" y="44" font-size="12" fill="#16181d">&#8220;no, not r-robust&#8221;</text>
+          <rect x="0" y="54" width="118" height="26" rx="4" fill="#eef4fc" stroke="#0b5fc1" stroke-width="1.3"/>
+          <text x="59" y="71" text-anchor="middle" font-size="11.5" fill="#0b5fc1">one pair (S&#8321;, S&#8322;)</text>
+          <line x1="126" y1="67" x2="176" y2="67" stroke="#0b5fc1" stroke-width="1.4"/>
+          <path d="M 176 67 l -8 -4 v 8 z" fill="#0b5fc1"/>
+          <text x="186" y="71" font-size="12" fill="#16181d">checked in linear time</text>
+          <line x1="0" y1="100" x2="500" y2="100" stroke="#e2e6ec" stroke-width="1"/>
+          <text x="0" y="128" font-size="12" fill="#16181d">&#8220;yes, r-robust&#8221;</text>
+          <rect x="0" y="138" width="404" height="26" rx="4" fill="#f7f8fa" stroke="#c8cfd8" stroke-width="1.3"/>
+          <text x="202" y="155" text-anchor="middle" font-size="11.5" fill="#5b6572">no short certificate known &#8212; roughly 3&#8319; pairs</text>
+          <line x1="412" y1="151" x2="466" y2="151" stroke="#c8cfd8" stroke-width="1.4" stroke-dasharray="4 3"/>
+          <path d="M 466 151 l -8 -4 v 8 z" fill="#c8cfd8"/>
+        </svg>
+        <figcaption>coNp-complete: easy to check it is not but hard to prove it is.</figcaption>
+      </figure>
+
+     
+
+      <h2 id="proxies">Proxy metrics: minimum degree and connectivity</h2>
+
+      <p>Both standard structural measures are polynomial - minimum degree \(\delta(G)\)
+      trivially, vertex connectivity \(\kappa(G)\) by max-flow - and both relate cleanly to
+      robustness:</p>
+
+      $$G \text{ is } r\text{-robust} \ \Longrightarrow\ G \text{ is } r\text{-connected}
+        \ \Longrightarrow\ \delta(G) \ge r.$$
+
+      <p>Writing \(r^\star(G)\) for the largest \(r\) that holds, this chain says</p>
+
+      $$r^\star(G) \ \le\ \kappa(G) \ \le\ \delta(G) ,$$
+
+      <p>which is an <em>upper</em> bound, sometimes very loose. Consider two cliques joined by a perfect matching have
+      \(\kappa = \delta = n/2\) but \(r^\star = 1\), so the gap can be as wide as the graph
+      permits. The only unconditional coincidence is at \(r = 1\), where 1-robust and
+      1-connected are the same property. There is also a ceiling,
+      \(r^\star \le \lceil n/2 \rceil\), attained by \(K_n\).</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 248" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two four-node cliques joined by a perfect matching, illustrating high connectivity but low robustness">
+          <g stroke="#c8cfd8" stroke-width="1.3" fill="none">
+            <line x1="170" y1="52" x2="170" y2="102"/>
+            <line x1="170" y1="102" x2="170" y2="152"/>
+            <line x1="170" y1="152" x2="170" y2="202"/>
+            <path d="M 170 52 Q 116 102 170 152"/>
+            <path d="M 170 102 Q 116 152 170 202"/>
+            <path d="M 170 52 Q 96 127 170 202"/>
+            <line x1="350" y1="52" x2="350" y2="102"/>
+            <line x1="350" y1="102" x2="350" y2="152"/>
+            <line x1="350" y1="152" x2="350" y2="202"/>
+            <path d="M 350 52 Q 404 102 350 152"/>
+            <path d="M 350 102 Q 404 152 350 202"/>
+            <path d="M 350 52 Q 424 127 350 202"/>
+          </g>
+          <g stroke="#0b5fc1" stroke-width="1.6">
+            <line x1="170" y1="52" x2="350" y2="52"/>
+            <line x1="170" y1="102" x2="350" y2="102"/>
+            <line x1="170" y1="152" x2="350" y2="152"/>
+            <line x1="170" y1="202" x2="350" y2="202"/>
+          </g>
+          <g fill="#fff" stroke="#16181d" stroke-width="1.8">
+            <circle cx="170" cy="52" r="6"/><circle cx="170" cy="102" r="6"/>
+            <circle cx="170" cy="152" r="6"/><circle cx="170" cy="202" r="6"/>
+            <circle cx="350" cy="52" r="6"/><circle cx="350" cy="102" r="6"/>
+            <circle cx="350" cy="152" r="6"/><circle cx="350" cy="202" r="6"/>
+          </g>
+          <text x="120" y="30" text-anchor="middle" font-size="12.5" fill="#5b6572">complete</text>
+          <text x="400" y="30" text-anchor="middle" font-size="12.5" fill="#5b6572">complete</text>
+          <text x="260" y="30" text-anchor="middle" font-size="12" fill="#0b5fc1">one edge each</text>
+          <text x="260" y="232" text-anchor="middle" font-size="12" fill="#16181d">connectivity 4, minimum degree 4, but only 1-robust</text>
+        </svg>
+        <figcaption>Remove any three nodes and this graph stays connected. It is still useless for W-MSR at \(F \ge 1\), because no node hears more than one voice from the other side.</figcaption>
+      </figure>
+
+
+      <div class="nb-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Quantity</th><th>Cost</th><th>Direction</th><th>Use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Minimum degree \(\delta\)</td><td>\(O(|\mathcal{E}|)\), local</td><td>upper bound on \(r^\star\)</td><td>Reject a topology fast; enforce online</td></tr>
+          <tr><td>Connectivity \(\kappa\)</td><td>polynomial, global</td><td>upper bound on \(r^\star\)</td><td>Tighter rejection than degree</td></tr>
+          <tr><td>Algebraic connectivity \(\lambda_2\)</td><td>polynomial</td><td>bounds via isoperimetric constant</td><td>Smooth surrogate for optimization</td></tr>
+          <tr><td>Exact \(r^\star\)</td><td>coNP-complete</td><td>the real thing</td><td>Offline, via mixed-integer programming</td></tr>
+          <tr><td>Construction rule</td><td>free</td><td>guarantees \(r^\star \ge r\)</td><td>Design the topology instead of testing it</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2 id="reading">Further reading</h2>
+
+      <ul>
+        <li>LeBlanc, Zhang, Koutsoukos, Sundaram, &ldquo;Resilient asymptotic consensus in
+        robust networks,&rdquo; <em>IEEE JSAC</em> 31(4), 2013. Origin of \(r\)- and
+        \((r,s)\)-robustness and the W-MSR convergence conditions.</li>
+        <li>Zhang, Fata, Sundaram, &ldquo;A notion of robustness in complex networks,&rdquo;
+        <em>IEEE TCNS</em> 2(3), 2015. Random-graph
+        thresholds and the coNP-completeness proof.</li>
+        <li>Usevitch, Panagou, &ldquo;Determining \(r\)- and \((r,s)\)-robustness of digraphs
+        using mixed integer linear programming&rdquo; <em>Automatica</em> 111, 2020. MILP to compute r- and (r,s)-robustness.</li>
+        <li>Lee, Panagou, &ldquo;Minimal construction of graphs with maximum robustness &rdquo; <em>IEEE TAC</em> 2027. Sparsest graphs with maximum r- and (r,s)-robustness.</li>
+      </ul>
+
+
+      <div class="nb-pager">
+        <a href="control-design.html">&larr; Control law design</a>
+        <span></span>
+      </div>
+    </div>
+
+    <nav class="nb-toc" aria-label="On this page">
+      <div class="nb-toc-head">On this page</div>
+      <ol>
+      <li><a href="#definitions">The definitions</a></li>
+      <li><a href="#wmsr">The W-MSR algorithm</a></li>
+      <li><a href="#safety">Why filtering is safe</a></li>
+      <li><a href="#rs">The F-total model</a></li>
+      <li><a href="#complexity">Why r is hard to compute</a></li>
+      <li><a href="#proxies">Proxy metrics</a></li>
+      <li><a href="#reading">Further reading</a></li>
+      </ol>
+    </nav>
+  </div>
+
+</div>
+{% endraw %}

@@ -305,7 +305,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
           <text x="330" y="128" font-size="12" fill="#16181d">true trajectory</text>
           <text x="330" y="144" font-size="12" fill="#0b5fc1">held between samples</text>
         </svg>
-        <figcaption>The controller only sees the dots. Everything between them is the discretisation's problem.</figcaption>
+        <figcaption>The controller only sees the dots. Everything between them is the discretization's problem.</figcaption>
       </figure>
 
       <p>Three ways to get \(F\) from \(f\), in increasing order of cost and accuracy:</p>
@@ -313,7 +313,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       <ul>
         <li><strong>Forward Euler.</strong> \(x_{k+1} = x_k + \Delta t\, f(x_k, u_k)\). 1st order prediction, common.</li>
         <li><strong>Runge-Kutta 4.</strong> Four evaluations per step. 4th order prediction, more accurate.</li>
-        <li><strong>Exact discretisation (linear systems only).</strong> For \(\dot x = Ax + Bu\)
+        <li><strong>Exact discretization (linear systems only).</strong> For \(\dot x = Ax + Bu\)
         with \(u\) held constant over each interval,
         $$A_d = e^{A\Delta t}, \qquad B_d = \left(\int_0^{\Delta t} e^{A\tau}\,d\tau\right) B,$$
         which is exact, not an approximation.</li>
@@ -353,7 +353,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       $$
       \begin{array}{lll}
-      \text{LTI:} & \dot{x}=Ax+Bu, & A,B\text{ are constant},\[1mm]
+      \text{LTI:} & \dot{x}=Ax+Bu, & A,B\text{ are constant}, \\
       \text{LTV:} & \dot{x}=A(t)x+B(t)u, & A(t),B(t)\text{ vary with time}.
       \end{array}
       $$
@@ -361,7 +361,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       <p>Both are <strong>linear systems</strong>; the difference is whether their system matrices are constant or time-dependent.</p>
 
 
-      <h2 id="nonlinear">Nonlinear and control-affine systems</h2>
+      <h2 id="nonlinear">Nonlinear systems</h2>
 
       <p>A general continuous-time <strong>nonlinear system</strong> is written as</p>
 
@@ -382,7 +382,7 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       <p>None of that survives nonlinearity intact. Most real robots are nonlinear:
       rotations, gravity, friction, contact, and aerodynamics all break superposition.</p>
 
-      <h2 id="affine">The control-affine middle ground</h2>
+      <h2 id="affine">The control-affine systems</h2>
 
       <p>Fortunately, a huge fraction of robotic systems sit in a convenient middle class,
       <strong>control-affine</strong>:</p>
