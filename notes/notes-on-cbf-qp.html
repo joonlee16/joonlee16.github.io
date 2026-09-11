@@ -250,13 +250,14 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         <p class="nb-src">Same source, Theorems 2 and 3.</p>
       </div>
 
-      <p>Sufficiency
-      asks for the condition on \(D\) and returns safety <em>plus</em> asymptotic stability.
+      <p>Sufficiency asks for the condition on \(D\) and returns safety <em>plus</em> asymptotic stability.
       Necessity starts from safety on <em>\(\mathcal{C}\)</em> to get CBF.
       The gap between the hypotheses is exactly the gap between the conclusions.</p>
 
       <h2 id="domain">Confusion with the Defintion and Theorems</h2>
 
+      <h3> First Confusion: why \(\nabla h\) is not in the definition of CBF but is in Theorems 2 and 3? </h3>
+        
       <p>Notice that the definition of a CBF itself (Definition 2) says nothing
       about \(\nabla h\) on the boundary - the gradient is allowed to vanish there. The
       regularity requirement \(\frac{\partial h}{\partial x} \neq 0\) on
@@ -285,9 +286,22 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         immediately, and \(\mathcal{C}\) is not forward invariant.</p>
       </div>
 
-    <p>So the reason why CBF defined on \(D\) is for the sufficiency of safety and stability. 
-        Even if we have a CBF on \(\mathcal C\) and \(\nabla h(x)\neq 0\) on 
-        the boundary \(\partial\mathcal C\), we can still ensure safety. </p>
+      <h3> Second Confusion: why is h defined on \(D\)? </h3>
+
+
+      <p> There are three main reasons why a CBF is defined on \(D\). The first is to 
+        provide robustness to model perturbations, as noted in Remark 5 
+        of <a href="https://arxiv.org/pdf/1609.06408">Control Barrier Function 
+          Based Quadratic Programs for Safety Critical Systems</a>. Another is to guarantee 
+          asymptotic stability of the safe set (Theorem 2). The third is to ensure that the 
+          gradient \(\nabla h(x)\) is well-defined on the boundary of the safe set, which 
+          requires \(h\) to be continuously differentiable on an 
+          open neighborhood containing \(\partial\mathcal{C}\).</p>
+ 
+      <p> This naturally raises the question of whether a CBF can instead be defined only on 
+        \(\mathcal C\). The answer is yes, provided (1) the gradient exists on the boundary, (2) the gradient 
+        remains nondegenerate, i.e., \(\nabla h(x)\neq 0\) for all \(x\in\partial\mathcal C\), and (3) \(\mathcal C\) is compact. 
+        If these conditions are met, the CBF condition still guarantees forward invariance and safety of \(\mathcal C\). </p>
 
       <h2 id="invariance">Controlled invariance is not forward invariance</h2>
 
