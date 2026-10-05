@@ -9,6 +9,7 @@
     pdf: "https://arxiv.org/pdf/2607.20992"
     webpage: "https://distributed-mbd.github.io/dmbd.github.io"
     code: "https://github.com/distributed-mbd/dmbd"
+    demo: "https://mbd.taekyung.me/"
 
 
 
@@ -22,6 +23,7 @@
   links:
     pdf: "https://arxiv.org/pdf/2605.12974"
     webpage: "https://dcherenson.github.io/drs-gk"
+    demo: "https://backupsf.taekyung.me/#drs/f16-canyon?method=drs-gk&truth=inside&seed=2027&beta=1&risk=0.05&speed=1"
 
 
 - year: 2026
@@ -44,6 +46,7 @@
   first_coauthors: true
   links:
     pdf: "https://arxiv.org/pdf/2605.09076"
+    code: "https://github.com/daniel-eai/Robust-Multi-Agent-LLMs-under-Byzantine-Faults"
 
 
 - year: 2026

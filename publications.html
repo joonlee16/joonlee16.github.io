@@ -31,9 +31,10 @@ title: Publications
               {% endif %}
               <div class="pub-venue"><em>{{ pub.venue }}</em></div>
               <div class="pub-links">
-                {% if pub.links.pdf %}<a class="pub-btn" href="{{ pub.links.pdf }}" target="_blank">📄</a>{% endif %}
-                {% if pub.links.code %}<a class="pub-btn" href="{{ pub.links.code }}" target="_blank">💻</a>{% endif %}
-                {% if pub.links.webpage %}<a class="pub-btn" href="{{ pub.links.webpage }}" target="_blank">🌐</a>{% endif %}
+                {% if pub.links.pdf %}<a class="pub-btn" href="{{ pub.links.pdf }}" target="_blank">📄 Paper</a>{% endif %}
+                {% if pub.links.code %}<a class="pub-btn" href="{{ pub.links.code }}" target="_blank">💻 Code</a>{% endif %}
+                {% if pub.links.webpage %}<a class="pub-btn" href="{{ pub.links.webpage }}" target="_blank">🌐 Website</a>{% endif %}
+                {% if pub.links.demo %}<a class="pub-btn" href="{{ pub.links.demo }}" target="_blank">👨‍💻 Web Demo</a>{% endif %}
               </div>
             </div>
           </div>
