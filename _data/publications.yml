@@ -39,7 +39,7 @@
   title: "Robust Multi-Agent LLMs Under Byzantine Faults"
   category: conferences
   image: "/pics/robust_llms.png"
-  venue: "Empirical Methods in Natural Language Processing (EMNLP) 2026"
+  venue: "Empirical Methods in Natural Language Processing (EMNLP) 2026 Oral"
   authors: " <strong>Haejoon Lee</strong>*, Vincent-Daniel Yun*, Dimitra Panagou, Sai Praneeth Karimireddy"
   first_coauthors: true
   links:

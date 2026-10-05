@@ -3,74 +3,97 @@ layout: default
 title: Research
 ---
 
+<style>
+  .research-q { margin-bottom: 0.9em; }
+  .research-q .q-text { display: block; }
+  .paper-tags { margin-top: 0.3em; display: flex; flex-wrap: wrap; gap: 0.4em; }
+  .paper-tag {
+    font-size: 0.8em;
+    padding: 0.15em 0.6em;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    text-decoration: none;
+    opacity: 0.8;
+  }
+  .paper-tag:hover { opacity: 1; }
+</style>
 
-<!-- ======= CONTENT BELOW THE HERO ======= -->
 <div class="content-wrap">
   <h2>Research questions I have been working on</h2>
 
+  <p>
+    My research asks how robot teams can coordinate reliably when some members fail or act adversarially,
+    and how that coordination can scale without giving up safety guarantees.
+  </p>
+
   <!-- CATEGORY 1 -->
   <div class="research-category">
-    <h3>Resilience in Multi-Robot Coordination</h3>
+    <h3>Resilient Multi-Robot Networks</h3>
     <ul>
-      <li>
-        <a href="https://ieeexplore.ieee.org/abstract/document/11127420/" target="_blank" class="paper-link">
-          How can multi-robot systems dynamically reconfigure communication networks to achieve resilience against adversarial attacks while guaranteeing physical safety?
+      <li class="research-q">
+        <span class="q-text">What network structures make a team resilient to adversaries?</span>
+        <div class="paper-tags">
+          <a href="https://ieeexplore.ieee.org/abstract/document/10886656" target="_blank" class="paper-tag">CDC '24</a>
+          <a href="https://arxiv.org/pdf/2507.00415" target="_blank" class="paper-tag">TAC '27</a>
+        </div>
       </li>
-      <li>
-        <a href="https://arxiv.org/pdf/2504.03120" target="_blank" class="paper-link">
-         How can multi-robot systems maintain resilient communication networks using only locally available information?
-        </a>
+      <li class="research-q">
+        <span class="q-text">How can moving robots maintain resilient networks despite spatial constraints?</span>
+        <div class="paper-tags">
+          <a href="https://ieeexplore.ieee.org/abstract/document/11127420/" target="_blank" class="paper-tag">ICRA '25</a>
+          <a href="https://arxiv.org/pdf/2504.03120" target="_blank" class="paper-tag">CDC '25</a>
+        </div>
       </li>
     </ul>
   </div>
 
   <!-- CATEGORY 2 -->
   <div class="research-category">
-    <h3>Resilient Network Control</h3>
+    <h3>Resilient Consensus, Learning, and Decision-Making</h3>
     <ul>
-      <li>
-        <a href="https://ieeexplore.ieee.org/abstract/document/10886656" target="_blank" class="paper-link">
-          What structural properties of a network ensure resilience to adversarial attacks?
-        </a>
-      </li>
-      <li>
-        <a href="https://arxiv.org/pdf/2510.01144" target="_blank" class="paper-link">
-          How can systems achieve degraded yet guranateed performance under adversarial attacks, even when the network lacks full robustness?
-        </a>
+      <li class="research-q">
+        <span class="q-text">How can agents agree, learn, and decide reliably despite Byzantine members?</span>
+        <div class="paper-tags">
+          <a href="https://arxiv.org/pdf/2510.01144" target="_blank" class="paper-tag">ACC '26</a>
+          <a href="https://arxiv.org/pdf/2604.02791" target="_blank" class="paper-tag">CDC '26</a>
+          <a href="https://arxiv.org/pdf/2605.09076" target="_blank" class="paper-tag">EMNLP '26</a>
+        </div>
       </li>
     </ul>
   </div>
 
-
-    <!-- CATEGORY 3 -->
+  <!-- CATEGORY 3 -->
   <div class="research-category">
-    <h3>Scalable Optimization-Based Controllers with Regularity and Safety Guarantees</h3>
-     <ul>
-      <li>
-        <a href="https://arxiv.org/pdf/2508.18530" target="_blank" class="paper-link">
-          How can we design optimization-based controllers that guarantee regular control laws while respecting state and input constraints?
-        </a>
-      </li>
-      <li>
-        <a href="https://arxiv.org/pdf/2509.10716" target="_blank" class="paper-link">
-          How can we design optimization-based controllers that scalably and provaly enforce multiple nested safety requirements?
-        </a>
-      </li>
-        <li>
-        <a href="https://arxiv.org/pdf/2505.05502" target="_blank" class="paper-link">
-          How can we design optimization-based controllers that effectively handle infeasible constraints?
-        </a>
+    <h3>Scalable Multi-Robot Planning and Allocation</h3>
+    <ul>
+      <li class="research-q">
+        <span class="q-text">How can robot teams plan and allocate tasks at scale?</span>
+        <div class="paper-tags">
+          <a href="https://arxiv.org/pdf/2607.20992" target="_blank" class="paper-tag">Preprint</a>
+          <a href="https://arxiv.org/pdf/2509.22883" target="_blank" class="paper-tag">ACC '26</a>
+        </div>
       </li>
     </ul>
   </div>
 
   <!-- CATEGORY 4 -->
   <div class="research-category">
-    <h3>Distributed Learning with Resilience</h3>
+    <h3>Safe Optimization-Based Control with Guarantees</h3>
     <ul>
-      <li>
-        <a href="https://arxiv.org/pdf/2604.02791" target="_blank" class="paper-link">
-        How can we design distributed learning algorithms that are resilient to adversarial attacks?      </li>
+      <li class="research-q">
+        <span class="q-text">How can optimization-based controllers stay regular and feasible?</span>
+        <div class="paper-tags">
+          <a href="https://arxiv.org/pdf/2508.18530" target="_blank" class="paper-tag">L-CSS '25</a>
+          <a href="https://arxiv.org/pdf/2505.05502" target="_blank" class="paper-tag">Preprint</a>
+        </div>
+      </li>
+      <li class="research-q">
+        <span class="q-text">How can we enforce complex safety requirements?</span>
+        <div class="paper-tags">
+          <a href="https://arxiv.org/pdf/2509.10716" target="_blank" class="paper-tag">L-CSS '25</a>
+          <a href="https://arxiv.org/pdf/2605.12974" target="_blank" class="paper-tag">RA-L '26</a>
+        </div>
+      </li>
     </ul>
   </div>
 </div>
