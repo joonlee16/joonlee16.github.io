@@ -404,27 +404,19 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
 
       $$\exists\, u \in U \ : \quad L_f h(x) + L_g h(x)\,u \ \ge\ 0, \qquad x \in \partial\mathcal{C}.$$
 
-      <p>Correct, but awkward to build a controller around. The condition lives only on a
-      measure-zero surface, so a controller enforcing it does nothing until the state arrives
-      at the boundary and then must react instantaneously. Sampled at \(100\,\mathrm{Hz}\),
-      "react instantaneously at the boundary" means "react one step after crossing it".</p>
+      <p>Correct, but awkward to build a controller around. The condition only cares about being safer than before.</p>
 
       <p>The fix is to extend it to a condition defined everywhere that <em>reduces</em> to
       Nagumo's at the boundary and relaxes smoothly inward. Pick an extended class
       \(\mathcal{K}_\infty\) function \(\alpha\) — strictly increasing, \(\alpha(0) = 0\),
-      defined on all of \(\mathbb{R}\) so it accepts negative arguments — and require</p>
+      defined on all of \(\mathbb{R}\)— and require</p>
 
       $$\dot h(x,u) \ =\ L_f h(x) + L_g h(x)\,u \ \ge\ -\alpha\big(h(x)\big).$$
 
       <p>At \(h = 0\) the right-hand side is zero and this is exactly \(\dot h \ge 0\). For
       \(h > 0\) it is negative, so \(h\) is allowed to decrease, and the deeper inside you are
-      the faster it may decrease. The constraint interferes only as the margin runs out.</p>
+      the faster it may decrease. The constraint interferes only as the margin goes to zero.</p>
 
-      <p>The proof that this suffices is a comparison argument rather than a tangent-cone one.
-      If the inequality holds along a trajectory, then \(h(x(t))\) is bounded below by the
-      solution of the scalar ODE \(\dot y = -\alpha(y)\) with \(y(0) = h(x(0)) \ge 0\); since
-      \(y = 0\) is an equilibrium of that ODE, \(y(t) \ge 0\) for all \(t\), and therefore
-      \(h(x(t)) \ge 0\).</p>
 
       <div class="nb-key">
         <p>Note what that argument needs: the inequality must hold <em>along the whole
@@ -434,65 +426,13 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         <a href="cbf-qp.html">next page</a> takes that apart.</p>
       </div>
 
-      <h2 id="two-flavours">Two flavours: reciprocal and zeroing</h2>
+      <h2 id="two-flavours">zeroing cbf</h2>
 
-      <p>Historically there are two ways to build a barrier from a constraint function, and the
-      literature from roughly 2014 to 2017 carries both.</p>
-
-      <h3>Reciprocal CBFs</h3>
-
-      <p>A <strong>reciprocal</strong> barrier function \(B\) is built to blow up at the
-      boundary,</p>
-
-      $$B(x) \to \infty \ \text{ as } \ x \to \partial\mathcal{C},
-        \qquad \text{typically} \quad B = \frac{1}{h}
-        \quad \text{or} \quad B = -\log\!\frac{h}{1+h},$$
-
-      <p>and is then required to stay bounded along trajectories, which keeps the state
-      strictly inside. It is a literal barrier: an infinite wall at the edge of the set.</p>
-
-      <p>The drawbacks are what retired it. \(B\) is defined only on
-      \(\mathrm{Int}(\mathcal{C})\), so it certifies invariance of the open interior and says
-      nothing once you touch the boundary. It is numerically ill-conditioned near the edge. And
-      it is fragile in the way that matters most: if a disturbance or model error pushes the
-      state onto or past the boundary, \(B\) is undefined and there is no recovery condition to
-      appeal to. Keeping a reciprocal barrier finite as the state approaches the boundary
-      generally demands unbounded control effort.</p>
-
-      <h3>Zeroing CBFs</h3>
-
-      <p>A <strong>zeroing</strong> barrier function is \(h\) itself, which goes to zero at the
-      boundary rather than to infinity, with the condition \(\dot h \ge -\alpha(h)\) from the
-      previous section. Being finite everywhere, it is defined on both sides of the boundary,
-      and that is exactly what buys robustness: outside the set \(h < 0\), so
+      <p>A <strong>zeroing</strong> barrier function goes to zero at the
+      boundary, with the condition \(\dot h \ge -\alpha(h)\) from the
+      previous section. Outside the set \(h < 0\), so
       \(-\alpha(h) > 0\) and the condition demands that \(h\) <em>increase</em>. It drives the
       state back. The set is not merely invariant but asymptotically stable.</p>
-
-      <figure class="nb-fig">
-        <svg viewBox="0 0 520 232" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A reciprocal barrier blowing up at the boundary beside a zeroing barrier that passes through zero and recovers">
-          <rect x="32" y="32" width="33" height="148" fill="#f2f4f6"/>
-          <line x1="35" y1="180" x2="250" y2="180" stroke="#c8cfd8" stroke-width="1"/>
-          <line x1="65" y1="32" x2="65" y2="188" stroke="#5b6572" stroke-width="1.2" stroke-dasharray="4 3"/>
-          <path d="M 82 40 L 90 87 L 99 110 L 107 124 L 128 143 L 149 152 L 191 161 L 233 166"
-                fill="none" stroke="#0b5fc1" stroke-width="2"/>
-          <text x="168" y="124" font-size="12" fill="#0b5fc1">B = 1/h</text>
-          <text x="254" y="184" font-size="11.5" fill="#5b6572">h</text>
-          <text x="140" y="22" text-anchor="middle" font-size="12" fill="#16181d">reciprocal</text>
-          <text x="48" y="202" text-anchor="middle" font-size="10.5" fill="#5b6572">h &#8804; 0</text>
-          <text x="145" y="220" text-anchor="middle" font-size="11" fill="#5b6572">undefined at and past the boundary</text>
-          <line x1="268" y1="18" x2="268" y2="204" stroke="#e2e6ec" stroke-width="1"/>
-          <rect x="295" y="130" width="200" height="40" fill="#f2f4f6"/>
-          <line x1="295" y1="130" x2="495" y2="130" stroke="#16181d" stroke-width="1.4"/>
-          <path d="M 300 80 L 325 92 L 345 112 L 360 132 L 375 146 L 390 150 L 405 144 L 425 128 L 450 112 L 470 104 L 490 100"
-                fill="none" stroke="#0b5fc1" stroke-width="2"/>
-          <text x="300" y="70" font-size="12" fill="#0b5fc1">h(x(t))</text>
-          <text x="500" y="128" font-size="11.5" fill="#5b6572">0</text>
-          <text x="390" y="22" text-anchor="middle" font-size="12" fill="#16181d">zeroing</text>
-          <text x="330" y="164" font-size="10.5" fill="#5b6572">h &lt; 0</text>
-          <text x="390" y="220" text-anchor="middle" font-size="11" fill="#5b6572">finite on both sides, so recovery is defined</text>
-        </svg>
-        <figcaption>Left, a wall you must never reach. Right, a margin that may go negative and be pushed back positive.</figcaption>
-      </figure>
 
       <div class="nb-table-wrap">
       <table>
@@ -509,9 +449,6 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       </table>
       </div>
 
-      <p>In current usage "control barrier function" means the zeroing kind, and the reciprocal
-      form survives mainly as a historical note. Worth recognising when reading older papers,
-      not worth implementing.</p>
 
       <h2 id="intuition">The intuition worth keeping</h2>
 
@@ -521,42 +458,36 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
         in.</em></p>
       </div>
 
-      <p>That is the shift from the reciprocal picture, and it is why CBFs are usable as a
-      filter around an existing controller. The constraint \(\dot h \ge -\alpha(h)\) is slack
+      <p>The constraint \(\dot h \ge -\alpha(h)\) is slack
       while \(h\) is large: deep inside the set the margin may be spent freely and the nominal
       controller runs untouched. As \(h\) shrinks the permitted rate of decrease shrinks with
       it, so the margin is spent more and more slowly — you decelerate toward the boundary
       rather than being repelled from it. At \(h = 0\) the permitted rate is exactly zero,
-      which is Nagumo's condition, and at that moment the input has to be able to deliver
+      which is Nagumo's condition, and at that moment the input has to be able to ensure
       \(\dot h \ge 0\).</p>
-
-      <p>"Able to deliver" is the real content. It is the requirement that</p>
 
       $$K_{\mathrm{cbf}}(x) = \big\{ u \in U : L_f h(x) + L_g h(x)\,u + \alpha(h(x)) \ge 0 \big\}$$
 
       <p>be nonempty at every state — which at a boundary point needs \(L_g h(x) \neq 0\), so
       that the input has first-order authority over \(h\), and needs \(U\) to be large enough
       to overcome the drift \(L_f h(x)\). A CBF is a certificate that this authority is present
-      everywhere, not that the boundary is far away.</p>
+      everywhere.</p>
 
       <p>Scaling \(\alpha\) up makes the constraint more permissive, letting the state approach
-      faster and brake later; scaling it down keeps the state conservatively inside. This is
-      the main tuning knob, and under input bounds it is not a free one: brake too late and the
-      input required at the boundary exceeds what the actuators can supply.</p>
+      faster and brake later; scaling it down keeps the state conservatively inside.</p>
 
       <h2 id="qp">The CBF-QP</h2>
 
-      <p>Now assemble. You have a nominal controller \(k(x)\) that does whatever the task
-      requires and knows nothing about safety, and a constraint that is affine in \(u\). So ask
-      for the smallest modification to the nominal input that satisfies the constraint:</p>
+      <p>You have a nominal controller \(k(x)\) that does whatever the task
+      requires and knows nothing about safety, and a constraint that is affine in \(u\). So minimally modify
+      the nominal input that satisfies the cbf constraint (and thus ensures safety):</p>
 
       $$\begin{aligned}
         u^\star(x) \ =\ \underset{u \in U}{\arg\min} \quad & \tfrac{1}{2}\big\|u - k(x)\big\|^2 \\
         \text{subject to} \quad & L_f h(x) + L_g h(x)\,u \ \ge\ -\alpha\big(h(x)\big).
       \end{aligned}$$
 
-      <p>A quadratic objective with affine constraints: a quadratic program, solvable in
-      microseconds, which is why this runs at control rate. Several safety constraints are
+      <p>A quadratic objective with affine constraints: a quadratic program. Several safety constraints are
       several rows. A control Lyapunov function for the task can be added as another row,
       usually with a slack variable so that safety takes precedence over stability.</p>
 
@@ -564,20 +495,6 @@ mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; 
       be a PID loop, an MPC, or a learned policy; the filter does not care, and it intervenes
       only when the constraint is about to bind. This is the <em>safety filter</em> pattern.</p>
 
-      <div class="nb-key">
-        <p>Three things are easy to assume here and none is free: that \(K_{\mathrm{cbf}}(x)\)
-        stays nonempty once \(U\) is bounded, that \(u^\star(x)\) depends continuously on
-        \(x\), and that imposing the CBF condition on \(\mathcal{C}\) is the same as imposing
-        it on \(D\). Each fails in identifiable circumstances.</p>
-      </div>
-
-      <h2 id="next">Where this goes</h2>
-
-      <p>The construction above is standard and sound, but every step carries a hypothesis: the
-      regular-value condition on \(h\), the choice of \(D\) over \(\mathcal{C}\), the Lipschitz
-      continuity of the controller the QP produces. Those are the places where the guarantee
-      can quietly stop holding, and the <a href="cbf-qp.html">next page</a> works through the
-      three I found most confusing.</p>
 
       <h2 id="reading">References</h2>
 
