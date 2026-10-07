@@ -1,0 +1,626 @@
+---
+layout: default
+title: Safety as set invariance
+---
+
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      tags: 'none'
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+.nb {
+  --ink: #16181d;
+  --muted: #5b6572;
+  --accent: #0b5fc1;
+  --accent-soft: #eef4fc;
+  --rule: #e2e6ec;
+  --panel: #f7f8fa;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+
+  max-width: 1160px;
+  margin: 2rem auto 4.5rem;
+  padding: 0 20px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.68;
+}
+
+/* ---------- page head ---------- */
+.nb-crumb {
+  font-family: var(--sans);
+  font-size: .82rem;
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+}
+.nb-crumb a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.nb-crumb a:hover { color: var(--accent); border-color: var(--accent); }
+
+.nb-title {
+  font-family: var(--sans);
+  font-size: 2.1rem;
+  font-weight: 650;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  margin: 0 0 .6rem;
+}
+.nb-deck {
+  color: var(--muted);
+  font-size: 1.05rem;
+  margin: 0 0 1.6rem;
+  max-width: 62ch;
+}
+.nb-rule { border: 0; border-top: 1px solid var(--rule); margin: 0 0 2.2rem; }
+
+/* ---------- two-column shell ---------- */
+.nb-grid { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 52px; align-items: start; }
+.nb-body { min-width: 0; }
+
+.nb-toc { position: sticky; top: 24px; font-family: var(--sans); font-size: .85rem; }
+.nb-toc-head { font-weight: 650; margin-bottom: .6rem; font-size: .8rem; color: var(--ink); }
+.nb-toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+.nb-toc li { margin: 0 0 .38rem; padding-left: 1.5rem; text-indent: -1.5rem; }
+.nb-toc li::before {
+  counter-increment: toc; content: counter(toc) ". ";
+  color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.nb-toc a { color: var(--muted); text-decoration: none; }
+.nb-toc a:hover { color: var(--accent); }
+
+/* ---------- typography ---------- */
+.nb-body { counter-reset: sec; }
+.nb-body > h2 {
+  font-family: var(--sans);
+  font-size: 1.32rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  margin: 3rem 0 .9rem;
+  padding-top: .2rem;
+  scroll-margin-top: 20px;
+}
+.nb-body > h2::before {
+  counter-increment: sec;
+  content: counter(sec) ".";
+  color: var(--accent);
+  margin-right: .5rem;
+  font-variant-numeric: tabular-nums;
+}
+.nb-body > h2:first-child { margin-top: 0; }
+.nb-body h3 {
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  font-weight: 650;
+  margin: 1.9rem 0 .5rem;
+}
+.nb-body p { margin: 0 0 1rem; max-width: 72ch; }
+.nb-body ul, .nb-body ol { max-width: 70ch; padding-left: 1.35rem; margin: 0 0 1.1rem; }
+.nb-body li { margin-bottom: .38rem; }
+.nb-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+.nb-body a:hover { border-bottom-color: var(--accent); }
+.nb-body strong { font-weight: 600; }
+.nb-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em; background: var(--panel); padding: .1em .35em; border-radius: 3px;
+}
+
+/* ---------- blocks ---------- */
+.nb-key {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  padding: .85rem 1.1rem;
+  margin: 1.4rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.nb-key p { margin: 0; }
+.nb-key p + p { margin-top: .6rem; }
+
+.nb-eg {
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: .9rem 1.1rem .3rem;
+  margin: 1.4rem 0;
+  background: #fff;
+}
+.nb-eg-label {
+  font-family: var(--sans); font-size: .78rem; font-weight: 650;
+  color: var(--muted); margin-bottom: .5rem;
+}
+
+.nb-src { font-family: var(--sans); font-size: .78rem; color: var(--muted); margin-top: .55rem !important; }
+
+/* ---------- figures ---------- */
+.nb-fig { margin: 1.9rem 0; }
+.nb-fig svg, .nb-fig img {
+  display: block; width: 100%; height: auto; max-width: 620px; margin: 0 auto;
+}
+.nb-fig img { border: 1px solid var(--rule); border-radius: 4px; }
+.nb-fig figcaption {
+  font-family: var(--sans); font-size: .82rem; color: var(--muted);
+  margin-top: .7rem; text-align: center; max-width: 60ch; margin-left: auto; margin-right: auto;
+}
+.nb-fig text { font-family: var(--sans); }
+
+/* ---------- tables ---------- */
+.nb-table-wrap { overflow-x: auto; margin: 1.6rem 0; }
+.nb-body table { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: .87rem; }
+.nb-body th, .nb-body td {
+  text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top;
+}
+.nb-body th { font-weight: 650; border-bottom: 1.5px solid var(--ink); white-space: nowrap; }
+.nb-body tbody tr:last-child td { border-bottom: none; }
+
+/* ---------- math ---------- */
+mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+
+/* ---------- prev / next ---------- */
+.nb-pager {
+  display: flex; justify-content: space-between; gap: 1rem;
+  margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: .88rem;
+}
+.nb-pager a { color: var(--accent); text-decoration: none; }
+.nb-pager a:hover { text-decoration: underline; }
+.nb-pager span { color: #b9c0c9; }
+
+@media (max-width: 900px) {
+  .nb { font-size: 16px; }
+  .nb-grid { grid-template-columns: 1fr; gap: 0; }
+  .nb-toc {
+    position: static; order: -1; border: 1px solid var(--rule);
+    border-radius: 5px; padding: .9rem 1.1rem; margin-bottom: 2rem; background: var(--panel);
+  }
+  .nb-title { font-size: 1.72rem; }
+}
+</style>
+
+{% raw %}
+<div class="nb">
+
+  <div class="nb-crumb"><a href="../notes.html">Notes</a> &middot; Safety as set invariance</div>
+  <h1 class="nb-title">Safety as set invariance</h1>
+  <p class="nb-deck">What it means for a system to be safe, why that question turns into a
+  question about sets, and how Nagumo's theorem for an uncontrolled system becomes the
+  control barrier function quadratic program.</p>
+  <hr class="nb-rule">
+
+  <div class="nb-grid">
+    <div class="nb-body">
+
+      <h2 id="constraint">Definition</h2>
+
+      <p>The standard way to write that down is with a scalar <strong>constraint
+      function</strong> \(h : \mathbb{R}^n \to \mathbb{R}\), continuously differentiable,
+      chosen so that \(h\\geq 0) means the state is safe.
+      For example:</p>
+
+      <ul>
+        <li>Circular obstacle avoidance: \(h(x) = \|p - p_{\mathrm{obs}}\|^2 - r^2\), positive when the
+        robot is farther than \(r\) from the obstacle centre.</li>
+        <li>Speed limit: \(h(x) = v_{\max}^2 - v^2\).</li>
+      </ul>
+
+      <p>Usually, <strong>non-negative means safe</strong>.</p>
+
+      <h2 id="level-sets">Superlevel, sublevel, and level sets</h2>
+
+      <p>Given \(h\), three sets matter:</p>
+
+      $$\underbrace{\mathcal{C} = \{x : h(x) \ge 0\}}_{\text{0-superlevel set}}, \qquad
+        \underbrace{\partial\mathcal{C} = \{x : h(x) = 0\}}_{\text{0-level set}}, \qquad
+        \underbrace{\{x : h(x) \le 0\}}_{\text{0-sublevel set}}.$$
+
+      <p>\(\mathcal{C}\) is the <strong>safe set</strong>. Its interior
+      \(\mathrm{Int}(\mathcal{C}) = \{h \ge 0\}\) is where you are safe, and outside of the superlevel set, you are unsafe.</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 232" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Nested level sets of h, with the safe superlevel set shaded and the zero level set as its boundary">
+          <ellipse cx="150" cy="116" rx="112" ry="82" fill="none" stroke="#c8cfd8" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <ellipse cx="150" cy="116" rx="85" ry="62" fill="#eef4fc" stroke="#16181d" stroke-width="2.2"/>
+          <ellipse cx="150" cy="116" rx="55" ry="40" fill="none" stroke="#9fb6d4" stroke-width="1.1"/>
+          <ellipse cx="150" cy="116" rx="28" ry="20" fill="none" stroke="#9fb6d4" stroke-width="1.1"/>
+          <circle cx="150" cy="116" r="2.6" fill="#9fb6d4"/>
+          <circle cx="205" cy="116" r="2.8" fill="#5b6572"/><circle cx="235" cy="116" r="2.8" fill="#16181d"/><circle cx="262" cy="116" r="2.8" fill="#5b6572"/>
+          <line x1="205" y1="116" x2="296" y2="68" stroke="#c8cfd8" stroke-width="1"/>
+          <line x1="235" y1="116" x2="296" y2="104" stroke="#c8cfd8" stroke-width="1"/>
+          <line x1="262" y1="116" x2="296" y2="140" stroke="#c8cfd8" stroke-width="1"/>
+          <text x="306" y="42" fill="#16181d" font-size="12.5">C = {x : h(x) &#8805; 0}</text>
+          <text x="306" y="72" fill="#5b6572" font-size="12">h &gt; 0, interior, with margin</text>
+          <text x="306" y="108" fill="#16181d" font-size="12">h = 0, the boundary</text>
+          <text x="306" y="144" fill="#5b6572" font-size="12">h &lt; 0, unsafe</text>
+          <text x="150" y="222" text-anchor="middle" font-size="11.5" fill="#5b6572">the thin curves are level sets of h at positive values</text>
+        </svg>
+        <figcaption>Safety has been converted from a property of trajectories into a property of a set. Everything after this is about keeping the state inside it.</figcaption>
+      </figure>
+
+      <div class="nb-key">
+        <p>One technical condition recurs throughout: \(0\) should be a <strong>regular
+        value</strong> of \(h\). That means \(\nabla h(x) \neq 0\) for every
+        \(x \in \partial\mathcal{C}\). Geometrically, the boundary is then a genuine surface
+        with a well-defined normal rather than a point where \(h\) touches zero tangentially.</p>
+      </div>
+
+      <h2 id="nagumo">Forward invariance and Nagumo's theorem</h2>
+
+      <p>For an autonomous system \(\dot x = f(x)\) with \(f\)
+      locally Lipschitz, the set \(\mathcal{C}\) is <strong>forward invariant</strong> if every
+      trajectory starting inside stays inside:</p>
+
+      $$x(0) \in \mathcal{C} \quad \Longrightarrow \quad x(t) \in \mathcal{C}
+        \ \text{ for all } t \ge 0.$$
+
+      <p>That quantifies over every trajectory and all time. Nagumo's theorem converts it into a pointwise condition.</p>
+
+      <p>We define the<strong>tangent cone</strong>, the set of directions pointing
+      into \(\mathcal{C}\) or along its boundary \(\partial\mathcal{C}\):</p>
+
+      $$T_{\mathcal{C}}(x) = \left\{ v \in \mathbb{R}^n \ :\
+        \liminf_{\tau \to 0^+} \frac{\mathrm{dist}(x + \tau v,\ \mathcal{C})}{\tau} = 0 \right\}.$$
+
+      <div class="nb-key">
+        <p><strong>Nagumo's theorem.</strong> For \(\dot x = f(x)\) with \(f\) locally
+        Lipschitz and \(\mathcal{C}\) closed, \(\mathcal{C}\) is forward invariant if and only
+        if</p>
+        $$f(x) \in T_{\mathcal{C}}(x) \qquad \text{for all } x \in \mathcal{C}.$$
+      </div>
+
+      <p>At an interior point, the tangent cone is all of
+      \(\mathbb{R}^n\). What that means is that from strictly inside, every direction keeps you inside for at least a
+      short time, which is trivial. What really matters is at the <strong>boundary</strong> \(\partial\mathcal{C}\).</p>
+
+      <p>And at the boundary, when \(0\) is a regular value of \(h\), the tangent cone is a
+      half-space determined by the gradient,</p>
+
+      $$T_{\mathcal{C}}(x) = \big\{ v : \nabla h(x)^\top v \ge 0 \big\},
+        \qquad x \in \partial\mathcal{C},$$
+
+      <p>so the theorem collapses to one scalar inequality:</p>
+
+      $$\dot{h}(x) = \nabla h(x)^\top f(x) \ \ge\ 0 \qquad \text{for all } x \in \partial\mathcal{C}.$$
+
+      <p><strong>In words: on the boundary the vector field must not point outward.</strong> It may point
+      inward, or run exactly along the boundary.</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 226" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="At a boundary point the tangent cone is a half space and the vector field must lie in it">
+          <path d="M 40 70 Q 260 160 480 70 L 480 200 L 40 200 Z" fill="#f7f8fa"/>
+          <path d="M 190 115 A 70 70 0 0 0 330 115 Z" fill="#eef4fc"/>
+          <path d="M 40 70 Q 260 160 480 70" fill="none" stroke="#16181d" stroke-width="2"/>
+          <line x1="176" y1="115" x2="344" y2="115" stroke="#5b6572" stroke-width="1" stroke-dasharray="4 3"/>
+          <line x1="260" y1="115" x2="260" y2="172" stroke="#0b5fc1" stroke-width="2"/>
+          <path d="M 260 172 l -4.4 -8 h 8.8 z" fill="#0b5fc1"/>
+          <text x="268" y="160" font-size="12" fill="#0b5fc1">&#8711;h</text>
+          <line x1="260" y1="115" x2="326" y2="148" stroke="#16181d" stroke-width="2"/>
+          <path d="M 326 148 l -8.8 -1.2 l 3.6 7.8 z" fill="#16181d"/>
+          <text x="334" y="152" font-size="12" fill="#16181d">allowed</text>
+          <line x1="260" y1="115" x2="194" y2="82" stroke="#b03030" stroke-width="2"/>
+          <path d="M 194 82 l 8.8 1.2 l -3.6 -7.8 z" fill="#b03030"/>
+          <text x="188" y="78" text-anchor="end" font-size="12" fill="#b03030">leaves</text>
+          <circle cx="260" cy="115" r="4.5" fill="#16181d"/>
+          <text x="74" y="186" font-size="12.5" fill="#5b6572">C</text>
+          <text x="74" y="56" font-size="12.5" fill="#5b6572">h &lt; 0</text>
+          <text x="260" y="218" text-anchor="middle" font-size="11.5" fill="#5b6572">the shaded wedge is the tangent cone, the half space &#8711;h &#183; v &#8805; 0</text>
+        </svg>
+        <figcaption>Nagumo's condition at a boundary point. Interior points impose nothing, because there the cone is the whole space.</figcaption>
+      </figure>
+
+      <h2 id="controlled">From invariance to controlled invariance</h2>
+
+      <p>For a control-affine system</p>
+
+      $$\dot x = f(x) + g(x)\,u, \qquad u \in U \subset \mathbb{R}^m,$$
+
+      <div class="nb-key">
+        <p><strong>Controlled invariance</strong> is a property of the <em>set</em>. For every
+        \(x \in \mathcal{C}\) there <em>exists</em> some \(u \in U\) with
+        \(f(x) + g(x)u \in T_{\mathcal{C}}(x)\). Note it only says that a safe control input always exists for the set.</p>
+        <p><strong>Forward invariance</strong> is a property of the <em>closed loop</em>. Given
+        a specific policy \(u = \pi(x)\), every trajectory of
+        \(\dot x = f(x) + g(x)\pi(x)\) starting in \(\mathcal{C}\) stays in
+        \(\mathcal{C}\).</p>
+      </div>
+
+      <p>Controlled invariance is necessary for safety. If some state in \(\mathcal{C}\)
+      admits no safe input at all, we can't ensure safety with any controller. 
+      But we also need a forward invariant controller to actually find the safe control input.</p>
+
+      <p>So the design problem is: <em>given a controlled invariant set, construct a policy
+      that renders it forward invariant.</em> That is what a control barrier function is
+      for.</p>
+
+      <h2 id="lie">Vector fields and Lie derivatives</h2>
+
+      <p>The <strong>Lie derivative</strong> of a scalar function \(h\) along a vector field
+      \(f\) is the directional derivative of \(h\) in the direction \(f\):</p>
+
+      $$L_f h(x) \ =\ \nabla h(x)^\top f(x) \ =\ \frac{\partial h}{\partial x}(x)\, f(x).$$
+
+      <p>It is a scalar, shows how \(f\) affects \(h\). The Lie
+      derivative is the component of the vector field along that normal, so its sign is the
+      in-or-out question: \(L_f h > 0\) means the flow carries you deeper into
+      \(\mathcal{C}\), \(L_f h < 0\) means it carries you out, and \(L_f h = 0\) means it runs
+      parallel to the level set.</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 212" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The gradient normal to a level set, with the vector field projected onto it to give the Lie derivative">
+          <path d="M 70 70 Q 260 88 450 60" fill="none" stroke="#c8cfd8" stroke-width="1.2"/>
+          <path d="M 70 115 Q 260 133 450 105" fill="none" stroke="#c8cfd8" stroke-width="1.2"/>
+          <path d="M 70 160 Q 260 180 450 150" fill="none" stroke="#16181d" stroke-width="2"/>
+          <text x="458" y="64" font-size="11.5" fill="#5b6572">h = 2</text>
+          <text x="458" y="109" font-size="11.5" fill="#5b6572">h = 1</text>
+          <text x="458" y="154" font-size="11.5" fill="#16181d">h = 0</text>
+          <line x1="260" y1="168" x2="260" y2="118" stroke="#0b5fc1" stroke-width="2"/>
+          <path d="M 260 118 l -4.4 8 h 8.8 z" fill="#0b5fc1"/>
+          <text x="272" y="122" font-size="12" fill="#0b5fc1">&#8711;h</text>
+          <line x1="260" y1="168" x2="340" y2="134" stroke="#16181d" stroke-width="2"/>
+          <path d="M 340 134 l -8.6 -2.2 l 2.6 8.4 z" fill="#16181d"/>
+          <text x="348" y="134" font-size="12" fill="#16181d">f(x)</text>
+          <line x1="340" y1="134" x2="252" y2="134" stroke="#5b6572" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="238" y1="168" x2="238" y2="134" stroke="#5b6572" stroke-width="1.2"/>
+          <line x1="234" y1="168" x2="242" y2="168" stroke="#5b6572" stroke-width="1.2"/>
+          <line x1="234" y1="134" x2="242" y2="134" stroke="#5b6572" stroke-width="1.2"/>
+          <text x="198" y="155" font-size="11.5" fill="#5b6572">L</text>
+          <text x="205" y="158" font-size="8.5" fill="#5b6572">f</text>
+          <text x="210" y="155" font-size="11.5" fill="#5b6572">h</text>
+          <circle cx="260" cy="168" r="4.5" fill="#16181d"/>
+          <text x="260" y="202" text-anchor="middle" font-size="11.5" fill="#5b6572">the component of the flow along the inward normal is the rate of change of h</text>
+        </svg>
+        <figcaption>The gradient supplies the direction; the Lie derivative says how much of the vector field points that way.</figcaption>
+      </figure>
+
+      <p>Apply the chain rule to the controlled system and the rate of change of \(h\) splits
+      cleanly in two:</p>
+
+      $$\frac{d}{dt} h(x(t)) \ =\ \nabla h^\top \big(f(x) + g(x)u\big)
+        \ =\ \underbrace{L_f h(x)}_{\text{drift}} \ +\ \underbrace{L_g h(x)\,u}_{\text{control}} .$$
+
+      <p>Here \(L_g h(x) = \nabla h(x)^\top g(x)\) is a <em>row vector</em> in
+      \(\mathbb{R}^{1\times m}\), one entry per input channel, each saying how strongly that
+      channel moves \(h\). This decomposition is the whole reason control barrier functions
+      work:</p>
+
+      <ul>
+        <li>\(L_f h\) is what the system does to your safety margin on its own. You get no say
+        in it.</li>
+        <li>\(L_g h\,u\) is your authority over that margin, and it is <strong>linear in
+        \(u\)</strong>. Any requirement of the form \(\dot h \ge \text{something}\) is
+        therefore an affine inequality in the decision variable.</li>
+        <li>If \(L_g h(x) = 0\) you have no first-order authority at all: at this instant the
+        input cannot influence \(h\), whatever you do. That is the relative-degree problem, and
+        it is what exponential and high-order CBFs exist to handle.</li>
+      </ul>
+
+      <h2 id="from-nagumo">From Nagumo to a condition you can enforce</h2>
+
+      <p>Combining the last two sections, controlled invariance at a boundary point reads</p>
+
+      $$\exists\, u \in U \ : \quad L_f h(x) + L_g h(x)\,u \ \ge\ 0, \qquad x \in \partial\mathcal{C}.$$
+
+      <p>Correct, but awkward to build a controller around. The condition lives only on a
+      measure-zero surface, so a controller enforcing it does nothing until the state arrives
+      at the boundary and then must react instantaneously. Sampled at \(100\,\mathrm{Hz}\),
+      "react instantaneously at the boundary" means "react one step after crossing it".</p>
+
+      <p>The fix is to extend it to a condition defined everywhere that <em>reduces</em> to
+      Nagumo's at the boundary and relaxes smoothly inward. Pick an extended class
+      \(\mathcal{K}_\infty\) function \(\alpha\) — strictly increasing, \(\alpha(0) = 0\),
+      defined on all of \(\mathbb{R}\) so it accepts negative arguments — and require</p>
+
+      $$\dot h(x,u) \ =\ L_f h(x) + L_g h(x)\,u \ \ge\ -\alpha\big(h(x)\big).$$
+
+      <p>At \(h = 0\) the right-hand side is zero and this is exactly \(\dot h \ge 0\). For
+      \(h > 0\) it is negative, so \(h\) is allowed to decrease, and the deeper inside you are
+      the faster it may decrease. The constraint interferes only as the margin runs out.</p>
+
+      <p>The proof that this suffices is a comparison argument rather than a tangent-cone one.
+      If the inequality holds along a trajectory, then \(h(x(t))\) is bounded below by the
+      solution of the scalar ODE \(\dot y = -\alpha(y)\) with \(y(0) = h(x(0)) \ge 0\); since
+      \(y = 0\) is an equilibrium of that ODE, \(y(t) \ge 0\) for all \(t\), and therefore
+      \(h(x(t)) \ge 0\).</p>
+
+      <div class="nb-key">
+        <p>Note what that argument needs: the inequality must hold <em>along the whole
+        trajectory</em>, not merely at points of \(\mathcal{C}\). That is why the CBF condition
+        is stated on a domain \(D \supset \mathcal{C}\) rather than on \(\mathcal{C}\) alone,
+        and it is where the regular-value condition from section 2 comes back. The
+        <a href="cbf-qp.html">next page</a> takes that apart.</p>
+      </div>
+
+      <h2 id="two-flavours">Two flavours: reciprocal and zeroing</h2>
+
+      <p>Historically there are two ways to build a barrier from a constraint function, and the
+      literature from roughly 2014 to 2017 carries both.</p>
+
+      <h3>Reciprocal CBFs</h3>
+
+      <p>A <strong>reciprocal</strong> barrier function \(B\) is built to blow up at the
+      boundary,</p>
+
+      $$B(x) \to \infty \ \text{ as } \ x \to \partial\mathcal{C},
+        \qquad \text{typically} \quad B = \frac{1}{h}
+        \quad \text{or} \quad B = -\log\!\frac{h}{1+h},$$
+
+      <p>and is then required to stay bounded along trajectories, which keeps the state
+      strictly inside. It is a literal barrier: an infinite wall at the edge of the set.</p>
+
+      <p>The drawbacks are what retired it. \(B\) is defined only on
+      \(\mathrm{Int}(\mathcal{C})\), so it certifies invariance of the open interior and says
+      nothing once you touch the boundary. It is numerically ill-conditioned near the edge. And
+      it is fragile in the way that matters most: if a disturbance or model error pushes the
+      state onto or past the boundary, \(B\) is undefined and there is no recovery condition to
+      appeal to. Keeping a reciprocal barrier finite as the state approaches the boundary
+      generally demands unbounded control effort.</p>
+
+      <h3>Zeroing CBFs</h3>
+
+      <p>A <strong>zeroing</strong> barrier function is \(h\) itself, which goes to zero at the
+      boundary rather than to infinity, with the condition \(\dot h \ge -\alpha(h)\) from the
+      previous section. Being finite everywhere, it is defined on both sides of the boundary,
+      and that is exactly what buys robustness: outside the set \(h < 0\), so
+      \(-\alpha(h) > 0\) and the condition demands that \(h\) <em>increase</em>. It drives the
+      state back. The set is not merely invariant but asymptotically stable.</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 232" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A reciprocal barrier blowing up at the boundary beside a zeroing barrier that passes through zero and recovers">
+          <rect x="32" y="32" width="33" height="148" fill="#f2f4f6"/>
+          <line x1="35" y1="180" x2="250" y2="180" stroke="#c8cfd8" stroke-width="1"/>
+          <line x1="65" y1="32" x2="65" y2="188" stroke="#5b6572" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <path d="M 82 40 L 90 87 L 99 110 L 107 124 L 128 143 L 149 152 L 191 161 L 233 166"
+                fill="none" stroke="#0b5fc1" stroke-width="2"/>
+          <text x="168" y="124" font-size="12" fill="#0b5fc1">B = 1/h</text>
+          <text x="254" y="184" font-size="11.5" fill="#5b6572">h</text>
+          <text x="140" y="22" text-anchor="middle" font-size="12" fill="#16181d">reciprocal</text>
+          <text x="48" y="202" text-anchor="middle" font-size="10.5" fill="#5b6572">h &#8804; 0</text>
+          <text x="145" y="220" text-anchor="middle" font-size="11" fill="#5b6572">undefined at and past the boundary</text>
+          <line x1="268" y1="18" x2="268" y2="204" stroke="#e2e6ec" stroke-width="1"/>
+          <rect x="295" y="130" width="200" height="40" fill="#f2f4f6"/>
+          <line x1="295" y1="130" x2="495" y2="130" stroke="#16181d" stroke-width="1.4"/>
+          <path d="M 300 80 L 325 92 L 345 112 L 360 132 L 375 146 L 390 150 L 405 144 L 425 128 L 450 112 L 470 104 L 490 100"
+                fill="none" stroke="#0b5fc1" stroke-width="2"/>
+          <text x="300" y="70" font-size="12" fill="#0b5fc1">h(x(t))</text>
+          <text x="500" y="128" font-size="11.5" fill="#5b6572">0</text>
+          <text x="390" y="22" text-anchor="middle" font-size="12" fill="#16181d">zeroing</text>
+          <text x="330" y="164" font-size="10.5" fill="#5b6572">h &lt; 0</text>
+          <text x="390" y="220" text-anchor="middle" font-size="11" fill="#5b6572">finite on both sides, so recovery is defined</text>
+        </svg>
+        <figcaption>Left, a wall you must never reach. Right, a margin that may go negative and be pushed back positive.</figcaption>
+      </figure>
+
+      <div class="nb-table-wrap">
+      <table>
+        <thead>
+          <tr><th></th><th>Reciprocal (RCBF)</th><th>Zeroing (ZCBF)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Behaviour at \(\partial\mathcal{C}\)</td><td>\(B \to \infty\)</td><td>\(h \to 0\)</td></tr>
+          <tr><td>Domain</td><td>\(\mathrm{Int}(\mathcal{C})\) only</td><td>all of \(D \supset \mathcal{C}\)</td></tr>
+          <tr><td>Guarantee</td><td>invariance of the interior</td><td>invariance of \(\mathcal{C}\), plus asymptotic stability of \(\mathcal{C}\)</td></tr>
+          <tr><td>Recovery from \(h &lt; 0\)</td><td>undefined</td><td>built into the condition</td></tr>
+          <tr><td>Conditioning near the edge</td><td>poor; effort grows without bound</td><td>benign</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>In current usage "control barrier function" means the zeroing kind, and the reciprocal
+      form survives mainly as a historical note. Worth recognising when reading older papers,
+      not worth implementing.</p>
+
+      <h2 id="intuition">The intuition worth keeping</h2>
+
+      <div class="nb-key">
+        <p>A zeroing CBF does not keep you away from the boundary. It lets you go right up to
+        it, and only insists that <em>when you get there, you still have the authority to stay
+        in.</em></p>
+      </div>
+
+      <p>That is the shift from the reciprocal picture, and it is why CBFs are usable as a
+      filter around an existing controller. The constraint \(\dot h \ge -\alpha(h)\) is slack
+      while \(h\) is large: deep inside the set the margin may be spent freely and the nominal
+      controller runs untouched. As \(h\) shrinks the permitted rate of decrease shrinks with
+      it, so the margin is spent more and more slowly — you decelerate toward the boundary
+      rather than being repelled from it. At \(h = 0\) the permitted rate is exactly zero,
+      which is Nagumo's condition, and at that moment the input has to be able to deliver
+      \(\dot h \ge 0\).</p>
+
+      <p>"Able to deliver" is the real content. It is the requirement that</p>
+
+      $$K_{\mathrm{cbf}}(x) = \big\{ u \in U : L_f h(x) + L_g h(x)\,u + \alpha(h(x)) \ge 0 \big\}$$
+
+      <p>be nonempty at every state — which at a boundary point needs \(L_g h(x) \neq 0\), so
+      that the input has first-order authority over \(h\), and needs \(U\) to be large enough
+      to overcome the drift \(L_f h(x)\). A CBF is a certificate that this authority is present
+      everywhere, not that the boundary is far away.</p>
+
+      <p>Scaling \(\alpha\) up makes the constraint more permissive, letting the state approach
+      faster and brake later; scaling it down keeps the state conservatively inside. This is
+      the main tuning knob, and under input bounds it is not a free one: brake too late and the
+      input required at the boundary exceeds what the actuators can supply.</p>
+
+      <h2 id="qp">The CBF-QP</h2>
+
+      <p>Now assemble. You have a nominal controller \(k(x)\) that does whatever the task
+      requires and knows nothing about safety, and a constraint that is affine in \(u\). So ask
+      for the smallest modification to the nominal input that satisfies the constraint:</p>
+
+      $$\begin{aligned}
+        u^\star(x) \ =\ \underset{u \in U}{\arg\min} \quad & \tfrac{1}{2}\big\|u - k(x)\big\|^2 \\
+        \text{subject to} \quad & L_f h(x) + L_g h(x)\,u \ \ge\ -\alpha\big(h(x)\big).
+      \end{aligned}$$
+
+      <p>A quadratic objective with affine constraints: a quadratic program, solvable in
+      microseconds, which is why this runs at control rate. Several safety constraints are
+      several rows. A control Lyapunov function for the task can be added as another row,
+      usually with a slack variable so that safety takes precedence over stability.</p>
+
+      <p>The structure is modular in a way that matters in practice. The nominal controller can
+      be a PID loop, an MPC, or a learned policy; the filter does not care, and it intervenes
+      only when the constraint is about to bind. This is the <em>safety filter</em> pattern.</p>
+
+      <div class="nb-key">
+        <p>Three things are easy to assume here and none is free: that \(K_{\mathrm{cbf}}(x)\)
+        stays nonempty once \(U\) is bounded, that \(u^\star(x)\) depends continuously on
+        \(x\), and that imposing the CBF condition on \(\mathcal{C}\) is the same as imposing
+        it on \(D\). Each fails in identifiable circumstances.</p>
+      </div>
+
+      <h2 id="next">Where this goes</h2>
+
+      <p>The construction above is standard and sound, but every step carries a hypothesis: the
+      regular-value condition on \(h\), the choice of \(D\) over \(\mathcal{C}\), the Lipschitz
+      continuity of the controller the QP produces. Those are the places where the guarantee
+      can quietly stop holding, and the <a href="cbf-qp.html">next page</a> works through the
+      three I found most confusing.</p>
+
+      <h2 id="reading">References</h2>
+
+      <ul>
+        <li>Nagumo, &ldquo;&Uuml;ber die Lage der Integralkurven gew&ouml;hnlicher
+        Differentialgleichungen,&rdquo; 1942. The original invariance theorem; Blanchini's
+        survey &ldquo;Set invariance in control&rdquo; (<em>Automatica</em>, 1999) is the
+        readable modern account.</li>
+        <li>Ames, Xu, Grizzle, Tabuada, &ldquo;Control barrier function based quadratic
+        programs for safety critical systems,&rdquo; <em>IEEE TAC</em> 62(8), 2017. Defines
+        both the reciprocal and zeroing forms and relates them.</li>
+        <li>Xu, Tabuada, Grizzle, Ames, &ldquo;Robustness of control barrier functions for
+        safety critical control,&rdquo; ADHS 2015. The robustness argument that settles the
+        question in favour of the zeroing form.</li>
+        <li>Ames, Coogan, Egerstedt, Notomista, Sreenath, Tabuada, &ldquo;Control Barrier
+        Functions: Theory and Applications,&rdquo; ECC 2019
+        (<a href="https://arxiv.org/abs/1903.11199">arXiv:1903.11199</a>). The standard
+        tutorial reference and the source of the definitions used here.</li>
+      </ul>
+
+      <div class="nb-pager">
+        <a href="control-design.html">&larr; Control law design</a>
+        <a href="cbf-qp.html">CBF-QP: three clarifications &rarr;</a>
+      </div>
+    </div>
+
+    <nav class="nb-toc" aria-label="On this page">
+      <div class="nb-toc-head">On this page</div>
+      <ol>
+        <li><a href="#constraint">Safety is a constraint</a></li>
+        <li><a href="#level-sets">Level sets</a></li>
+        <li><a href="#nagumo">Nagumo's theorem</a></li>
+        <li><a href="#controlled">Controlled invariance</a></li>
+        <li><a href="#lie">Lie derivatives</a></li>
+        <li><a href="#from-nagumo">A condition you can enforce</a></li>
+        <li><a href="#two-flavours">Reciprocal and zeroing</a></li>
+        <li><a href="#intuition">The intuition</a></li>
+        <li><a href="#qp">The CBF-QP</a></li>
+        <li><a href="#next">Where this goes</a></li>
+        <li><a href="#reading">References</a></li>
+      </ol>
+    </nav>
+  </div>
+
+</div>
+{% endraw %}
