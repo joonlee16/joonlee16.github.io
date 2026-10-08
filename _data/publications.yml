@@ -91,7 +91,7 @@
   links:
     pdf: "https://arxiv.org/pdf/2509.10716"
     code: "https://github.com/joonlee16/combinatorial_cbf"
-    demo: "demos/combinatorial_cbf.html"
+    demo: "playground/comb-cbf.html"
 
 - year: 2025
   title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
