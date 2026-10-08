@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Combinatorial CBF Patrol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f14; --panel:rgba(14,19,26,.82); --line:rgba(255,255,255,.09);
+    --ink:#e6edf3; --mute:#8b98a5; --l1:#2dd4bf; --l2:#f5a524; --out:#94a3b8;
+    --ok:#4ade80; --bad:#f87171; --accent:#7dd3fc;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;overflow:hidden}
+  #scene{position:fixed;inset:0}
+  .panel{position:fixed;background:var(--panel);backdrop-filter:blur(10px);
+    border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .mono{font-family:"IBM Plex Mono",monospace}
+  /* title */
+  #title{top:16px;left:16px;max-width:380px}
+  #title h1{font-size:15px;margin:0 0 4px;font-weight:600;letter-spacing:.2px}
+  #title p{margin:0;color:var(--mute);font-size:12.5px;line-height:1.5}
+  #title .eq{margin-top:10px;font-size:11.5px;color:var(--accent);line-height:1.6}
+  #title a{color:var(--accent)}
+  /* counters */
+  #hud{top:16px;right:16px;width:290px}
+  .hudrow{display:grid;grid-template-columns:1fr auto;align-items:center;
+    padding:9px 0;border-bottom:1px solid var(--line)}
+  .hudrow:last-of-type{border-bottom:none}
+  .hudlabel{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:8px}
+  .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .big{font-family:"IBM Plex Mono",monospace;font-size:30px;font-weight:600;line-height:1}
+  .req{font-size:11px;color:var(--mute);margin-left:4px}
+  .pips{display:flex;gap:3px;margin-top:6px}
+  .pip{flex:1;max-width:14px;height:5px;border-radius:2px;background:rgba(255,255,255,.08)}
+  #status{margin-top:10px;padding:9px 10px;border-radius:8px;font-size:12px;
+    display:flex;justify-content:space-between;align-items:center}
+  #status.safe{background:rgba(74,222,128,.1);color:var(--ok)}
+  #status.unsafe{background:rgba(248,113,113,.12);color:var(--bad)}
+  #metrics{margin-top:8px;font-size:11px;color:var(--mute);display:grid;
+    grid-template-columns:1fr 1fr;gap:4px 10px}
+  #metrics b{color:var(--ink);font-weight:500}
+  /* controls */
+  #ctrl{left:16px;bottom:16px;width:380px}
+  .crow{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:12px}
+  .crow label{color:var(--mute);width:118px;flex:none}
+  .crow input[type=range]{flex:1;accent-color:var(--accent)}
+  .crow .val{width:42px;text-align:right;font-family:"IBM Plex Mono",monospace;font-size:11.5px}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  button{background:rgba(255,255,255,.06);color:var(--ink);border:1px solid var(--line);
+    border-radius:8px;padding:7px 11px;font:500 12px "IBM Plex Sans",sans-serif;cursor:pointer}
+  button:hover{background:rgba(255,255,255,.12)}
+  button.on{background:rgba(125,211,252,.16);border-color:rgba(125,211,252,.5);color:var(--accent)}
+  button.off{background:rgba(248,113,113,.14);border-color:rgba(248,113,113,.5);color:var(--bad)}
+  .toggles{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin-top:6px}
+  .toggles input{accent-color:var(--accent)}
+  /* chart */
+  #chartbox{right:16px;bottom:16px;width:420px}
+  #chartbox .hd{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);margin-bottom:6px}
+  #chart{width:100%;height:150px;display:block}
+  .legend{display:flex;gap:12px;font-size:11px;color:var(--mute)}
+  .legend span{display:flex;align-items:center;gap:5px}
+  #hint{position:fixed;left:50%;top:14px;transform:translateX(-50%);font-size:11.5px;color:var(--mute);
+    background:var(--panel);border:1px solid var(--line);padding:5px 10px;border-radius:999px}
+  @media (max-width: 900px){
+    #title{max-width:calc(100% - 32px)} #title .eq{display:none}
+    #hud{top:auto;bottom:16px;right:16px;width:calc(50% - 24px)}
+    #ctrl{width:calc(50% - 24px)} #chartbox,#hint{display:none}
+    .big{font-size:22px}
+  }
+  @media (max-width: 600px){
+    #hud{left:16px;right:16px;width:auto;bottom:auto;top:110px;padding:10px 12px}
+    #hud .hudrow{padding:5px 0} #metrics{display:none}
+    #ctrl{left:16px;right:16px;width:auto}
+    #title p{display:none}
+  }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+
+<div id="title" class="panel">
+  <h1>Combinatorial CBFs · Multi-drone patrol</h1>
+  <p><span id="nTxt">Eleven</span> single-integrator drones patrol back and forth over two L-shaped districts, a research campus (L<sub>1</sub>) and a residential neighbourhood (L<sub>2</sub>).
+     A combinatorial CBF-QP keeps at least <b class="mono" id="rTxt">4</b> drones over each region at all times,
+     using only <span class="mono" id="nCons">132</span> primitive constraints (12 per drone) instead of thousands of Boolean combinations.</p>
+  <div class="eq mono">
+    h<sub>L</sub>(x<sub>j</sub>) = min( min<sub>k</sub> h<sub>k</sub>, max(h<sub>5</sub>,h<sub>6</sub>) )<br>
+    h(x) = min( max<sup>r</sup><sub>j</sub> h<sub>L1</sub>(x<sub>j</sub>), max<sup>r</sup><sub>j</sub> h<sub>L2</sub>(x<sub>j</sub>) )<br>
+    ḣ<sub>k</sub> ≥ −α( h + |h<sub>k</sub> − h| ) &nbsp;∀k
+  </div>
+  <p style="margin-top:8px">Ong, Lee, Molnar, Panagou, Ames · IEEE L-CSS 2025 ·
+     <a href="https://github.com/joonlee16/combinatorial_cbf" target="_blank" rel="noopener">code</a></p>
+</div>
+
+<div id="hint">drag to orbit · scroll to zoom · right-drag to pan</div>
+
+<div id="hud" class="panel">
+  <div class="hudrow">
+    <div><div class="hudlabel"><span class="sw" style="background:var(--l1)"></span>Watching L₁</div>
+      <div class="pips" id="pipsL1"></div></div>
+    <div><span class="big" id="cL1" style="color:var(--l1)">0</span><span class="req" id="qL1">≥4</span></div>
+  </div>
+  <div class="hudrow">
+    <div><div class="hudlabel"><span class="sw" style="background:var(--l2)"></span>Watching L₂</div>
+      <div class="pips" id="pipsL2"></div></div>
+    <div><span class="big" id="cL2" style="color:var(--l2)">0</span><span class="req" id="qL2">≥4</span></div>
+  </div>
+  <div class="hudrow">
+    <div><div class="hudlabel"><span class="sw" style="background:var(--out)"></span>In transit (outside)</div>
+      <div class="pips" id="pipsOut"></div></div>
+    <div><span class="big" id="cOut">0</span><span class="req" id="qOut">≤3</span></div>
+  </div>
+  <div id="status" class="safe mono"><span id="statusTxt">SAFE</span><span id="hval">h = 0.00</span></div>
+  <div id="metrics" class="mono">
+    <div>t <b id="mT">0.0 s</b></div>
+    <div>CBF active <b id="mAct">0</b></div>
+    <div>min sep <b id="mSep">–</b></div>
+    <div>violations <b id="mViol">0</b></div>
+    <div>peak |u| <b id="mU">0.00</b></div>
+    <div>bound <b id="mUB">1.00 m/s</b></div>
+  </div>
+</div>
+
+<div id="ctrl" class="panel">
+  <div class="btns">
+    <button id="bPlay" class="on">❚❚ Pause</button>
+    <button id="bReset">↺ Reset</button>
+    <button id="bSeed">⚄ New patrol plan</button>
+    <button id="bFilter" class="on">CBF filter: ON</button>
+  </div>
+  <div class="crow"><label>Number of drones N</label><input id="sN" type="range" min="8" max="24" step="1" value="11"><span class="val" id="vN">11</span></div>
+  <div class="crow"><label>Required per region r</label><input id="sR" type="range" min="1" max="10" step="1" value="4"><span class="val" id="vR">4</span></div>
+  <div class="crow" style="margin-top:-2px"><label></label><span style="font-size:11px;color:var(--mute)" id="nNote">N ≥ 2r is enforced: at least r drones per region, both regions.</span></div>
+  <div class="crow"><label>Input bound |u<sub>x</sub>|,|u<sub>y</sub>| ≤</label><input id="sU" type="range" min="0.25" max="3.25" step="0.25" value="1"><span class="val" id="vU" style="width:58px">1.00 m/s</span></div>
+  <div class="crow"><label>Sim speed</label><input id="sSpd" type="range" min="0.25" max="8" step="0.25" value="2"><span class="val" id="vSpd">2×</span></div>
+  <div class="crow"><label>CBF gain α</label><input id="sA" type="range" min="0.5" max="6" step="0.5" value="2"><span class="val" id="vA">2.0</span></div>
+  <div class="toggles">
+    <label><input type="checkbox" id="tNom"> nominal command</label>
+    <label><input type="checkbox" id="tTrail" checked> trails</label>
+    <label><input type="checkbox" id="tRail" checked> patrol lanes</label>
+    <label><input type="checkbox" id="tRot"> auto-rotate</label>
+  </div>
+</div>
+
+<div id="chartbox" class="panel">
+  <div class="hd"><span>Coverage over the last 50 s</span>
+    <div class="legend"><span><i class="sw" style="background:var(--l1)"></i>L1</span>
+      <span><i class="sw" style="background:var(--l2)"></i>L2</span>
+      <span><i class="sw" style="background:var(--out)"></i>outside</span></div></div>
+  <canvas id="chart"></canvas>
+</div>
+
+<!-- ======================= Simulation core (pure JS, no rendering) ======================= -->
+<script>
+// SIM-BEGIN
+// Port of joonlee16/combinatorial_cbf (config.py, L_shape.py, controller.py, simulation.py),
+// generalised to any number of drones N and with the whole layout scaled by SCALE.
+// For N = 11 the paper's initial positions and amplitude pattern are used (scaled).
+const SIM = (() => {
+  const SCALE = 1.6;                 // enlarge the L-regions (and patrol ranges) uniformly
+  const DT = 0.05, KAPPA = 2.0, NMAX = 24;
+  // Half-planes [nx, ny, c]: h = nx*x + ny*y + c >= 0 (unit inward normals) in the paper's units.
+  // Edges 0,1 form the OR pair at the notch; edges 2..5 are the AND box.
+  const BASE = [
+    { name: 'L1', cx: 3.5, H: [[0,-1,0],[-1,0,3.5],[0,-1,2],[1,0,-1.5],[0,1,2],[-1,0,5.5]],
+      poly: [[5.5,0],[3.5,0],[3.5,2],[1.5,2],[1.5,-2],[5.5,-2]] },
+    { name: 'L2', cx: -3.5, H: [[0,-1,0],[1,0,3.5],[0,-1,2],[-1,0,-1.5],[0,1,2],[1,0,5.5]],
+      poly: [[-5.5,0],[-3.5,0],[-3.5,2],[-1.5,2],[-1.5,-2],[-5.5,-2]] },
+  ];
+  const REGIONS = BASE.map(r => ({ name: r.name, cx: r.cx*SCALE,
+    H: r.H.map(([a,b,c]) => [a, b, c*SCALE]), poly: r.poly.map(([x,y]) => [x*SCALE, y*SCALE]) }));
+  const INIT11 = [
+    [3.5-0.20,-1.70],[3.5-2.00,-0.15],[3.5+1.50,-0.60],[3.5-0.50,0.90],[3.5-1.30,0.35],[3.5-1.70,1.95],
+    [-3.5-1.55,-1.35],[-3.5-0.30,-1.00],[-3.5+2.00,1.20],[-3.5+0.40,0.65],[-3.5+1.20,0.10],
+  ];
+  const AMAG11 = [5,5,5,3,3,3,5,5,3,3,3];
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+
+  // Initial positions + patrol amplitudes. Every drone gets its own y-lane; lanes alternate
+  // between L1 and L2 so each region starts with >= floor(N/2) drones (>= r whenever N >= 2r).
+  function layout(N, rnd){
+    if (N === 11) return { init: INIT11.map(([x,y]) => [x*SCALE, y*SCALE]), amag: AMAG11.map(a => a*SCALE) };
+    const init = [], amag = [];
+    const ymax = 1.85;
+    for (let j=0;j<N;j++){
+      const y = -ymax + 2*ymax*(N===1?0.5:j/(N-1));
+      const inL1 = j % 2 === 0;
+      // x range inside the L at this lane (notch removes the outer half above y=0)
+      const lo = 1.5 + 0.15, hi = (y > 0 ? 3.5 : 5.5) - 0.15;
+      const x = lo + (hi-lo)*rnd();
+      init.push([(inL1 ? x : -x)*SCALE, y*SCALE]);
+      amag.push((j % 4 < 2 ? 5 : 3)*SCALE);
+    }
+    return { init, amag };
+  }
+
+  function makePlan(seed, N){
+    const rnd = mulberry32(seed);
+    const { init, amag } = layout(N, rnd);
+    const A = amag.map(a => a * (rnd() < 0.5 ? -1 : 1));
+    const W = amag.map(() => (0.02 + 0.08*rnd()) * Math.PI);
+    return { A, W, init, seed };
+  }
+
+  const hRaw = (h, x, y) => h[0]*x + h[1]*y + h[2];
+  function hL(reg, x, y){
+    const v = reg.H.map(h => hRaw(h, x, y));
+    return Math.min(Math.max(v[0], v[1]), v[2], v[3], v[4], v[5]);
+  }
+  function rthLargest(arr, r){ const s = arr.slice().sort((a,b)=>b-a); return s[Math.min(r, arr.length)-1]; }
+
+  // Exact 2D QP: min |u-ud|^2  s.t.  a.u >= b  for each [ax, ay, b].
+  function qp2(ud, cons){
+    const ok = (u) => { for (const c of cons) if (c[0]*u[0]+c[1]*u[1] < c[2]-1e-9) return false; return true; };
+    if (ok(ud)) return { u: ud, feasible: true };
+    let best = null, bd = Infinity;
+    const tryU = (u) => { if (ok(u)) { const d=(u[0]-ud[0])**2+(u[1]-ud[1])**2; if (d<bd){bd=d;best=u;} } };
+    for (const c of cons){
+      const s = (c[2] - (c[0]*ud[0]+c[1]*ud[1])) / (c[0]*c[0]+c[1]*c[1]);
+      if (s > 0) tryU([ud[0]+s*c[0], ud[1]+s*c[1]]);
+    }
+    for (let i=0;i<cons.length;i++) for (let k=i+1;k<cons.length;k++){
+      const a=cons[i], b=cons[k], det=a[0]*b[1]-a[1]*b[0];
+      if (Math.abs(det) < 1e-12) continue;
+      tryU([(a[2]*b[1]-a[1]*b[2])/det, (a[0]*b[2]-a[2]*b[0])/det]);
+    }
+    if (best) return { u: best, feasible: true };
+    // Infeasible (only possible when h<0, e.g. right after raising r): least-violation fallback.
+    let fb=[0,0], fv=Infinity;
+    const cands=[ud,[0,0]]; for (const c of cons){const s=(c[2]-(c[0]*ud[0]+c[1]*ud[1]))/(c[0]*c[0]+c[1]*c[1]); cands.push([ud[0]+s*c[0],ud[1]+s*c[1]]);}
+    for (const u of cands){ let v=0; for (const c of cons) v+=Math.max(0,c[2]-(c[0]*u[0]+c[1]*u[1])); if(v<fv){fv=v;fb=u;} }
+    return { u: fb, feasible: false };
+  }
+
+  function create(seed, N = 11){
+    const plan = makePlan(seed, N);
+    return { N, t: 0, step: 0, plan,
+      p: plan.init.map(q => q.slice()), u: plan.init.map(()=>[0,0]), ud: plan.init.map(()=>[0,0]),
+      hL1: new Array(N).fill(0), hL2: new Array(N).fill(0), active: new Array(N).fill(false),
+      pivot: 0, feasible: true };
+  }
+
+  function refreshH(S){ for (let j=0;j<S.N;j++){ S.hL1[j] = hL(REGIONS[0], S.p[j][0], S.p[j][1]); S.hL2[j] = hL(REGIONS[1], S.p[j][0], S.p[j][1]); } }
+
+  function step(S, opt){
+    const { r = 4, alpha = 2.0, filter = true, umax = Infinity } = opt || {};
+    const sat = v => Math.max(-umax, Math.min(umax, v));
+    const N = S.N;
+    S.step += 1; const t = S.step * DT;   // matches compute_u_des(..., t) with t*0.05
+    const { A, W } = S.plan;
+    refreshH(S);
+    const pivot = Math.min(rthLargest(S.hL1, r), rthLargest(S.hL2, r));
+    S.pivot = pivot; S.feasible = true;
+    for (let j=0;j<N;j++){
+      const [x,y] = S.p[j];
+      const xd = A[j]*Math.sin(W[j]*t), xdd = A[j]*W[j]*Math.cos(W[j]*t);
+      const ud = [KAPPA*(xd - x) + xdd, 0];
+      S.ud[j] = ud;
+      let u = ud;
+      if (filter){
+        const cons = [];
+        for (const reg of REGIONS) for (const h of reg.H){
+          const hk = hRaw(h, x, y);
+          cons.push([h[0], h[1], -alpha*(pivot + Math.abs(hk - pivot))]);
+        }
+        // input bounds |u_x|, |u_y| <= umax (linear, so the per-drone QP stays exact)
+        if (isFinite(umax)) cons.push([1,0,-umax], [-1,0,-umax], [0,1,-umax], [0,-1,-umax]);
+        const sol = qp2(ud, cons); u = sol.u; if (!sol.feasible) S.feasible = false;
+        if (!sol.feasible) u = [sat(u[0]), sat(u[1])];   // never exceed the actuator limit
+      } else {
+        u = [sat(ud[0]), sat(ud[1])];                     // unfiltered: nominal command, saturated
+      }
+      S.u[j] = u;
+      S.active[j] = Math.hypot(u[0]-ud[0], u[1]-ud[1]) > 0.03;
+    }
+    for (let j=0;j<N;j++){ S.p[j][0] += DT*S.u[j][0]; S.p[j][1] += DT*S.u[j][1]; }
+    refreshH(S);
+    S.t = t;
+    return S;
+  }
+
+  function counts(S){
+    let c1=0,c2=0,out=0;
+    for (let j=0;j<S.N;j++){ const a=S.hL1[j]>=-1e-6, b=S.hL2[j]>=-1e-6; if(a)c1++; if(b)c2++; if(!a&&!b)out++; }
+    return { c1, c2, out };
+  }
+  function barrier(S, r){ return Math.min(rthLargest(S.hL1, r), rthLargest(S.hL2, r)); }
+
+  return { SCALE, NMAX, DT, REGIONS, create, step, counts, barrier, hL, qp2, refreshH };
+})();
+if (typeof module !== 'undefined') module.exports = SIM;
+// SIM-END
+</script>
+
+<!-- ======================= Rendering ======================= -->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const COLORS = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf","#92A8D1"];
+const C_L1 = 0x2dd4bf, C_L2 = 0xf5a524;
+const SC = SIM.SCALE;
+const colorOf = j => j < COLORS.length ? COLORS[j] : '#'+new THREE.Color().setHSL(((j*0.618)%1), 0.62, 0.6).getHexString();
+// sim (x, y) -> world (x, alt, -y)
+const W = (x, y, z=0) => new THREE.Vector3(x, z, -y);
+
+// ---------- state & params ----------
+const params = { r: 4, alpha: 2.0, filter: true, speed: 2, playing: true, umax: 1.0 };
+let peakU = 0;
+let seed = 7;
+let nDrones = 11;
+let S = SIM.create(seed, nDrones);
+let history = [];       // {t,c1,c2,out}
+let violations = 0, wasUnsafe = false;
+
+// Altitude tiers: drones on neighbouring y-lanes fly at different heights → well separated in 3D.
+// Lowest tier (3.4 m) is above the tallest rooftop beacon (~3.0 m).
+let ALT = [];
+function computeAlt(){
+  const order = S.p.map((p,i)=>[p[1],i]).sort((a,b)=>a[0]-b[0]).map(e=>e[1]);
+  ALT = new Array(S.N); order.forEach((j,rank)=>{ ALT[j] = 3.4 + 0.5*(rank % 3); });
+}
+computeAlt();
+
+// ---------- renderer / scene ----------
+const host = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+host.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0f14);
+scene.fog = new THREE.Fog(0x0b0f14, 30, 70);
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 200);
+camera.position.set(0.8, 17.5, 21);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 1.6, 0); controls.enableDamping = true;
+controls.maxPolarAngle = Math.PI*0.48; controls.minDistance = 4; controls.maxDistance = 50;
+
+scene.add(new THREE.HemisphereLight(0xbfd9ff, 0x0b0f14, 0.65));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+sun.position.set(-9, 22, 11); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left:-15, right:15, top:12, bottom:-12, near:1, far:60 });
+scene.add(sun);
+
+// ground
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 80),
+  new THREE.MeshStandardMaterial({ color: 0x10161d, roughness: 0.95 }));
+ground.rotation.x = -Math.PI/2; ground.receiveShadow = true; scene.add(ground);
+const grid = new THREE.GridHelper(60, 60, 0x24303c, 0x18212a); grid.position.y = 0.002; scene.add(grid);
+const fine = new THREE.GridHelper(22, 88, 0x1b242e, 0x151d25); fine.position.y = 0.003; scene.add(fine);
+
+// ---------- L regions ----------
+const regionVis = SIM.REGIONS.map((reg, i) => {
+  const col = i===0 ? C_L1 : C_L2;
+  const shape = new THREE.Shape(reg.poly.map(([x,y]) => new THREE.Vector2(x,y)));
+  const g = new THREE.Group();
+  const floor = new THREE.Mesh(new THREE.ShapeGeometry(shape),
+    new THREE.MeshStandardMaterial({ color: col, transparent: true, opacity: 0.10, roughness: 1 }));
+  floor.rotation.x = -Math.PI/2; floor.position.y = 0.01; floor.receiveShadow = true; g.add(floor);
+  const vol = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: 4.9, bevelEnabled: false }),
+    new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.045, depthWrite: false, side: THREE.DoubleSide }));
+  vol.rotation.x = -Math.PI/2; g.add(vol);
+  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(vol.geometry),
+    new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.35 }));
+  edges.rotation.x = -Math.PI/2; g.add(edges);
+  // bright floor outline
+  const pts = reg.poly.concat([reg.poly[0]]).map(([x,y]) => W(x,y,0.02));
+  const outline = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({ color: col }));
+  g.add(outline);
+  // label sprite
+  const label = makeLabel(reg.name + (i===0 ? ' · CAMPUS' : ' · HOMES'), '#'+col.toString(16).padStart(6,'0'));
+  const c = reg.poly.reduce((a,[x,y])=>[a[0]+x/6,a[1]+y/6],[0,0]);
+  label.position.copy(W(reg.cx, -2.55*SC - 0.75, 0.05)); g.add(label);
+  scene.add(g);
+  return { floor, edges, outline, col };
+});
+
+function makeLabel(text, color){
+  const cv = document.createElement('canvas'); cv.width = 640; cv.height = 96;
+  const ctx = cv.getContext('2d');
+  ctx.font = '600 56px "IBM Plex Mono", monospace'; ctx.fillStyle = color;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, 320, 50);
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.48),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false }));
+  m.rotation.x = -Math.PI/2; return m;
+}
+
+// ---------- towns: buildings of interest inside each L ----------
+const townRnd = (() => { let a = 20251203; return () => { a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t; return((t^t>>>14)>>>0)/4294967296; }; })();
+const rr = (lo, hi) => lo + (hi-lo)*townRnd();
+// a footprint fits if all four corners are inside the L with a small margin
+const fits = (reg, x, y, hw, hd, m=0.07) =>
+  [[-1,-1],[1,-1],[-1,1],[1,1]].every(([a,b]) => SIM.hL(reg, x+a*hw, y+b*hd) >= m);
+const beacons = [];
+const town = new THREE.Group(); scene.add(town);
+
+function windowTexture(){
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128;
+  const g = cv.getContext('2d'); g.fillStyle = '#26303b'; g.fillRect(0,0,128,128);
+  for (let i=0;i<8;i++) for (let k=0;k<8;k++){
+    const lit = townRnd() < 0.42;
+    g.fillStyle = lit ? (townRnd()<0.7 ? '#ffd58a' : '#bfe3ff') : '#0f161e';
+    g.fillRect(i*16+4, k*16+4, 8, 9);
+  }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+}
+const WIN_TEX = [windowTexture(), windowTexture(), windowTexture()];
+const roofMat = new THREE.MeshStandardMaterial({ color: 0x3a4652, roughness: 0.9 });
+const detailMat = new THREE.MeshStandardMaterial({ color: 0x5b6874, roughness: 0.7, metalness: 0.3 });
+const shadowy = m => { m.castShadow = true; m.receiveShadow = true; return m; };
+
+function addBeacon(x, y, z, color=0xff3b3b){
+  const b = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), new THREE.MeshBasicMaterial({ color }));
+  b.position.copy(W(x, y, z)); b.userData.ph = townRnd()*2; town.add(b); beacons.push(b);
+}
+
+function office(x, y, w, d, h){
+  const tex = WIN_TEX[(townRnd()*3)|0].clone(); tex.needsUpdate = true;
+  tex.repeat.set(Math.max(1, w/0.9), Math.max(1, h/0.9));
+  const side = new THREE.MeshStandardMaterial({ map: tex, emissiveMap: tex, emissive: 0xffffff,
+    emissiveIntensity: 0.55, roughness: 0.55, metalness: 0.25 });
+  const m = shadowy(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [side, side, roofMat, roofMat, side, side]));
+  m.position.copy(W(x, y, h/2)); town.add(m);
+  const ac = shadowy(new THREE.Mesh(new THREE.BoxGeometry(w*0.32, 0.06, d*0.28), detailMat));
+  ac.position.copy(W(x + w*0.15, y - d*0.12, h + 0.03)); town.add(ac);
+  return m;
+}
+
+function tree(x, y, s=1){
+  const trunk = shadowy(new THREE.Mesh(new THREE.CylinderGeometry(0.018*s, 0.024*s, 0.12*s, 6),
+    new THREE.MeshStandardMaterial({ color: 0x5a4030, roughness: 1 })));
+  trunk.position.copy(W(x, y, 0.06*s)); town.add(trunk);
+  const crown = shadowy(new THREE.Mesh(new THREE.IcosahedronGeometry(0.1*s, 0),
+    new THREE.MeshStandardMaterial({ color: new THREE.Color().setHSL(0.3 + rr(-0.03,0.04), 0.45, rr(0.24,0.32)), roughness: 0.9, flatShading: true })));
+  crown.position.copy(W(x, y, 0.17*s)); crown.scale.y = 1.2; town.add(crown);
+}
+
+const WALLS = [0xe8dcc8, 0xd9c7a8, 0xc9d3dc, 0xe2c9bd, 0xbfcbb4, 0xf0e6d6];
+const ROOFS = [0x8c3b2e, 0x6b4a3a, 0x445566, 0x7a2f2f, 0x55606b];
+function house(x, y, w, d, h, rot){
+  const g = new THREE.Group();
+  const wall = new THREE.MeshStandardMaterial({ color: WALLS[(townRnd()*WALLS.length)|0], roughness: 0.85 });
+  const body = shadowy(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), wall)); body.position.y = h/2; g.add(body);
+  // hip roof: 4-sided cone rotated to align with walls, stretched to the footprint
+  const roof = shadowy(new THREE.Mesh(new THREE.ConeGeometry(0.5, 1, 4),
+    new THREE.MeshStandardMaterial({ color: ROOFS[(townRnd()*ROOFS.length)|0], roughness: 0.8, flatShading: true })));
+  roof.rotation.y = Math.PI/4; roof.scale.set((w+0.07)/0.707, h*0.75, (d+0.07)/0.707);
+  roof.position.y = h + h*0.375; g.add(roof);
+  const door = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.22, 0.01), new THREE.MeshStandardMaterial({ color: 0x3b2a20 }));
+  door.position.set(-w*0.22, 0.11, d/2+0.005); g.add(door);
+  const winM = new THREE.MeshStandardMaterial({ color: 0x1b2430, emissive: 0xffd58a, emissiveIntensity: townRnd()<0.6 ? 0.9 : 0.05 });
+  const wdw = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.12, 0.01), winM); wdw.position.set(w*0.18, h*0.6, d/2+0.005); g.add(wdw);
+  const wdw2 = wdw.clone(); wdw2.position.set(0, h*0.6, -d/2-0.005); g.add(wdw2);
+  g.position.copy(W(x, y, 0)); g.rotation.y = rot; town.add(g);
+}
+
+// Lots: a 1 m grid over each (scaled) L; a lot is used if a 0.8 m footprint fits inside.
+function lotsIn(reg, sign){
+  const lots = [];
+  const x0 = 1.5*SC + 0.5, x1 = 5.5*SC - 0.4, y0 = -2*SC + 0.5, y1 = 2*SC - 0.4;
+  for (let x = x0; x <= x1 + 1e-9; x += 1.0) for (let y = y0; y <= y1 + 1e-9; y += 1.0)
+    if (fits(reg, sign*x, y, 0.4, 0.4)) lots.push([sign*x, y]);
+  return lots;
+}
+const near = (lots, x, y) => lots.reduce((b, l) => Math.hypot(l[0]-x, l[1]-y) < Math.hypot(b[0]-x, b[1]-y) ? l : b);
+const same = (a, b) => a && b && a[0] === b[0] && a[1] === b[1];
+
+// --- L1: research campus — a skyline of mixed heights, HQ tower with antenna, lab dome ---
+(function buildCampus(){
+  const reg = SIM.REGIONS[0];
+  const lots = lotsIn(reg, +1);
+  const hq = near(lots, 1.5*SC, 2*SC), dome = near(lots, 4.2*SC, -1.0*SC);
+  const parks = [near(lots, 2.6*SC, -0.4*SC), near(lots, 4.8*SC, -1.9*SC)];
+  lots.forEach(([x, y]) => {
+    if (same([x,y], hq)){                     // HQ tower, the tallest landmark
+      office(x, y, 0.62, 0.62, 2.6);
+      const crown = shadowy(new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.12, 0.44), detailMat));
+      crown.position.copy(W(x, y, 2.66)); town.add(crown);
+      const mast = shadowy(new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.022, 0.26, 6), detailMat));
+      mast.position.copy(W(x, y, 2.85)); town.add(mast);
+      addBeacon(x, y, 2.99);
+    } else if (same([x,y], dome)){           // lab dome
+      const base = shadowy(new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.42, 0.3, 32), new THREE.MeshStandardMaterial({ color: 0xc9d3dc, roughness: 0.7 })));
+      base.position.copy(W(x, y, 0.15)); town.add(base);
+      const dm = shadowy(new THREE.Mesh(new THREE.SphereGeometry(0.38, 32, 16, 0, Math.PI*2, 0, Math.PI/2),
+        new THREE.MeshStandardMaterial({ color: 0xe6edf3, roughness: 0.25, metalness: 0.4 })));
+      dm.position.copy(W(x, y, 0.3)); town.add(dm);
+      addBeacon(x, y, 0.72, 0x7dd3fc);
+    } else if (parks.some(p => same(p, [x,y]))){   // courtyard with trees
+      for (let k=0;k<5;k++) tree(x + rr(-0.3,0.3), y + rr(-0.3,0.3), rr(1.4,1.9));
+    } else {
+      // skyline: towers cluster toward the inner corner, low-rise toward the edges
+      const dIn = Math.hypot(x - 2.2*SC, y - 0.2*SC);
+      const tall = townRnd() < Math.max(0.12, 0.6 - 0.12*dIn);
+      const h = tall ? rr(1.6, 2.35) : (townRnd() < 0.5 ? rr(0.9, 1.4) : rr(0.4, 0.8));
+      const fw = h > 1.6 ? rr(0.5,0.6) : h > 1.0 ? rr(0.58,0.7) : rr(0.68,0.8);
+      const fd = h > 1.6 ? rr(0.5,0.6) : h > 1.0 ? rr(0.58,0.7) : rr(0.68,0.8);
+      office(x + rr(-0.04,0.04), y + rr(-0.04,0.04), fw, fd, h);
+      if (h > 1.6) addBeacon(x, y, h + 0.1);   // aviation lights on the towers
+    }
+  });
+})();
+
+// --- L2: residential neighbourhood — houses (bigger than a drone), mid-rise apartments, a school ---
+function apartment(x, y, w, d, h){
+  const tex = WIN_TEX[(townRnd()*3)|0].clone(); tex.needsUpdate = true;
+  tex.repeat.set(Math.max(1, w/0.9), Math.max(1, h/0.9));
+  const side = new THREE.MeshStandardMaterial({ color: 0xb87a5e, map: tex, emissiveMap: tex, emissive: 0xffffff,
+    emissiveIntensity: 0.4, roughness: 0.85 });
+  const m = shadowy(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [side, side, roofMat, roofMat, side, side]));
+  m.position.copy(W(x, y, h/2)); town.add(m);
+  const parapet = shadowy(new THREE.Mesh(new THREE.BoxGeometry(w+0.04, 0.05, d+0.04), detailMat));
+  parapet.position.copy(W(x, y, h + 0.02)); town.add(parapet);
+}
+(function buildHomes(){
+  const reg = SIM.REGIONS[1];
+  const lots = lotsIn(reg, -1);
+  const school = near(lots, -2.6*SC, -1.2*SC);
+  const apts = [near(lots, -5.3*SC, -1.8*SC), near(lots, -1.6*SC, 1.8*SC), near(lots, -2.0*SC, 0.0)];
+  const parks = [near(lots, -4.4*SC, -0.4*SC)];
+  lots.forEach(([x, y]) => {
+    if (same([x,y], school)){                // school with a bell tower
+      const tex = WIN_TEX[0].clone(); tex.needsUpdate = true; tex.repeat.set(1.2, 0.6);
+      const side = new THREE.MeshStandardMaterial({ color: 0xd8b48a, map: tex, emissiveMap: tex, emissive: 0xffffff, emissiveIntensity: 0.35, roughness: 0.8 });
+      const sch = shadowy(new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.5, 0.62), [side, side, roofMat, roofMat, side, side]));
+      sch.position.copy(W(x + 0.05, y, 0.25)); town.add(sch);
+      const tower = shadowy(new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.05, 0.2), new THREE.MeshStandardMaterial({ color: 0xd8b48a, roughness: 0.8 })));
+      tower.position.copy(W(x - 0.3, y + 0.15, 0.525)); town.add(tower);
+      const spire = shadowy(new THREE.Mesh(new THREE.ConeGeometry(0.17, 0.42, 4), new THREE.MeshStandardMaterial({ color: 0x7a2f2f, flatShading: true })));
+      spire.rotation.y = Math.PI/4; spire.position.copy(W(x - 0.3, y + 0.15, 1.26)); town.add(spire);
+      addBeacon(x - 0.3, y + 0.15, 1.5, 0xf5a524);
+    } else if (apts.some(a => same(a, [x,y]))){   // mid-rise apartments
+      apartment(x, y, rr(0.66,0.76), rr(0.6,0.7), rr(1.1, 1.6));
+      tree(x + 0.42, y - 0.42, 1.5);
+    } else if (parks.some(p => same(p, [x,y]))){
+      for (let k=0;k<5;k++) tree(x + rr(-0.32,0.32), y + rr(-0.32,0.32), rr(1.4,1.9));
+    } else {
+      const rot = (townRnd()<0.5 ? 0 : Math.PI/2) + rr(-0.06,0.06);
+      house(x + rr(-0.03,0.03), y + rr(-0.03,0.03), rr(0.72,0.84), rr(0.58,0.68), rr(0.36,0.48), rot);
+      tree(x + 0.42*(townRnd()<0.5?-1:1), y + 0.42*(townRnd()<0.5?-1:1), rr(1.4,1.9));
+    }
+  });
+})();
+
+// --- roads: a boulevard south of both districts and a connector through the transit gap ---
+(function buildRoads(){
+  const asphalt = new THREE.MeshStandardMaterial({ color: 0x1c232b, roughness: 0.95 });
+  const road = (x, y, w, d) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), asphalt);
+    m.rotation.x = -Math.PI/2; m.position.copy(W(x, y, 0.006)); m.receiveShadow = true; town.add(m); };
+  const yr = -2*SC - 0.55, gap = 1.5*SC;
+  road(0, yr, 2*5.5*SC + 3, 0.42); road(0, 0, 2*gap, 0.42); road(0, (yr-0.21)/2, 0.42, -yr-0.21);
+  const dash = new THREE.LineDashedMaterial({ color: 0xc9b458, dashSize: 0.18, gapSize: 0.16, transparent: true, opacity: 0.6 });
+  for (const pts of [[W(-5.5*SC-1.5,yr,0.012), W(5.5*SC+1.5,yr,0.012)], [W(-gap,0,0.012), W(gap,0,0.012)], [W(0,yr+0.21,0.012), W(0,-0.21,0.012)]]){
+    const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), dash); l.computeLineDistances(); town.add(l); }
+  // streetlights along the boulevard
+  for (let x = -5.5*SC - 1; x <= 5.5*SC + 1; x += 1.3){
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.012, 0.28, 5), detailMat);
+    pole.position.copy(W(x, yr - 0.28, 0.14)); town.add(pole);
+    const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffe3a3 }));
+    lamp.position.copy(W(x, yr - 0.28, 0.29)); town.add(lamp);
+  }
+})();
+
+// ---------- drone model (procedural quadrotor) ----------
+function makeDrone(hex){
+  const color = new THREE.Color(hex);
+  const root = new THREE.Group();          // position + yaw
+  const tilt = new THREE.Group(); root.add(tilt);   // pitch/roll
+  const dark = new THREE.MeshStandardMaterial({ color: 0x1d232b, roughness: 0.55, metalness: 0.35 });
+  const shell = new THREE.MeshStandardMaterial({ color: 0xdfe5ea, roughness: 0.35, metalness: 0.1 });
+  const accent = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.9 });
+  const s = 0.34; // scale
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.34*s, 0.12*s, 0.5*s), shell); body.castShadow = true; tilt.add(body);
+  const canopy = new THREE.Mesh(new THREE.SphereGeometry(0.16*s, 20, 12, 0, Math.PI*2, 0, Math.PI/2), shell);
+  canopy.scale.set(1, 0.55, 1.35); canopy.position.y = 0.06*s; canopy.castShadow = true; tilt.add(canopy);
+  const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.345*s, 0.03*s, 0.36*s), accent); stripe.position.y = 0.0; tilt.add(stripe);
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.035*s, 10, 8),
+    new THREE.MeshBasicMaterial({ color: 0xffffff })); nose.position.set(0, 0.02*s, -0.27*s); tilt.add(nose);
+  const cam = new THREE.Mesh(new THREE.SphereGeometry(0.06*s, 12, 10), dark); cam.position.set(0,-0.08*s,-0.16*s); tilt.add(cam);
+
+  const props = [];
+  const armLen = 0.62*s;
+  [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([sx,sz], i) => {
+    const ang = Math.atan2(sz, sx);
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(armLen, 0.04*s, 0.06*s), dark);
+    arm.position.set(Math.cos(ang)*armLen/2, 0, Math.sin(ang)*armLen/2);
+    arm.rotation.y = -ang; arm.castShadow = true; tilt.add(arm);
+    const mx = Math.cos(ang)*armLen, mz = Math.sin(ang)*armLen;
+    const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.05*s, 0.06*s, 0.1*s, 14), dark);
+    motor.position.set(mx, 0.03*s, mz); motor.castShadow = true; tilt.add(motor);
+    const guard = new THREE.Mesh(new THREE.TorusGeometry(0.27*s, 0.012*s, 6, 36),
+      new THREE.MeshStandardMaterial({ color: 0x9aa7b4, roughness: 0.5 }));
+    guard.rotation.x = Math.PI/2; guard.position.set(mx, 0.08*s, mz); tilt.add(guard);
+    const prop = new THREE.Group(); prop.position.set(mx, 0.09*s, mz);
+    const bladeMat = new THREE.MeshStandardMaterial({ color: 0x2a3138, roughness: 0.4, transparent: true, opacity: 0.9 });
+    for (let b=0;b<2;b++){ const bl = new THREE.Mesh(new THREE.BoxGeometry(0.5*s, 0.008*s, 0.05*s), bladeMat);
+      bl.rotation.y = b*Math.PI; bl.position.x = 0; prop.add(bl); }
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(0.25*s, 28),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false }));
+    disc.rotation.x = -Math.PI/2; prop.add(disc);
+    prop.userData.dir = (i===0||i===3) ? 1 : -1;
+    tilt.add(prop); props.push(prop);
+    // arm-tip LEDs (front red/green convention looks nice)
+    const led = new THREE.Mesh(new THREE.SphereGeometry(0.022*s, 8, 6),
+      new THREE.MeshBasicMaterial({ color: sz < 0 ? (sx>0?0x4ade80:0xf87171) : color }));
+    led.position.set(mx, -0.04*s, mz); tilt.add(led);
+  });
+  return { root, tilt, props };
+}
+
+// ---------- per-drone visuals (rebuilt whenever N changes) ----------
+let drones = [];
+function disposeDrones(){
+  drones.forEach(d => [d.root, d.arrow, d.nom, d.ring, d.tether, d.trail, d.lane].forEach(o => {
+    scene.remove(o); o.traverse(c => { c.geometry && c.geometry.dispose(); }); }));
+  drones = [];
+}
+function buildDrones(){
+  disposeDrones();
+  for (let j=0;j<S.N;j++){
+    const hex = colorOf(j);
+    const d = makeDrone(hex);
+    scene.add(d.root);
+    // velocity arrow (filtered command u)
+    const arrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(), 0.6, new THREE.Color(hex).getHex(), 0.18, 0.12);
+    scene.add(arrow);
+    // nominal arrow (u_des), shown optionally
+    const nom = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(), 0.6, 0xffffff, 0.14, 0.09);
+    nom.line.material.transparent = true; nom.line.material.opacity = 0.45;
+    nom.cone.material.transparent = true; nom.cone.material.opacity = 0.45; nom.visible = false; scene.add(nom);
+    // ground marker ring + tether line
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.16, 0.22, 32),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite:false }));
+    ring.rotation.x = -Math.PI/2; scene.add(ring);
+    const tether = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]),
+      new THREE.LineDashedMaterial({ color: 0x8b98a5, dashSize: 0.08, gapSize: 0.08, transparent: true, opacity: 0.45 }));
+    scene.add(tether);
+    // trail
+    const TL = 120; const tpos = new Float32Array(TL*3);
+    const tgeo = new THREE.BufferGeometry(); tgeo.setAttribute('position', new THREE.BufferAttribute(tpos, 3));
+    const trail = new THREE.Line(tgeo, new THREE.LineBasicMaterial({ color: hex, transparent: true, opacity: 0.55 }));
+    trail.frustumCulled = false; scene.add(trail);
+    // patrol lane (desired back-and-forth range on the ground)
+    const A = Math.abs(S.plan.A[j]); const y0 = S.p[j][1];
+    const lane = new THREE.Line(new THREE.BufferGeometry().setFromPoints([W(-A,y0,0.015), W(A,y0,0.015)]),
+      new THREE.LineDashedMaterial({ color: hex, dashSize: 0.18, gapSize: 0.14, transparent: true, opacity: 0.35 }));
+    lane.computeLineDistances(); scene.add(lane);
+    nom.visible = $('tNom').checked; trail.visible = $('tTrail').checked; lane.visible = $('tRail').checked;
+    drones.push({ ...d, arrow, nom, ring, tether, trail, tpos, tcount: 0, lane, yaw: 0, hex });
+  }
+}
+const $ = id => document.getElementById(id);
+buildDrones();
+
+// ---------- HUD ----------
+function pips(el, n, total, color){
+  el.innerHTML = Array.from({length: total}, (_,i)=>`<span class="pip" style="${i<n?`background:${color}`:''}"></span>`).join('');
+}
+const chart = $('chart'), cctx = chart.getContext('2d');
+function sizeChart(){ const r = chart.getBoundingClientRect(); chart.width = r.width*devicePixelRatio; chart.height = r.height*devicePixelRatio; }
+sizeChart();
+
+function drawChart(){
+  const w = chart.width, h = chart.height, dpr = devicePixelRatio;
+  cctx.clearRect(0,0,w,h);
+  const pad = { l: 22*dpr, r: 6*dpr, t: 6*dpr, b: 16*dpr };
+  const span = 50, tEnd = Math.max(S.t, span), t0 = tEnd - span;
+  const X = t => pad.l + (t - t0)/span*(w-pad.l-pad.r);
+  const NN = S.N; const Y = v => h-pad.b - v/NN*(h-pad.t-pad.b);
+  cctx.font = `${10*dpr}px IBM Plex Mono, monospace`; cctx.fillStyle = '#5b6672';
+  cctx.strokeStyle = 'rgba(255,255,255,.06)'; cctx.lineWidth = 1;
+  for (const v of [...new Set([0, Math.round(NN/4), Math.round(NN/2), Math.round(3*NN/4), NN])]){ cctx.beginPath(); cctx.moveTo(pad.l,Y(v)); cctx.lineTo(w-pad.r,Y(v)); cctx.stroke(); cctx.fillText(v, 4*dpr, Y(v)+3*dpr); }
+  for (let tt=Math.ceil(t0/10)*10; tt<=tEnd; tt+=10) cctx.fillText(tt+'s', X(tt)-8*dpr, h-3*dpr);
+  // thresholds
+  cctx.setLineDash([4*dpr,4*dpr]);
+  cctx.strokeStyle = 'rgba(74,222,128,.55)'; cctx.beginPath(); cctx.moveTo(pad.l,Y(params.r)); cctx.lineTo(w-pad.r,Y(params.r)); cctx.stroke();
+  cctx.strokeStyle = 'rgba(148,163,184,.4)'; cctx.beginPath(); cctx.moveTo(pad.l,Y(NN-2*params.r)); cctx.lineTo(w-pad.r,Y(NN-2*params.r)); cctx.stroke();
+  cctx.setLineDash([]);
+  const series = [['c1','#2dd4bf'],['c2','#f5a524'],['out','#94a3b8']];
+  for (const [k,col] of series){
+    cctx.strokeStyle = col; cctx.lineWidth = 1.8*dpr; cctx.beginPath();
+    let first = true, prev = null;
+    for (const s of history){ if (s.t < t0) continue;
+      const x = X(s.t), y = Y(s[k] + (k==='c1'?0.06:k==='c2'?-0.06:0));
+      if (first){ cctx.moveTo(x,y); first=false; } else { cctx.lineTo(x, Y(prev[k] + (k==='c1'?0.06:k==='c2'?-0.06:0))); cctx.lineTo(x,y); }
+      prev = s; }
+    cctx.stroke();
+  }
+}
+
+function updateHUD(){
+  const { c1, c2, out } = SIM.counts(S);
+  const r = params.r;
+  $('cL1').textContent = c1; $('cL2').textContent = c2; $('cOut').textContent = out;
+  $('qL1').textContent = '≥'+r; $('qL2').textContent = '≥'+r; const N = S.N;
+  $('qOut').textContent = '≤'+(N-2*r);
+  pips($('pipsL1'), c1, N, c1>=r ? '#2dd4bf' : '#f87171');
+  pips($('pipsL2'), c2, N, c2>=r ? '#f5a524' : '#f87171');
+  pips($('pipsOut'), out, N, '#94a3b8');
+  const hv = SIM.barrier(S, r), safe = c1>=r && c2>=r;
+  const st = $('status'); st.className = 'mono ' + (safe ? 'safe' : 'unsafe');
+  $('statusTxt').textContent = safe ? 'SAFE' : 'UNSAFE · coverage lost';
+  $('hval').textContent = 'h = ' + hv.toFixed(2);
+  $('mT').textContent = S.t.toFixed(1)+' s';
+  $('mAct').textContent = S.active.filter(Boolean).length + ' / ' + N;
+  $('mViol').textContent = violations;
+  $('mU').textContent = peakU.toFixed(2);
+  // min 3D separation between drones
+  let ms = Infinity;
+  for (let i=0;i<N;i++) for (let k=i+1;k<N;k++){
+    const dx=S.p[i][0]-S.p[k][0], dy=S.p[i][1]-S.p[k][1], dz=ALT[i]-ALT[k];
+    ms = Math.min(ms, Math.hypot(dx,dy,dz)); }
+  $('mSep').textContent = ms.toFixed(2)+' m';
+  regionVis[0].outline.material.color.set(c1>=r ? C_L1 : 0xf87171);
+  regionVis[1].outline.material.color.set(c2>=r ? C_L2 : 0xf87171);
+  return { safe, c1, c2, out };
+}
+
+// ---------- controls ----------
+$('bPlay').onclick = () => { params.playing = !params.playing;
+  $('bPlay').textContent = params.playing ? '❚❚ Pause' : '▶ Play'; $('bPlay').className = params.playing ? 'on' : ''; };
+function syncTexts(){
+  const words = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve'];
+  $('nTxt').textContent = words[nDrones] || String(nDrones);
+  $('nCons').textContent = 12*nDrones;
+  $('sN').min = 2*params.r; $('sN').value = nDrones; $('vN').textContent = nDrones;
+}
+function reset(newSeed){
+  if (newSeed) seed = (Math.random()*1e9)|0;
+  S = SIM.create(seed, nDrones); peakU = 0; history = []; violations = 0; wasUnsafe = false;
+  computeAlt(); buildDrones(); syncTexts();
+}
+$('bReset').onclick = () => reset(false);
+$('bSeed').onclick = () => reset(true);
+$('bFilter').onclick = () => { params.filter = !params.filter;
+  $('bFilter').textContent = 'CBF filter: ' + (params.filter ? 'ON' : 'OFF');
+  $('bFilter').className = params.filter ? 'on' : 'off'; };
+$('sR').oninput = e => {
+  params.r = +e.target.value; $('vR').textContent = params.r; $('rTxt').textContent = params.r;
+  if (nDrones < 2*params.r){ nDrones = 2*params.r; reset(false); }   // enforce N >= 2r
+  syncTexts();
+};
+$('sN').oninput = e => { nDrones = Math.max(+e.target.value, 2*params.r); reset(false); };
+$('sU').oninput = e => { const v = +e.target.value;
+  params.umax = v > 3.0 ? Infinity : v;
+  const t = isFinite(params.umax) ? params.umax.toFixed(2)+' m/s' : 'off';
+  $('vU').textContent = t; $('mUB').textContent = t; peakU = 0; };
+$('sSpd').oninput = e => { params.speed = +e.target.value; $('vSpd').textContent = params.speed+'×'; };
+$('sA').oninput = e => { params.alpha = +e.target.value; $('vA').textContent = params.alpha.toFixed(1); };
+$('tNom').onchange = e => drones.forEach(d => d.nom.visible = e.target.checked);
+syncTexts();
+$('tTrail').onchange = e => drones.forEach(d => d.trail.visible = e.target.checked);
+$('tRail').onchange = e => drones.forEach(d => d.lane.visible = e.target.checked);
+$('tRot').onchange = e => { controls.autoRotate = e.target.checked; controls.autoRotateSpeed = 0.6; };
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight); sizeChart();
+});
+
+// ---------- loop ----------
+const clock = new THREE.Clock();
+let acc = 0, propSpin = 0;
+const tmpDir = new THREE.Vector3();
+updateHUD();
+
+function frame(){
+  const dt = Math.min(clock.getDelta(), 0.1);
+  if (params.playing){
+    acc += dt * params.speed;
+    let n = 0;
+    while (acc >= SIM.DT && n < 200){
+      SIM.step(S, params); acc -= SIM.DT; n++;
+      for (const u of S.u) peakU = Math.max(peakU, Math.abs(u[0]), Math.abs(u[1]));
+      const c = SIM.counts(S);
+      history.push({ t: S.t, ...c });
+      const unsafe = c.c1 < params.r || c.c2 < params.r;
+      if (unsafe && !wasUnsafe) violations++; wasUnsafe = unsafe;
+      if (S.step % 2 === 0) drones.forEach((d,j) => {   // trail sampling
+        const TL = d.tpos.length/3;
+        if (d.tcount < TL) d.tcount++; d.tpos.copyWithin(3, 0, (TL-1)*3);
+        d.tpos[0]=S.p[j][0]; d.tpos[1]=ALT[j]; d.tpos[2]=-S.p[j][1];
+      });
+    }
+    if (history.length > 4000) history.splice(0, history.length - 1200);
+    propSpin += dt * 55;
+  }
+  const hud = updateHUD();
+
+  drones.forEach((d, j) => {
+    const [x, y] = S.p[j], [ux, uy] = S.u[j], [dx, dy] = S.ud[j];
+    const bob = Math.sin(performance.now()/600 + j*1.7) * 0.025;
+    d.root.position.copy(W(x, y, ALT[j] + bob));
+    const sp = Math.hypot(ux, uy);
+    if (sp > 0.05){ const target = Math.atan2(-uy, ux) ; // heading in world x/z
+      let yaw = Math.atan2(uy, ux) - Math.PI/2; // body nose is -z
+      let diff = yaw - d.yaw; diff = Math.atan2(Math.sin(diff), Math.cos(diff)); d.yaw += diff * Math.min(1, dt*4); }
+    d.root.rotation.y = d.yaw;
+    d.tilt.rotation.x = -Math.min(sp, 3) * 0.08;   // pitch forward with speed
+    d.props.forEach(p => p.rotation.y = propSpin * p.userData.dir);
+
+    // arrows: filtered command u (colored) and nominal u_des (white)
+    const base = W(x, y, ALT[j] - 0.02);
+    if (sp > 1e-3){ tmpDir.set(ux, 0, -uy).normalize(); d.arrow.setDirection(tmpDir);
+      d.arrow.setLength(0.35 + Math.min(sp, 4)*0.32, 0.18, 0.12); d.arrow.visible = true; }
+    else d.arrow.visible = false;
+    d.arrow.position.copy(base);
+    if ($('tNom').checked){ const ns = Math.hypot(dx, dy);
+      if (ns > 1e-3){ tmpDir.set(dx,0,-dy).normalize(); d.nom.setDirection(tmpDir); d.nom.setLength(0.35+Math.min(ns,4)*0.32, 0.14, 0.09); }
+      d.nom.position.copy(W(x, y, ALT[j] + 0.1)); d.nom.visible = ns > 1e-3; }
+
+    // ground ring colour = where the drone is counted
+    const in1 = S.hL1[j] >= -1e-6, in2 = S.hL2[j] >= -1e-6;
+    const rc = in1 ? C_L1 : in2 ? C_L2 : 0x94a3b8;
+    d.ring.material.color.set(S.active[j] && params.filter ? 0xffffff : rc);
+    const pulse = S.active[j] && params.filter ? 1 + 0.25*Math.sin(performance.now()/90) : 1;
+    d.ring.scale.setScalar(pulse);
+    d.ring.position.copy(W(x, y, 0.02));
+    const tp = d.tether.geometry.attributes.position.array;
+    tp[0]=x; tp[1]=0.02; tp[2]=-y; tp[3]=x; tp[4]=ALT[j]-0.1; tp[5]=-y;
+    d.tether.geometry.attributes.position.needsUpdate = true; d.tether.computeLineDistances();
+    d.trail.geometry.setDrawRange(0, d.tcount); d.trail.geometry.attributes.position.needsUpdate = true;
+  });
+
+  const nowMs = performance.now();
+  beacons.forEach(b => { b.visible = Math.floor(nowMs/650 + b.userData.ph) % 2 === 0; });
+  drawChart();
+  controls.update();
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
