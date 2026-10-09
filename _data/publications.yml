@@ -91,7 +91,7 @@
   links:
     pdf: "https://arxiv.org/pdf/2509.10716"
     code: "https://github.com/joonlee16/combinatorial_cbf"
-    demo: "playground/comb-cbf.html"
+    demo: "playground/comb-cbf"
 
 - year: 2025
   title: "Reformulations of Quadratic Programs for Lipschitz Continuity"
@@ -147,6 +147,7 @@
   links:
     pdf: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11127420"
     code: "https://github.com/joonlee16/Resilient-Leader-Follower-CBF-QP"
+    demo: "playground/strong-r-cbf"
 
 - year: 2024
   title: "Construction of the Sparsest Maximally r-Robust Graphs"

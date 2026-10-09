@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Combinatorial CBF Patrol</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0b0f14; --panel:rgba(14,19,26,.82); --line:rgba(255,255,255,.09);
@@ -14,25 +14,19 @@
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
-    font-family:"IBM Plex Sans",system-ui,sans-serif;overflow:hidden}
+    font-family:"IBM Plex Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;overflow:hidden}
   #scene{position:fixed;inset:0}
   .panel{position:fixed;background:var(--panel);backdrop-filter:blur(10px);
     border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-  .mono{font-family:"IBM Plex Mono",monospace}
-  /* title */
-  #title{top:16px;left:16px;max-width:380px}
-  #title h1{font-size:15px;margin:0 0 4px;font-weight:600;letter-spacing:.2px}
-  #title p{margin:0;color:var(--mute);font-size:12.5px;line-height:1.5}
-  #title .eq{margin-top:10px;font-size:11.5px;color:var(--accent);line-height:1.6}
-  #title a{color:var(--accent)}
+  .mono{font-family:inherit}
   /* counters */
-  #hud{top:16px;right:16px;width:290px}
+  #hud{top:16px;left:16px;width:290px}
   .hudrow{display:grid;grid-template-columns:1fr auto;align-items:center;
     padding:9px 0;border-bottom:1px solid var(--line)}
   .hudrow:last-of-type{border-bottom:none}
   .hudlabel{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:8px}
   .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
-  .big{font-family:"IBM Plex Mono",monospace;font-size:30px;font-weight:600;line-height:1}
+  .big{font-size:30px;font-weight:600;line-height:1}
   .req{font-size:11px;color:var(--mute);margin-left:4px}
   .pips{display:flex;gap:3px;margin-top:6px}
   .pip{flex:1;max-width:14px;height:5px;border-radius:2px;background:rgba(255,255,255,.08)}
@@ -40,61 +34,45 @@
     display:flex;justify-content:space-between;align-items:center}
   #status.safe{background:rgba(74,222,128,.1);color:var(--ok)}
   #status.unsafe{background:rgba(248,113,113,.12);color:var(--bad)}
+  #status.adjust{background:rgba(251,191,36,.12);color:#fbbf24}
   #metrics{margin-top:8px;font-size:11px;color:var(--mute);display:grid;
     grid-template-columns:1fr 1fr;gap:4px 10px}
   #metrics b{color:var(--ink);font-weight:500}
   /* controls */
-  #ctrl{left:16px;bottom:16px;width:380px}
-  .crow{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:12px}
-  .crow label{color:var(--mute);width:118px;flex:none}
-  .crow input[type=range]{flex:1;accent-color:var(--accent)}
-  .crow .val{width:42px;text-align:right;font-family:"IBM Plex Mono",monospace;font-size:11.5px}
-  .btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  #ctrl{left:16px;right:16px;bottom:16px;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;padding:10px 14px}
+  .sep{width:1px;align-self:stretch;background:var(--line)}
+  .crow{display:flex;align-items:center;gap:8px;font-size:12px;flex:1 1 210px;min-width:200px}
+  .crow label{color:var(--mute);flex:none;display:flex;align-items:center;gap:6px}
+  .hintsm{font-size:10.5px;opacity:.75}
+  .crow input[type=range]{flex:1;min-width:60px;accent-color:var(--accent)}
+  .req1 input[type=range]{accent-color:var(--l1)} .req2 input[type=range]{accent-color:var(--l2)}
+  .crow .val{width:42px;text-align:right;font-size:11.5px;white-space:nowrap} .crow .val.wide{width:62px}
+  .btns{display:flex;gap:8px;flex:none}
   button{background:rgba(255,255,255,.06);color:var(--ink);border:1px solid var(--line);
-    border-radius:8px;padding:7px 11px;font:500 12px "IBM Plex Sans",sans-serif;cursor:pointer}
+    border-radius:8px;padding:7px 11px;font:500 12px "IBM Plex Sans",system-ui,sans-serif;cursor:pointer}
   button:hover{background:rgba(255,255,255,.12)}
   button.on{background:rgba(125,211,252,.16);border-color:rgba(125,211,252,.5);color:var(--accent)}
   button.off{background:rgba(248,113,113,.14);border-color:rgba(248,113,113,.5);color:var(--bad)}
-  .toggles{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin-top:6px}
+  .toggles{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
   .toggles input{accent-color:var(--accent)}
   /* chart */
-  #chartbox{right:16px;bottom:16px;width:420px}
+  #chartbox{top:16px;right:16px;width:min(430px, calc(100vw - 354px));min-width:240px}
   #chartbox .hd{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);margin-bottom:6px}
-  #chart{width:100%;height:150px;display:block}
+  #chart{width:100%;height:170px;display:block}
   .legend{display:flex;gap:12px;font-size:11px;color:var(--mute)}
   .legend span{display:flex;align-items:center;gap:5px}
   #hint{position:fixed;left:50%;top:14px;transform:translateX(-50%);font-size:11.5px;color:var(--mute);
     background:var(--panel);border:1px solid var(--line);padding:5px 10px;border-radius:999px}
-  @media (max-width: 900px){
-    #title{max-width:calc(100% - 32px)} #title .eq{display:none}
-    #hud{top:auto;bottom:16px;right:16px;width:calc(50% - 24px)}
-    #ctrl{width:calc(50% - 24px)} #chartbox,#hint{display:none}
-    .big{font-size:22px}
-  }
-  @media (max-width: 600px){
-    #hud{left:16px;right:16px;width:auto;bottom:auto;top:110px;padding:10px 12px}
-    #hud .hudrow{padding:5px 0} #metrics{display:none}
-    #ctrl{left:16px;right:16px;width:auto}
-    #title p{display:none}
+  @media (max-width: 1000px){ #hint{display:none} }
+  @media (max-width: 760px){
+    #hud{width:min(46vw, 290px);padding:10px 12px} #metrics{display:none} #hud .hudrow{padding:5px 0}
+    #chartbox{width:calc(100vw - min(46vw, 290px) - 44px);min-width:0;padding:10px 12px} #chartbox .legend{display:none}
+    #ctrl .sep,#ctrl .toggles,#ctrl .adv{display:none} .btns{flex:1 1 100%;flex-wrap:wrap} .big{font-size:22px}
   }
 </style>
 </head>
 <body>
 <div id="scene"></div>
-
-<div id="title" class="panel">
-  <h1>Combinatorial CBFs · Multi-drone patrol</h1>
-  <p><span id="nTxt">Eleven</span> single-integrator drones patrol back and forth over two L-shaped districts, a research campus (L<sub>1</sub>) and a residential neighbourhood (L<sub>2</sub>).
-     A combinatorial CBF-QP keeps at least <b class="mono" id="rTxt">4</b> drones over each region at all times,
-     using only <span class="mono" id="nCons">132</span> primitive constraints (12 per drone) instead of thousands of Boolean combinations.</p>
-  <div class="eq mono">
-    h<sub>L</sub>(x<sub>j</sub>) = min( min<sub>k</sub> h<sub>k</sub>, max(h<sub>5</sub>,h<sub>6</sub>) )<br>
-    h(x) = min( max<sup>r</sup><sub>j</sub> h<sub>L1</sub>(x<sub>j</sub>), max<sup>r</sup><sub>j</sub> h<sub>L2</sub>(x<sub>j</sub>) )<br>
-    ḣ<sub>k</sub> ≥ −α( h + |h<sub>k</sub> − h| ) &nbsp;∀k
-  </div>
-  <p style="margin-top:8px">Ong, Lee, Molnar, Panagou, Ames · IEEE L-CSS 2025 ·
-     <a href="https://github.com/joonlee16/combinatorial_cbf" target="_blank" rel="noopener">code</a></p>
-</div>
 
 <div id="hint">drag to orbit · scroll to zoom · right-drag to pan</div>
 
@@ -132,12 +110,16 @@
     <button id="bSeed">⚄ New patrol plan</button>
     <button id="bFilter" class="on">CBF filter: ON</button>
   </div>
-  <div class="crow"><label>Number of drones N</label><input id="sN" type="range" min="8" max="24" step="1" value="11"><span class="val" id="vN">11</span></div>
-  <div class="crow"><label>Required per region r</label><input id="sR" type="range" min="1" max="10" step="1" value="4"><span class="val" id="vR">4</span></div>
-  <div class="crow" style="margin-top:-2px"><label></label><span style="font-size:11px;color:var(--mute)" id="nNote">N ≥ 2r is enforced: at least r drones per region, both regions.</span></div>
-  <div class="crow"><label>Input bound |u<sub>x</sub>|,|u<sub>y</sub>| ≤</label><input id="sU" type="range" min="0.25" max="3.25" step="0.25" value="1"><span class="val" id="vU" style="width:58px">1.00 m/s</span></div>
+  <div class="sep"></div>
+  <div class="crow req1"><label><span class="sw" style="background:var(--l1)"></span>Required in L₁ r₁</label><input id="sR1" type="range" min="1" max="12" step="1" value="4"><span class="val" id="vR1">4</span></div>
+  <div class="crow req2"><label><span class="sw" style="background:var(--l2)"></span>Required in L₂ r₂</label><input id="sR2" type="range" min="1" max="12" step="1" value="4"><span class="val" id="vR2">4</span></div>
+  <div class="crow"><label title="changing N restarts the run; N ≥ r₁ + r₂">Drones N <span class="hintsm">(restarts)</span></label><input id="sN" type="range" min="8" max="24" step="1" value="11"><span class="val" id="vN">11</span></div>
+  <div class="sep"></div>
+  <div class="crow adv"><label title="per-axis input bound |u_x|, |u_y| ≤ value">Input bound</label><input id="sU" type="range" min="0.25" max="3.25" step="0.25" value="1"><span class="val wide" id="vU">1.00 m/s</span></div>
+  <div class="crow adv"><label>CBF gain α</label><input id="sA" type="range" min="0.5" max="6" step="0.5" value="2"><span class="val" id="vA">2.0</span></div>
+  <div class="crow adv"><label title="ḣ_k ≥ −α(h_k) − ρ·ReLU(α(h) − α(h_k)).  ρ = 2 is the paper's constraint; ρ ≥ 1 keeps u = 0 feasible.">Relaxation ρ</label><input id="sRho" type="range" min="1" max="8" step="0.25" value="2"><span class="val wide" id="vRho">2.0 paper</span></div>
   <div class="crow"><label>Sim speed</label><input id="sSpd" type="range" min="0.25" max="8" step="0.25" value="2"><span class="val" id="vSpd">2×</span></div>
-  <div class="crow"><label>CBF gain α</label><input id="sA" type="range" min="0.5" max="6" step="0.5" value="2"><span class="val" id="vA">2.0</span></div>
+  <div class="sep"></div>
   <div class="toggles">
     <label><input type="checkbox" id="tNom"> nominal command</label>
     <label><input type="checkbox" id="tTrail" checked> trails</label>
@@ -165,11 +147,15 @@ const SIM = (() => {
   const DT = 0.05, KAPPA = 2.0, NMAX = 24;
   // Half-planes [nx, ny, c]: h = nx*x + ny*y + c >= 0 (unit inward normals) in the paper's units.
   // Edges 0,1 form the OR pair at the notch; edges 2..5 are the AND box.
+  // L1 is the left L and L2 the right L (the paper's code has them the other way round; the scene is
+  // mirror-symmetric in x, so this is an exact mirror image: initial positions and patrol signs are
+  // mirrored too, giving the mirror image of the paper's trajectories).
+  const MIRROR = -1;
   const BASE = [
-    { name: 'L1', cx: 3.5, H: [[0,-1,0],[-1,0,3.5],[0,-1,2],[1,0,-1.5],[0,1,2],[-1,0,5.5]],
-      poly: [[5.5,0],[3.5,0],[3.5,2],[1.5,2],[1.5,-2],[5.5,-2]] },
-    { name: 'L2', cx: -3.5, H: [[0,-1,0],[1,0,3.5],[0,-1,2],[-1,0,-1.5],[0,1,2],[1,0,5.5]],
+    { name: 'L1', cx: -3.5, H: [[0,-1,0],[1,0,3.5],[0,-1,2],[-1,0,-1.5],[0,1,2],[1,0,5.5]],
       poly: [[-5.5,0],[-3.5,0],[-3.5,2],[-1.5,2],[-1.5,-2],[-5.5,-2]] },
+    { name: 'L2', cx: 3.5, H: [[0,-1,0],[-1,0,3.5],[0,-1,2],[1,0,-1.5],[0,1,2],[-1,0,5.5]],
+      poly: [[5.5,0],[3.5,0],[3.5,2],[1.5,2],[1.5,-2],[5.5,-2]] },
   ];
   const REGIONS = BASE.map(r => ({ name: r.name, cx: r.cx*SCALE,
     H: r.H.map(([a,b,c]) => [a, b, c*SCALE]), poly: r.poly.map(([x,y]) => [x*SCALE, y*SCALE]) }));
@@ -182,28 +168,31 @@ const SIM = (() => {
   function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
     t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
 
-  // Initial positions + patrol amplitudes. Every drone gets its own y-lane; lanes alternate
-  // between L1 and L2 so each region starts with >= floor(N/2) drones (>= r whenever N >= 2r).
-  function layout(N, rnd){
-    if (N === 11) return { init: INIT11.map(([x,y]) => [x*SCALE, y*SCALE]), amag: AMAG11.map(a => a*SCALE) };
+  // Initial positions + patrol amplitudes. Every drone gets its own y-lane. n1 lanes start in L1 and
+  // N-n1 in L2, with n1 chosen so that L1 starts with >= r1 drones and L2 with >= r2 (possible whenever
+  // N >= r1 + r2); the L1 lanes are spread evenly among all lanes. For N = 11 with r1 <= 6 and r2 <= 5
+  // the paper's own initial positions are used.
+  function layout(N, rnd, r1, r2){
+    if (N === 11 && r1 <= 6 && r2 <= 5) return { init: INIT11.map(([x,y]) => [MIRROR*x*SCALE, y*SCALE]), amag: AMAG11.map(a => a*SCALE) };
     const init = [], amag = [];
     const ymax = 1.85;
+    const n1 = Math.min(N - r2, Math.max(r1, Math.round(N*r1/Math.max(1, r1 + r2))));
     for (let j=0;j<N;j++){
       const y = -ymax + 2*ymax*(N===1?0.5:j/(N-1));
-      const inL1 = j % 2 === 0;
+      const inL1 = Math.floor((j+1)*n1/N) > Math.floor(j*n1/N);
       // x range inside the L at this lane (notch removes the outer half above y=0)
       const lo = 1.5 + 0.15, hi = (y > 0 ? 3.5 : 5.5) - 0.15;
       const x = lo + (hi-lo)*rnd();
-      init.push([(inL1 ? x : -x)*SCALE, y*SCALE]);
+      init.push([(inL1 ? MIRROR*x : -MIRROR*x)*SCALE, y*SCALE]);
       amag.push((j % 4 < 2 ? 5 : 3)*SCALE);
     }
     return { init, amag };
   }
 
-  function makePlan(seed, N){
+  function makePlan(seed, N, r1, r2){
     const rnd = mulberry32(seed);
-    const { init, amag } = layout(N, rnd);
-    const A = amag.map(a => a * (rnd() < 0.5 ? -1 : 1));
+    const { init, amag } = layout(N, rnd, r1, r2);
+    const A = amag.map(a => MIRROR * a * (rnd() < 0.5 ? -1 : 1));
     const W = amag.map(() => (0.02 + 0.08*rnd()) * Math.PI);
     return { A, W, init, seed };
   }
@@ -238,8 +227,8 @@ const SIM = (() => {
     return { u: fb, feasible: false };
   }
 
-  function create(seed, N = 11){
-    const plan = makePlan(seed, N);
+  function create(seed, N = 11, r1 = 4, r2 = 4){
+    const plan = makePlan(seed, N, r1, r2);
     return { N, t: 0, step: 0, plan,
       p: plan.init.map(q => q.slice()), u: plan.init.map(()=>[0,0]), ud: plan.init.map(()=>[0,0]),
       hL1: new Array(N).fill(0), hL2: new Array(N).fill(0), active: new Array(N).fill(false),
@@ -249,17 +238,21 @@ const SIM = (() => {
   function refreshH(S){ for (let j=0;j<S.N;j++){ S.hL1[j] = hL(REGIONS[0], S.p[j][0], S.p[j][1]); S.hL2[j] = hL(REGIONS[1], S.p[j][0], S.p[j][1]); } }
 
   function step(S, opt){
-    const { r = 4, alpha = 2.0, filter = true, umax = Infinity } = opt || {};
+    const { r = 4, alpha = 2.0, rho = 2.0, filter = true, umax = Infinity } = opt || {};
+    const r1 = (opt && opt.r1) || r, r2 = (opt && opt.r2) || r;   // per-region requirements (r1 for L1, r2 for L2)
     const sat = v => Math.max(-umax, Math.min(umax, v));
     const N = S.N;
     S.step += 1; const t = S.step * DT;   // matches compute_u_des(..., t) with t*0.05
     const { A, W } = S.plan;
     refreshH(S);
-    const pivot = Math.min(rthLargest(S.hL1, r), rthLargest(S.hL2, r));
+    // h(x) = min( max^{r1}_j hL1(x_j), max^{r2}_j hL2(x_j) ): r1-of-N over L1 AND r2-of-N over L2
+    const pivot = Math.min(rthLargest(S.hL1, r1), rthLargest(S.hL2, r2));
     S.pivot = pivot; S.feasible = true;
     for (let j=0;j<N;j++){
       const [x,y] = S.p[j];
-      const xd = A[j]*Math.sin(W[j]*t), xdd = A[j]*W[j]*Math.cos(W[j]*t);
+      const rec = opt && opt.recruit ? opt.recruit[j] : null;
+      const xd = rec !== null && rec !== undefined ? rec : A[j]*Math.sin(W[j]*t);
+      const xdd = rec !== null && rec !== undefined ? 0 : A[j]*W[j]*Math.cos(W[j]*t);
       const ud = [KAPPA*(xd - x) + xdd, 0];
       S.ud[j] = ud;
       let u = ud;
@@ -267,7 +260,9 @@ const SIM = (() => {
         const cons = [];
         for (const reg of REGIONS) for (const h of reg.H){
           const hk = hRaw(h, x, y);
-          cons.push([h[0], h[1], -alpha*(pivot + Math.abs(hk - pivot))]);
+          // ḣ_k ≥ −α(h_k) − ρ·ReLU(α(h) − α(h_k)),  α(s) = alpha·s.  ρ = 2 is the paper's
+          // ḣ_k ≥ −α(h + |h_k − h|); ρ only changes how fast the slack constraints (h_k < h) may decay.
+          cons.push([h[0], h[1], -alpha*hk - rho*Math.max(0, alpha*pivot - alpha*hk)]);
         }
         // input bounds |u_x|, |u_y| <= umax (linear, so the per-drone QP stays exact)
         if (isFinite(umax)) cons.push([1,0,-umax], [-1,0,-umax], [0,1,-umax], [0,-1,-umax]);
@@ -290,9 +285,58 @@ const SIM = (() => {
     for (let j=0;j<S.N;j++){ const a=S.hL1[j]>=-1e-6, b=S.hL2[j]>=-1e-6; if(a)c1++; if(b)c2++; if(!a&&!b)out++; }
     return { c1, c2, out };
   }
-  function barrier(S, r){ return Math.min(rthLargest(S.hL1, r), rthLargest(S.hL2, r)); }
+  function barrier(S, r1, r2 = r1){ return Math.min(rthLargest(S.hL1, r1), rthLargest(S.hL2, r2)); }
 
-  return { SCALE, NMAX, DT, REGIONS, create, step, counts, barrier, hL, qp2, refreshH };
+  // Requirement supervisor (lets r1, r2 change mid-run without a restart). The CBF enforces the
+  // effective requirements eff = (r1, r2). Lowering a target takes effect at once: the safe set only
+  // grows. Raising one is done one drone at a time: eff.rk is incremented only when the current state
+  // already lies in the safe set for rk + 1, i.e. when the patrol has carried an extra drone into the
+  // region; the CBF then keeps it there. So h(x; eff) >= 0 holds at every instant, and eff climbs to the
+  // target as the drones' own patrol motion brings them in.
+  // Recruitment (nominal command only; the CBF filter is unchanged): while a region holds fewer drones
+  // than its target, the closest drones that can be spared (outside both regions first, then drones
+  // from the other region beyond that region's own target) fly toward a point inside it instead of
+  // following their patrol sinusoid. Returns an array: target x per drone, or null to keep patrolling.
+  function recruits(S, tgt){
+    const N = S.N, out = new Array(N).fill(null);
+    const H = [S.hL1, S.hL2], T = [tgt.r1, tgt.r2], IN = [0, 0];
+    for (let j=0;j<N;j++){ if (S.hL1[j] >= 0) IN[0]++; if (S.hL2[j] >= 0) IN[1]++; }
+    for (let k=0;k<2;k++){
+      let deficit = T[k] - IN[k]; if (deficit <= 0) continue;
+      // drones already in region k hold inside it while it fills up (keeps h away from 0, so the
+      // min-coupled barrier does not freeze the spare drones that have to cross over)
+      for (let j=0;j<N;j++) if (H[k][j] >= 0 && out[j] === null) out[j] = Math.sign(REGIONS[k].cx) * 2.6 * SCALE;
+      const o = 1 - k, spareOther = IN[o] - T[o];
+      const cand = [];
+      for (let j=0;j<N;j++){
+        if (H[k][j] >= 0 || out[j] !== null) continue;
+        const inOther = H[o][j] >= 0;
+        if (inOther && spareOther <= 0) continue;
+        cand.push([inOther ? 1 : 0, -H[k][j], j]);
+      }
+      cand.sort((a,b) => a[0]-b[0] || a[1]-b[1]);
+      let taken = 0, takenFromOther = 0;
+      for (const [fromOther,, j] of cand){
+        if (taken >= deficit) break;
+        if (fromOther && takenFromOther >= spareOther) continue;
+        out[j] = Math.sign(REGIONS[k].cx) * 2.6 * SCALE;   // inside both arms of the L at any lane
+        taken++; if (fromOther) takenFromOther++;
+      }
+    }
+    return out;
+  }
+
+  function ratchet(S, eff, tgt){
+    const e = { r1: Math.min(eff.r1, tgt.r1), r2: Math.min(eff.r2, tgt.r2) };
+    for (let changed = true; changed; ){
+      changed = false;
+      if (e.r1 < tgt.r1 && barrier(S, e.r1 + 1, e.r2) >= 0){ e.r1++; changed = true; }
+      if (e.r2 < tgt.r2 && barrier(S, e.r1, e.r2 + 1) >= 0){ e.r2++; changed = true; }
+    }
+    return e;
+  }
+
+  return { SCALE, NMAX, DT, REGIONS, create, step, counts, barrier, ratchet, recruits, hL, qp2, refreshH };
 })();
 if (typeof module !== 'undefined') module.exports = SIM;
 // SIM-END
@@ -308,6 +352,7 @@ if (typeof module !== 'undefined') module.exports = SIM;
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+const LABEL_REDRAW = [];   // canvas labels to redraw once the web font has loaded
 
 const COLORS = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf","#92A8D1"];
 const C_L1 = 0x2dd4bf, C_L2 = 0xf5a524;
@@ -317,13 +362,14 @@ const colorOf = j => j < COLORS.length ? COLORS[j] : '#'+new THREE.Color().setHS
 const W = (x, y, z=0) => new THREE.Vector3(x, z, -y);
 
 // ---------- state & params ----------
-const params = { r: 4, alpha: 2.0, filter: true, speed: 2, playing: true, umax: 1.0 };
+const params = { rho: 2.0, r1: 4, r2: 4, alpha: 2.0, filter: true, speed: 2, playing: true, umax: 1.0 };
 let peakU = 0;
 let seed = 7;
 let nDrones = 11;
-let S = SIM.create(seed, nDrones);
+let S = SIM.create(seed, nDrones, 4, 4);
 let history = [];       // {t,c1,c2,out}
 let violations = 0, wasUnsafe = false;
+let eff = { r1: 4, r2: 4 };   // requirements the CBF currently enforces (climb to the targets params.r1/r2)
 
 // Altitude tiers: drones on neighbouring y-lanes fly at different heights → well separated in 3D.
 // Lowest tier (3.4 m) is above the tallest rooftop beacon (~3.0 m).
@@ -397,9 +443,12 @@ const regionVis = SIM.REGIONS.map((reg, i) => {
 function makeLabel(text, color){
   const cv = document.createElement('canvas'); cv.width = 640; cv.height = 96;
   const ctx = cv.getContext('2d');
-  ctx.font = '600 56px "IBM Plex Mono", monospace'; ctx.fillStyle = color;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, 320, 50);
+  const draw = () => { ctx.clearRect(0,0,640,96);
+    ctx.font = '600 56px "IBM Plex Sans", system-ui, sans-serif'; ctx.fillStyle = color;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, 320, 50); };
+  draw();
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  LABEL_REDRAW.push(() => { draw(); tex.needsUpdate = true; });
   const m = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.48),
     new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false }));
   m.rotation.x = -Math.PI/2; return m;
@@ -490,9 +539,10 @@ const same = (a, b) => a && b && a[0] === b[0] && a[1] === b[1];
 // --- L1: research campus — a skyline of mixed heights, HQ tower with antenna, lab dome ---
 (function buildCampus(){
   const reg = SIM.REGIONS[0];
-  const lots = lotsIn(reg, +1);
-  const hq = near(lots, 1.5*SC, 2*SC), dome = near(lots, 4.2*SC, -1.0*SC);
-  const parks = [near(lots, 2.6*SC, -0.4*SC), near(lots, 4.8*SC, -1.9*SC)];
+  const fx = Math.sign(reg.cx);            // landmark x-coordinates below are written for an L at +x
+  const lots = lotsIn(reg, fx);
+  const hq = near(lots, fx*1.5*SC, 2*SC), dome = near(lots, fx*4.2*SC, -1.0*SC);
+  const parks = [near(lots, fx*2.6*SC, -0.4*SC), near(lots, fx*4.8*SC, -1.9*SC)];
   lots.forEach(([x, y]) => {
     if (same([x,y], hq)){                     // HQ tower, the tallest landmark
       office(x, y, 0.62, 0.62, 2.6);
@@ -512,7 +562,7 @@ const same = (a, b) => a && b && a[0] === b[0] && a[1] === b[1];
       for (let k=0;k<5;k++) tree(x + rr(-0.3,0.3), y + rr(-0.3,0.3), rr(1.4,1.9));
     } else {
       // skyline: towers cluster toward the inner corner, low-rise toward the edges
-      const dIn = Math.hypot(x - 2.2*SC, y - 0.2*SC);
+      const dIn = Math.hypot(x - fx*2.2*SC, y - 0.2*SC);
       const tall = townRnd() < Math.max(0.12, 0.6 - 0.12*dIn);
       const h = tall ? rr(1.6, 2.35) : (townRnd() < 0.5 ? rr(0.9, 1.4) : rr(0.4, 0.8));
       const fw = h > 1.6 ? rr(0.5,0.6) : h > 1.0 ? rr(0.58,0.7) : rr(0.68,0.8);
@@ -536,10 +586,11 @@ function apartment(x, y, w, d, h){
 }
 (function buildHomes(){
   const reg = SIM.REGIONS[1];
-  const lots = lotsIn(reg, -1);
-  const school = near(lots, -2.6*SC, -1.2*SC);
-  const apts = [near(lots, -5.3*SC, -1.8*SC), near(lots, -1.6*SC, 1.8*SC), near(lots, -2.0*SC, 0.0)];
-  const parks = [near(lots, -4.4*SC, -0.4*SC)];
+  const fx = -Math.sign(reg.cx);           // landmark x-coordinates below are written for an L at -x
+  const lots = lotsIn(reg, -fx);
+  const school = near(lots, fx*-2.6*SC, -1.2*SC);
+  const apts = [near(lots, fx*-5.3*SC, -1.8*SC), near(lots, fx*-1.6*SC, 1.8*SC), near(lots, fx*-2.0*SC, 0.0)];
+  const parks = [near(lots, fx*-4.4*SC, -0.4*SC)];
   lots.forEach(([x, y]) => {
     if (same([x,y], school)){                // school with a bell tower
       const tex = WIN_TEX[0].clone(); tex.needsUpdate = true; tex.repeat.set(1.2, 0.6);
@@ -690,14 +741,15 @@ function drawChart(){
   const span = 50, tEnd = Math.max(S.t, span), t0 = tEnd - span;
   const X = t => pad.l + (t - t0)/span*(w-pad.l-pad.r);
   const NN = S.N; const Y = v => h-pad.b - v/NN*(h-pad.t-pad.b);
-  cctx.font = `${10*dpr}px IBM Plex Mono, monospace`; cctx.fillStyle = '#5b6672';
+  cctx.font = `${10*dpr}px IBM Plex Sans, system-ui, sans-serif`; cctx.fillStyle = '#5b6672';
   cctx.strokeStyle = 'rgba(255,255,255,.06)'; cctx.lineWidth = 1;
   for (const v of [...new Set([0, Math.round(NN/4), Math.round(NN/2), Math.round(3*NN/4), NN])]){ cctx.beginPath(); cctx.moveTo(pad.l,Y(v)); cctx.lineTo(w-pad.r,Y(v)); cctx.stroke(); cctx.fillText(v, 4*dpr, Y(v)+3*dpr); }
   for (let tt=Math.ceil(t0/10)*10; tt<=tEnd; tt+=10) cctx.fillText(tt+'s', X(tt)-8*dpr, h-3*dpr);
   // thresholds
   cctx.setLineDash([4*dpr,4*dpr]);
-  cctx.strokeStyle = 'rgba(74,222,128,.55)'; cctx.beginPath(); cctx.moveTo(pad.l,Y(params.r)); cctx.lineTo(w-pad.r,Y(params.r)); cctx.stroke();
-  cctx.strokeStyle = 'rgba(148,163,184,.4)'; cctx.beginPath(); cctx.moveTo(pad.l,Y(NN-2*params.r)); cctx.lineTo(w-pad.r,Y(NN-2*params.r)); cctx.stroke();
+  cctx.strokeStyle = 'rgba(45,212,191,.7)'; cctx.beginPath(); cctx.moveTo(pad.l,Y(params.r1)); cctx.lineTo(w-pad.r,Y(params.r1)); cctx.stroke();
+  cctx.strokeStyle = 'rgba(245,165,36,.7)'; cctx.beginPath(); cctx.moveTo(pad.l,Y(params.r2)); cctx.lineTo(w-pad.r,Y(params.r2)); cctx.stroke();
+  cctx.strokeStyle = 'rgba(148,163,184,.4)'; cctx.beginPath(); cctx.moveTo(pad.l,Y(NN-params.r1-params.r2)); cctx.lineTo(w-pad.r,Y(NN-params.r1-params.r2)); cctx.stroke();
   cctx.setLineDash([]);
   const series = [['c1','#2dd4bf'],['c2','#f5a524'],['out','#94a3b8']];
   for (const [k,col] of series){
@@ -713,16 +765,17 @@ function drawChart(){
 
 function updateHUD(){
   const { c1, c2, out } = SIM.counts(S);
-  const r = params.r;
+  const r1 = params.r1, r2 = params.r2, e1 = eff.r1, e2 = eff.r2;
   $('cL1').textContent = c1; $('cL2').textContent = c2; $('cOut').textContent = out;
-  $('qL1').textContent = '≥'+r; $('qL2').textContent = '≥'+r; const N = S.N;
-  $('qOut').textContent = '≤'+(N-2*r);
-  pips($('pipsL1'), c1, N, c1>=r ? '#2dd4bf' : '#f87171');
-  pips($('pipsL2'), c2, N, c2>=r ? '#f5a524' : '#f87171');
+  $('qL1').textContent = e1 < r1 ? `≥${e1}→${r1}` : '≥'+r1; $('qL2').textContent = e2 < r2 ? `≥${e2}→${r2}` : '≥'+r2; const N = S.N;
+  $('qOut').textContent = '≤'+(N-r1-r2);
+  pips($('pipsL1'), c1, N, c1>=r1 ? '#2dd4bf' : c1>=e1 ? '#fbbf24' : '#f87171');
+  pips($('pipsL2'), c2, N, c2>=r2 ? '#f5a524' : c2>=e2 ? '#fbbf24' : '#f87171');
   pips($('pipsOut'), out, N, '#94a3b8');
-  const hv = SIM.barrier(S, r), safe = c1>=r && c2>=r;
-  const st = $('status'); st.className = 'mono ' + (safe ? 'safe' : 'unsafe');
-  $('statusTxt').textContent = safe ? 'SAFE' : 'UNSAFE · coverage lost';
+  const hv = SIM.barrier(S, e1, e2), safe = c1>=e1 && c2>=e2, adjusting = e1 < r1 || e2 < r2;
+  const st = $('status'); st.className = 'mono ' + (!safe ? 'unsafe' : adjusting ? 'adjust' : 'safe');
+  $('statusTxt').textContent = !safe ? 'UNSAFE · coverage lost'
+    : adjusting ? `SAFE · filling ${e1 < r1 ? `L₁ ${c1}/${r1}` : ''}${e1 < r1 && e2 < r2 ? ', ' : ''}${e2 < r2 ? `L₂ ${c2}/${r2}` : ''}` : 'SAFE';
   $('hval').textContent = 'h = ' + hv.toFixed(2);
   $('mT').textContent = S.t.toFixed(1)+' s';
   $('mAct').textContent = S.active.filter(Boolean).length + ' / ' + N;
@@ -734,8 +787,8 @@ function updateHUD(){
     const dx=S.p[i][0]-S.p[k][0], dy=S.p[i][1]-S.p[k][1], dz=ALT[i]-ALT[k];
     ms = Math.min(ms, Math.hypot(dx,dy,dz)); }
   $('mSep').textContent = ms.toFixed(2)+' m';
-  regionVis[0].outline.material.color.set(c1>=r ? C_L1 : 0xf87171);
-  regionVis[1].outline.material.color.set(c2>=r ? C_L2 : 0xf87171);
+  regionVis[0].outline.material.color.set(c1>=e1 ? C_L1 : 0xf87171);
+  regionVis[1].outline.material.color.set(c2>=e2 ? C_L2 : 0xf87171);
   return { safe, c1, c2, out };
 }
 
@@ -743,14 +796,15 @@ function updateHUD(){
 $('bPlay').onclick = () => { params.playing = !params.playing;
   $('bPlay').textContent = params.playing ? '❚❚ Pause' : '▶ Play'; $('bPlay').className = params.playing ? 'on' : ''; };
 function syncTexts(){
-  const words = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve'];
-  $('nTxt').textContent = words[nDrones] || String(nDrones);
-  $('nCons').textContent = 12*nDrones;
-  $('sN').min = 2*params.r; $('sN').value = nDrones; $('vN').textContent = nDrones;
+  const need = params.r1 + params.r2;
+  $('sN').min = Math.max(2, need); $('sN').value = nDrones; $('vN').textContent = nDrones;
+  $('sR1').max = Math.min(12, nDrones - params.r2); $('sR2').max = Math.min(12, nDrones - params.r1);
+  $('sR1').value = params.r1; $('sR2').value = params.r2;
+  $('vR1').textContent = params.r1; $('vR2').textContent = params.r2;
 }
 function reset(newSeed){
   if (newSeed) seed = (Math.random()*1e9)|0;
-  S = SIM.create(seed, nDrones); peakU = 0; history = []; violations = 0; wasUnsafe = false;
+  S = SIM.create(seed, nDrones, params.r1, params.r2); eff = { r1: params.r1, r2: params.r2 }; peakU = 0; history = []; violations = 0; wasUnsafe = false;
   computeAlt(); buildDrones(); syncTexts();
 }
 $('bReset').onclick = () => reset(false);
@@ -758,18 +812,22 @@ $('bSeed').onclick = () => reset(true);
 $('bFilter').onclick = () => { params.filter = !params.filter;
   $('bFilter').textContent = 'CBF filter: ' + (params.filter ? 'ON' : 'OFF');
   $('bFilter').className = params.filter ? 'on' : 'off'; };
-$('sR').oninput = e => {
-  params.r = +e.target.value; $('vR').textContent = params.r; $('rTxt').textContent = params.r;
-  if (nDrones < 2*params.r){ nDrones = 2*params.r; reset(false); }   // enforce N >= 2r
+// per-region requirements change the run in place (no restart). The sliders keep r1 + r2 <= N; lowering
+// a target applies at once, raising one is phased in by the supervisor as drones arrive.
+function setReq(k, v){
+  params[k] = v;
   syncTexts();
-};
-$('sN').oninput = e => { nDrones = Math.max(+e.target.value, 2*params.r); reset(false); };
+}
+$('sR1').oninput = e => setReq('r1', +e.target.value);
+$('sR2').oninput = e => setReq('r2', +e.target.value);
+$('sN').oninput = e => { nDrones = Math.max(+e.target.value, params.r1 + params.r2); reset(false); };
 $('sU').oninput = e => { const v = +e.target.value;
   params.umax = v > 3.0 ? Infinity : v;
   const t = isFinite(params.umax) ? params.umax.toFixed(2)+' m/s' : 'off';
   $('vU').textContent = t; $('mUB').textContent = t; peakU = 0; };
 $('sSpd').oninput = e => { params.speed = +e.target.value; $('vSpd').textContent = params.speed+'×'; };
 $('sA').oninput = e => { params.alpha = +e.target.value; $('vA').textContent = params.alpha.toFixed(1); };
+$('sRho').oninput = e => { params.rho = +e.target.value; $('vRho').textContent = params.rho.toFixed(params.rho % 1 ? 2 : 1) + (params.rho === 2 ? ' paper' : ''); };
 $('tNom').onchange = e => drones.forEach(d => d.nom.visible = e.target.checked);
 syncTexts();
 $('tTrail').onchange = e => drones.forEach(d => d.trail.visible = e.target.checked);
@@ -780,6 +838,9 @@ addEventListener('resize', () => {
   camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight); sizeChart();
 });
+
+// canvas text is drawn once; if the web font was not ready yet, redraw it in IBM Plex Sans when it is
+if (document.fonts) document.fonts.load('600 56px "IBM Plex Sans"').then(() => LABEL_REDRAW.forEach(f => f())).catch(() => {});
 
 // ---------- loop ----------
 const clock = new THREE.Clock();
@@ -793,11 +854,15 @@ function frame(){
     acc += dt * params.speed;
     let n = 0;
     while (acc >= SIM.DT && n < 200){
-      SIM.step(S, params); acc -= SIM.DT; n++;
+      // supervisor: recruit drones toward a region below its target, enforce eff, then let eff climb
+      const recruit = SIM.recruits(S, params);
+      eff = SIM.ratchet(S, eff, params);
+      SIM.step(S, { ...params, r1: eff.r1, r2: eff.r2, recruit }); acc -= SIM.DT; n++;
+      eff = SIM.ratchet(S, eff, params);
       for (const u of S.u) peakU = Math.max(peakU, Math.abs(u[0]), Math.abs(u[1]));
       const c = SIM.counts(S);
       history.push({ t: S.t, ...c });
-      const unsafe = c.c1 < params.r || c.c2 < params.r;
+      const unsafe = c.c1 < eff.r1 || c.c2 < eff.r2;
       if (unsafe && !wasUnsafe) violations++; wasUnsafe = unsafe;
       if (S.step % 2 === 0) drones.forEach((d,j) => {   // trail sampling
         const TL = d.tpos.length/3;
