@@ -1,0 +1,895 @@
+---
+layout: default
+title: gatekeeper
+---
+
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      tags: 'none'
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+.nb {
+  --ink: #16181d;
+  --muted: #5b6572;
+  --accent: #0b5fc1;
+  --accent-soft: #eef4fc;
+  --rule: #e2e6ec;
+  --panel: #f7f8fa;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+
+  max-width: 1160px;
+  margin: 2rem auto 4.5rem;
+  padding: 0 20px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.68;
+}
+
+/* ---------- page head ---------- */
+.nb-crumb {
+  font-family: var(--sans);
+  font-size: .82rem;
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+}
+.nb-crumb a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.nb-crumb a:hover { color: var(--accent); border-color: var(--accent); }
+
+.nb-title {
+  font-family: var(--sans);
+  font-size: 2.1rem;
+  font-weight: 650;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  margin: 0 0 .6rem;
+}
+.nb-deck {
+  color: var(--muted);
+  font-size: 1.05rem;
+  margin: 0 0 1.6rem;
+  max-width: 62ch;
+}
+.nb-rule { border: 0; border-top: 1px solid var(--rule); margin: 0 0 2.2rem; }
+
+/* ---------- two-column shell ---------- */
+.nb-grid { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 52px; align-items: start; }
+.nb-body { min-width: 0; }
+
+.nb-toc { position: sticky; top: 24px; font-family: var(--sans); font-size: .85rem; }
+.nb-toc-head { font-weight: 650; margin-bottom: .6rem; font-size: .8rem; color: var(--ink); }
+.nb-toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+.nb-toc li { margin: 0 0 .38rem; padding-left: 1.5rem; text-indent: -1.5rem; }
+.nb-toc li::before {
+  counter-increment: toc; content: counter(toc) ". ";
+  color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.nb-toc a { color: var(--muted); text-decoration: none; }
+.nb-toc a:hover { color: var(--accent); }
+
+/* ---------- typography ---------- */
+.nb-body { counter-reset: sec; }
+.nb-body > h2 {
+  font-family: var(--sans);
+  font-size: 1.32rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  margin: 3rem 0 .9rem;
+  padding-top: .2rem;
+  scroll-margin-top: 20px;
+}
+.nb-body > h2::before {
+  counter-increment: sec;
+  content: counter(sec) ".";
+  color: var(--accent);
+  margin-right: .5rem;
+  font-variant-numeric: tabular-nums;
+}
+.nb-body > h2:first-child { margin-top: 0; }
+.nb-body h3 {
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  font-weight: 650;
+  margin: 1.9rem 0 .5rem;
+}
+.nb-body p { margin: 0 0 1rem; max-width: 72ch; }
+.nb-body ul, .nb-body ol { max-width: 70ch; padding-left: 1.35rem; margin: 0 0 1.1rem; }
+.nb-body li { margin-bottom: .38rem; }
+.nb-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+.nb-body a:hover { border-bottom-color: var(--accent); }
+.nb-body strong { font-weight: 600; }
+.nb-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88em; background: var(--panel); padding: .1em .35em; border-radius: 3px;
+}
+
+/* ---------- blocks ---------- */
+.nb-key {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  padding: .85rem 1.1rem;
+  margin: 1.4rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.nb-key p { margin: 0; }
+.nb-key p + p { margin-top: .6rem; }
+
+.nb-eg {
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: .9rem 1.1rem .3rem;
+  margin: 1.4rem 0;
+  background: #fff;
+}
+.nb-eg-label {
+  font-family: var(--sans); font-size: .78rem; font-weight: 650;
+  color: var(--muted); margin-bottom: .5rem;
+}
+
+.nb-src { font-family: var(--sans); font-size: .78rem; color: var(--muted); margin-top: .55rem !important; }
+
+/* ---------- figures ---------- */
+.nb-fig { margin: 1.9rem 0; }
+.nb-fig svg, .nb-fig img {
+  display: block; width: 100%; height: auto; max-width: 620px; margin: 0 auto;
+}
+.nb-fig img { border: 1px solid var(--rule); border-radius: 4px; }
+.nb-fig figcaption {
+  font-family: var(--sans); font-size: .82rem; color: var(--muted);
+  margin-top: .7rem; text-align: center; max-width: 60ch; margin-left: auto; margin-right: auto;
+}
+.nb-fig text { font-family: var(--sans); }
+
+/* ---------- tables ---------- */
+.nb-table-wrap { overflow-x: auto; margin: 1.6rem 0; }
+.nb-body table { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: .87rem; }
+.nb-body th, .nb-body td {
+  text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top;
+}
+.nb-body th { font-weight: 650; border-bottom: 1.5px solid var(--ink); white-space: nowrap; }
+.nb-body tbody tr:last-child td { border-bottom: none; }
+
+/* ---------- math ---------- */
+mjx-container[display="true"] { margin: 1.15rem 0 !important; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+
+/* ---------- prev / next ---------- */
+.nb-pager {
+  display: flex; justify-content: space-between; gap: 1rem;
+  margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: .88rem;
+}
+.nb-pager a { color: var(--accent); text-decoration: none; }
+.nb-pager a:hover { text-decoration: underline; }
+.nb-pager span { color: #b9c0c9; }
+
+@media (max-width: 900px) {
+  .nb { font-size: 16px; }
+  .nb-grid { grid-template-columns: 1fr; gap: 0; }
+  .nb-toc {
+    position: static; order: -1; border: 1px solid var(--rule);
+    border-radius: 5px; padding: .9rem 1.1rem; margin-bottom: 2rem; background: var(--panel);
+  }
+  .nb-title { font-size: 1.72rem; }
+}
+</style>
+
+{% raw %}
+<div class="nb">
+
+  <div class="nb-crumb"><a href="../notes.html">Notes</a> &middot; gatekeeper</div>
+  <h1 class="nb-title">gatekeeper</h1>
+  <p class="nb-deck">A safety filter that runs two controllers (performance and safety driven) and searches for the latest
+  switching time the system can still be safe while remaining on the performance-driven controller.</p>
+  <hr class="nb-rule">
+
+  <div class="nb-grid">
+    <div class="nb-body">
+
+      <h2 id="picture">The idea in one picture</h2>
+
+      <p>A robot is driving toward a goal with some performance controller that knows nothing
+      about safety. Behind it sits a second controller whose only job is to remain safe. The
+      question gatekeeper asks, over and over, is:</p>
+
+      <div class="nb-key">
+        <p><strong>How much longer can I keep running the performance controller and still be
+        certain I can bail out afterwards?</strong></p>
+      </div>
+
+      <p>Concretely: simulate "follow the nominal controller for \(T_S\) seconds, then hand
+      over to the backup controller." If that whole simulated trajectory stays safe and ends
+      somewhere the backup controller can ensure safety forever, then \(T_S\) seconds of nominal behaviour are
+      certified. Sweep \(T_S\), take the largest one that passes, and commit to it.</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 620 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three candidate trajectories from the same state, each following the nominal controller then curling into a backup orbit; the latest one cuts the obstacle">
+          <circle cx="339.3" cy="132.4" r="67.0" fill="#f7eded" stroke="#c98b8b" stroke-width="1.4"/>
+          <text x="339.3" y="137" text-anchor="middle" font-size="12" fill="#b03030">unsafe</text>
+          <path d="M 46.1 145.0 L 146.6 143.4" fill="none" stroke="#c8cfd8" stroke-width="1.6"/>
+          <path d="M 146.6 143.4 L 153.3 143.7 L 159.8 145.2 L 166.0 147.9 L 171.6 151.6 L 176.4 156.2 L 180.4 161.5 L 183.4 167.5 L 185.3 174.0 L 186.0 180.6 L 185.6 187.3 L 184.0 193.8 L 181.2 199.9 L 177.5 205.4 L 172.8 210.3 L 167.4 214.2 L 161.4 217.1 L 154.9 218.9 L 148.2 219.5 L 141.6 219.0 L 135.1 217.3 L 129.0 214.5 L 123.5 210.7 L 118.8 205.9 L 114.9 200.5 L 112.1 194.4 L 110.4 187.9 L 109.8 181.2 L 110.5 174.6 L 112.2 168.1 L 115.1 162.1 L 119.0 156.6 L 123.8 152.0 L 129.3 148.2 L 135.4 145.4 L 141.9 143.8 L 146.9 143.4"
+                fill="none" stroke="#c8cfd8" stroke-width="1.6" stroke-dasharray="4 3"/>
+          <circle cx="146.6" cy="143.4" r="3.6" fill="#c8cfd8"/>
+          <path d="M 297.4 139.5 L 304.1 139.9 L 310.6 141.4 L 316.7 144.0 L 322.3 147.7 L 327.2 152.3 L 331.2 157.6 L 334.2 163.6 L 336.1 170.0 L 336.9 176.7 L 336.4 183.4 L 334.8 189.9 L 332.1 196.0 L 328.4 201.5 L 323.7 206.4 L 318.3 210.3 L 312.3 213.2 L 305.8 215.0 L 299.2 215.7 L 292.5 215.2 L 286.0 213.5 L 279.9 210.7 L 274.4 206.9 L 269.7 202.2 L 265.8 196.7 L 263.0 190.6 L 261.3 184.2 L 260.7 177.5 L 261.3 170.8 L 263.1 164.4 L 265.9 158.3 L 269.8 152.9 L 274.6 148.2 L 280.1 144.4 L 286.2 141.6 L 292.7 140.0 L 297.7 139.5"
+                fill="none" stroke="#b03030" stroke-width="1.8" stroke-dasharray="5 3"/>
+          <path d="M 226.2 141.4 L 297.4 139.5" fill="none" stroke="#b03030" stroke-width="1.8"/>
+          <circle cx="297.4" cy="139.5" r="4" fill="#b03030"/>
+          <path d="M 46.1 145.0 L 226.2 141.4" fill="none" stroke="#0b5fc1" stroke-width="2.6"/>
+          <path d="M 226.2 141.4 L 232.9 141.7 L 239.4 143.2 L 245.5 145.9 L 251.1 149.5 L 256.0 154.1 L 260.0 159.5 L 263.0 165.5 L 264.9 171.9 L 265.6 178.5 L 265.2 185.2 L 263.6 191.7 L 260.9 197.8 L 257.2 203.4 L 252.5 208.2 L 247.1 212.1 L 241.1 215.0 L 234.6 216.9 L 228.0 217.5 L 221.3 217.0 L 214.8 215.3 L 208.7 212.5 L 203.2 208.7 L 198.5 204.0 L 194.6 198.5 L 191.8 192.5 L 190.1 186.0 L 189.5 179.3 L 190.1 172.7 L 191.9 166.2 L 194.7 160.2 L 198.6 154.7 L 203.4 150.0 L 208.9 146.2 L 215.0 143.5 L 221.5 141.8 L 226.5 141.4"
+                fill="none" stroke="#0b5fc1" stroke-width="2.2" stroke-dasharray="5 3"/>
+          <circle cx="226.2" cy="141.4" r="5" fill="#0b5fc1"/>
+          <circle cx="46.1" cy="145.0" r="12.6" fill="#fff" stroke="#16181d" stroke-width="2"/>
+          <line x1="46.1" y1="145.0" x2="64" y2="144.7" stroke="#16181d" stroke-width="2"/>
+          <path d="M 64 144.7 l -7 -3.6 v 7.6 z" fill="#16181d"/>
+          <circle cx="569.7" cy="132.4" r="6" fill="none" stroke="#16181d" stroke-width="2"/>
+          <circle cx="569.7" cy="132.4" r="2" fill="#16181d"/>
+          <text x="569.7" y="114" text-anchor="middle" font-size="12" fill="#16181d">goal</text>
+          <text x="40" y="172" font-size="12" fill="#16181d">now</text>
+          <text x="148" y="238" text-anchor="middle" font-size="11.5" fill="#5b6572">valid</text>
+          <text x="227" y="238" text-anchor="middle" font-size="11.5" fill="#0b5fc1" font-weight="600">latest valid</text>
+          <text x="298" y="238" text-anchor="middle" font-size="11.5" fill="#b03030">invalid</text>
+          <text x="420" y="196" font-size="11.5" fill="#b03030">switch any later and the</text>
+          <text x="420" y="211" font-size="11.5" fill="#b03030">escape orbit cuts the obstacle</text>
+          <line x1="344" y1="200" x2="414" y2="200" stroke="#c98b8b" stroke-width="1"/>
+          <text x="300" y="268" text-anchor="middle" font-size="11" fill="#5b6572">solid = nominal controller &#160;&#160;&#160; dashed = backup controller</text>
+        </svg>
+        <figcaption>Each candidate is one trajectory: nominal for \(T_S\) seconds, then backup forever. The backup here is "turn right as hard as you can", so its tail is a circle.</figcaption>
+      </figure>
+
+      <h2 id="policies">The two policies</h2>
+
+      <p>Everything rests on having two controllers with completely different jobs.</p>
+
+      <div class="nb-key">
+        <p><strong>The nominal policy \(\pi_{\mathrm{nom}}\)</strong> is performance-driven. It can be
+        an MPC, an RRT* path with a tracking controller, a learned policy, a human on a
+        joystick. It is not assumed safe, and nothing about it is assumed at all.</p>
+        <p><strong>The backup policy \(\pi_b\)</strong> ensures safety forever. Hover in
+        place, come to a stop, pull up out of the canyon, drive into a known safety pocket, or
+        circle. It is system-specific and task-specific. It is not assumed good at the task.</p>
+      </div>
+
+      <p>Formally the backup policy needs to do two things. Assume we have a safe set
+      \(\mathcal{C} = \{x : h_{\mathcal{C}}(x) \ge 0\}\) and a terminal set
+      \(\mathcal{S}_0 \subseteq \mathcal{C}\).</p>
+
+      <div class="nb-key">
+        <p><strong>Backup policy.</strong> A locally Lipschitz \(\pi_b : \mathcal{X} \to U\) is
+        a backup policy for \(\mathcal{S}_0\) with backup horizon \(T_B\) if</p>
+        <p>(i) it <em>recovers</em>: from any state in some neighbourhood of
+        \(\mathcal{S}_0\), running \(\pi_b\) stays in \(\mathcal{C}\) over \([0, T_B]\) and
+        lands in \(\mathcal{S}_0\) at time \(T_B\); and</p>
+        <p>(ii) it <em>stays</em>: \(\mathcal{S}_0\) is forward invariant under \(\pi_b\).</p>
+      </div>
+
+      <p>Part (ii) is the piece that reaches to infinity. Everything the algorithm checks
+      online is finite; the "forever" comes from \(\mathcal{S}_0\) being invariant, which you
+      establish once, offline.</p>
+
+      <div class="nb-eg">
+        <div class="nb-eg-label">Example &mdash; the one in the demo below</div>
+        <p>A Dubins car: \(\dot p_x = v\cos\psi\), \(\dot p_y = v\sin\psi\),
+        \(\dot\psi = \omega\), with fixed speed \(v\) and \(|\omega| \le \omega_{\max}\). It
+        cannot stop, so "stop and hover" is not available.</p>
+        <p>Backup policy: \(\pi_b(x) = -\omega_{\max}\), turn right as hard as possible. The
+        closed loop is a circle of radius \(\rho = v/\omega_{\max}\) centred at
+        \(c(x) = p + \rho\,(\sin\psi,\, -\cos\psi)\), and the state returns exactly to where it
+        started after \(T_B = 2\pi/\omega_{\max}\).</p>
+        <p>Terminal set: \(\mathcal{S}_0 = \{x : \text{the circle } c(x) + \rho\,\mathbb{S}^1
+        \text{ lies in } \mathcal{C}\}\). Invariance is immediate - the state just goes round
+        and round that circle, and the circle does not move. For a disc obstacle of radius
+        \(r_o\) at \(o\) and a robot of radius \(r_r\), membership is a closed-form test:</p>
+        $$\big|\,\|c(x) - o\| - \rho\,\big| \ \ge\ r_o + r_r .$$
+        <p>Both ways of satisfying it are real: orbit clear of the obstacle, or orbit tightly
+        around it.</p>
+      </div>
+
+      <h2 id="candidate">Candidate trajectories</h2>
+
+      <p>Now the construction. Work at discrete update times
+      \(t_k = t_0 + k\,\Delta t\), with \(x_k = x(t_k)\), and write \(\varphi^\pi_\tau(x)\) for
+      the state reached at time \(\tau\) by running policy \(\pi\) from \(x\).</p>
+
+      <div class="nb-key">
+        <p><strong>Candidate trajectory.</strong> For a switching time \(T_S \ge 0\),</p>
+        $$\chi^{\mathrm{can}}(\tau;\, x_k, T_S) =
+          \begin{cases}
+            \varphi^{\pi_{\mathrm{nom}}}_{\tau}(x_k), & \tau \in [0, T_S], \\[4pt]
+            \varphi^{\pi_b}_{\tau - T_S}\!\big(\varphi^{\pi_{\mathrm{nom}}}_{T_S}(x_k)\big),
+              & \tau \in [T_S,\ T_S + T_B].
+          \end{cases}$$
+      </div>
+
+      <p>Nominal for \(T_S\), backup for \(T_B\) after that.</p>
+
+      <figure class="nb-fig">
+        <svg viewBox="0 0 520 186" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Timeline of a candidate trajectory split into a nominal segment and a backup segment with the two validity conditions marked">
+          <line x1="40" y1="96" x2="492" y2="96" stroke="#c8cfd8" stroke-width="1"/>
+          <rect x="60" y="78" width="200" height="18" rx="3" fill="#eef4fc" stroke="#0b5fc1" stroke-width="1.3"/>
+          <rect x="260" y="78" width="180" height="18" rx="3" fill="#f7f8fa" stroke="#5b6572" stroke-width="1.3"/>
+          <text x="112" y="91" font-size="11.5" fill="#0b5fc1">nominal for T</text>
+          <text x="188" y="94" font-size="8.5" fill="#0b5fc1">S</text>
+          <text x="306" y="91" font-size="11.5" fill="#5b6572">backup for T</text>
+          <text x="376" y="94" font-size="8.5" fill="#5b6572">B</text>
+          <g stroke="#16181d" stroke-width="1.2">
+            <line x1="60" y1="72" x2="60" y2="102"/>
+            <line x1="260" y1="72" x2="260" y2="102"/>
+            <line x1="440" y1="72" x2="440" y2="102"/>
+          </g>
+          <text x="60" y="120" text-anchor="middle" font-size="11.5" fill="#16181d">now</text>
+          <text x="260" y="120" text-anchor="middle" font-size="11.5" fill="#16181d">switch</text>
+          <text x="440" y="120" text-anchor="middle" font-size="11.5" fill="#16181d">end of rollout</text>
+          <path d="M 60 62 H 440" fill="none" stroke="#0b5fc1" stroke-width="1.3"/>
+          <path d="M 60 62 v 8 M 440 62 v 8" stroke="#0b5fc1" stroke-width="1.3"/>
+          <text x="250" y="54" text-anchor="middle" font-size="11.5" fill="#0b5fc1">stay inside C the whole way</text>
+          <line x1="440" y1="130" x2="440" y2="148" stroke="#5b6572" stroke-width="1.2"/>
+          <path d="M 440 148 l -4 -8 h 8 z" fill="#5b6572"/>
+          <text x="440" y="164" text-anchor="middle" font-size="11.5" fill="#5b6572">and land in the terminal set</text>
+          <text x="250" y="180" text-anchor="middle" font-size="11" fill="#5b6572">beyond the end of the rollout, invariance of the terminal set takes over</text>
+        </svg>
+        <figcaption>The two conditions are the whole validity test. Nothing is checked beyond the end of the rollout.</figcaption>
+      </figure>
+
+      <h2 id="valid">When is a candidate valid?</h2>
+
+      <p>In plain words, a candidate is valid if <strong>you can safely reach the terminal set.</strong></p>
+
+      <div class="nb-key">
+        <p><strong>Validity.</strong> \(\mathrm{Valid}(x_k; T_S, T_B) = 1\) if and only if</p>
+        $$\chi^{\mathrm{can}}(\tau; x_k, T_S) \in \mathcal{C}
+          \quad \forall \tau \in [0,\ T_S + T_B],
+          \qquad\text{and}\qquad
+          \chi^{\mathrm{can}}(T_S + T_B;\, x_k, T_S) \in \mathcal{S}_0 .$$
+      </div>
+
+      <p>The first condition says the rollout never leaves the safe set. The second says it
+      ends in the terminal set, and that is what converts a finite check into an infinite-time
+      guarantee: past \(T_S + T_B\) the state is in \(\mathcal{S}_0\), and \(\pi_b\) keeps it
+      there by assumption (ii). So</p>
+
+      $$\underbrace{\text{safe on } [0,\ T_S+T_B]}_{\text{checked numerically}}
+        \ +\ \underbrace{\text{in } \mathcal{S}_0 \text{ at the end}}_{\text{checked numerically}}
+        \ +\ \underbrace{\mathcal{S}_0 \text{ invariant under } \pi_b}_{\text{established offline}}
+        \ \Longrightarrow\ \text{safe for all } \tau \ge 0 .$$
+
+      <p>Write \(\mathcal{V}(T_S) = \{x : \mathrm{Valid}(x; T_S, T_B) = 1\}\) for the set of
+      states from which a given switching time passes.</p>
+
+
+      <h2 id="commit">Committing, and why that is safe forever</h2>
+
+      <p>At each update, gatekeeper takes the largest switching time that passes, over a
+      search horizon \(T_H\):</p>
+
+      $$T_S^\star(x_k) \ =\ \sup\big\{\, T_S \in [0, T_H] \ :\ \mathrm{Valid}(x_k; T_S) = 1 \,\big\},$$
+
+      <p>and the filter is simply</p>
+
+      $$\pi_{\mathrm{GK}}(x_k) =
+        \begin{cases}
+          \pi_{\mathrm{nom}}(x_k), & T_S^\star(x_k) > 0, \\
+          \pi_b(x_k), & T_S^\star(x_k) = 0 .
+        \end{cases}$$
+
+      <p>In practice the supremum is a grid search, \(T_S \in \{0, \Delta t, 2\Delta t, \ldots,
+      T_H\}\), scanning down from \(T_H\) and stopping at the first hit. It is a search over a
+      <em>single scalar in a bounded interval</em>, which is the reason the method is cheap.</p>
+
+      <h3>The recursion</h3>
+
+      <p>The safety argument is an induction, and the key move is what happens when the search
+      fails. If no \(T_S\) is valid at step \(k+1\), gatekeeper simply takes the previously committed trajectory (switching time). The previously committed trajectory was already certified safe for all future time
+      when it was committed, so falling back to it is always available and always safe. </p>
+
+      $$\chi^{\mathrm{com}}_{k+1} =
+        \begin{cases}
+          \chi^{\mathrm{can}}(\cdot\,; x_{k+1}, T_S^\star), & \text{if some } T_S \text{ is valid},\\
+          \chi^{\mathrm{com}}_{k}, & \text{otherwise.}
+        \end{cases}$$
+
+      <h2 id="demo">Interactive Demo</h2>
+
+      <p>The system below is the Dubins car from the example above. The nominal controller is a
+      potential field that steers toward the goal and pushes away from obstacles, which is not necessarily safe. 
+      The backup is a hard right turn, so the terminal set is circling.</p>
+
+      <div class="gk" id="gk">
+        <div class="gk-main">
+          <div class="gk-canvas-wrap"><canvas id="gk-cv"></canvas></div>
+          <div class="gk-strip-row">
+            <div class="gk-strip-lab">T<sub>S</sub> grid</div>
+            <div class="gk-strip" id="gk-strip"></div>
+            <div class="gk-strip-max">T<sub>H</sub></div>
+          </div>
+          <div class="gk-status" id="gk-status"></div>
+        </div>
+        <div class="gk-side">
+          <div class="gk-btns">
+            <button id="gk-play" class="gk-btn gk-btn-main">Play</button>
+            <button id="gk-reset" class="gk-btn">Reset</button>
+          </div>
+          <label class="gk-k">speed <em>v</em><span id="gk-v-o"></span>
+            <input type="range" id="gk-v" min="0.8" max="4" step="0.1" value="2.4"></label>
+          <label class="gk-k">max turn rate <em>&omega;</em><sub>max</sub><span id="gk-w-o"></span>
+            <input type="range" id="gk-w" min="0.5" max="3.5" step="0.05" value="2.6"></label>
+          <label class="gk-k">search horizon <em>T</em><sub>H</sub><span id="gk-th-o"></span>
+            <input type="range" id="gk-th" min="0.5" max="8" step="0.25" value="4"></label>
+          <label class="gk-k">grid points <em>N</em><span id="gk-n-o"></span>
+            <input type="range" id="gk-n" min="4" max="40" step="1" value="16"></label>
+          <label class="gk-k">robot radius<span id="gk-rr-o"></span>
+            <input type="range" id="gk-rr" min="0.1" max="0.8" step="0.05" value="0.3"></label>
+          <div class="gk-derived">
+            <div><span>orbit radius <em>&rho;</em> = <em>v</em>/<em>&omega;</em><sub>max</sub></span><b id="gk-rho"></b></div>
+            <div><span>backup horizon <em>T</em><sub>B</sub> = 2&pi;/<em>&omega;</em><sub>max</sub></span><b id="gk-tb"></b></div>
+            <div><span>certified <em>T</em><sub>S</sub><sup>&#9733;</sup></span><b id="gk-ts"></b></div>
+          </div>
+          <div class="gk-legend">
+            <div><i class="gk-sw gk-sw-com"></i>committed trajectory</div>
+            <div><i class="gk-sw gk-sw-ok"></i>valid candidate</div>
+            <div><i class="gk-sw gk-sw-bad"></i>invalid candidate</div>
+          </div>
+        </div>
+      </div>
+
+      <style>
+      .gk { display: grid; grid-template-columns: minmax(0,1fr) 190px; gap: 18px;
+            margin: 1.8rem 0 1.4rem; font-family: var(--sans); align-items: start; }
+      .gk-canvas-wrap { position: relative; width: 100%; aspect-ratio: 16 / 10;
+            border: 1px solid var(--rule); border-radius: 5px; overflow: hidden; background: #fff; }
+      .gk-canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%;
+            display: block; touch-action: none; cursor: crosshair; }
+      .gk-strip-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+      .gk-strip-lab, .gk-strip-max { font-size: .72rem; color: var(--muted); flex: 0 0 auto; }
+      .gk-strip { display: flex; gap: 2px; flex: 1 1 auto; }
+      .gk-cell { flex: 1 1 0; height: 16px; border-radius: 2px; background: #eceff2; }
+      .gk-cell.ok { background: #bcd5f0; }
+      .gk-cell.bad { background: #f0d6d6; }
+      .gk-cell.sel { background: #0b5fc1; }
+      .gk-status { font-size: .8rem; color: var(--muted); margin-top: 9px; min-height: 2.6em; }
+      .gk-status b { color: var(--ink); font-weight: 650; }
+      .gk-status .gk-warn { color: #b03030; font-weight: 650; }
+      .gk-btns { display: flex; gap: 6px; margin-bottom: 14px; }
+      .gk-btn { flex: 1 1 0; font: inherit; font-size: .8rem; padding: .38rem .2rem; cursor: pointer;
+            border: 1px solid var(--rule); background: #fff; color: var(--ink); border-radius: 4px; }
+      .gk-btn:hover { border-color: var(--accent); color: var(--accent); }
+      .gk-btn-main { background: var(--accent); border-color: var(--accent); color: #fff; }
+      .gk-btn-main:hover { background: #0a54aa; color: #fff; }
+      .gk-k { display: block; font-size: .74rem; color: var(--muted); margin-bottom: 11px; }
+      .gk-k em { font-style: italic; }
+      .gk-k span { float: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+      .gk-k input { width: 100%; margin-top: 3px; accent-color: var(--accent); }
+      .gk-derived { border-top: 1px solid var(--rule); margin-top: 14px; padding-top: 10px; font-size: .74rem; }
+      .gk-derived div { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 5px; color: var(--muted); }
+      .gk-derived b { color: var(--ink); font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+      .gk-legend { border-top: 1px solid var(--rule); margin-top: 10px; padding-top: 10px;
+            font-size: .72rem; color: var(--muted); }
+      .gk-legend div { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+      .gk-sw { width: 16px; height: 0; border-top-width: 2.5px; flex: 0 0 auto; }
+      .gk-sw-com { border-top: 2.5px solid #0b5fc1; }
+      .gk-sw-ok { border-top: 2px solid #9ec2e8; }
+      .gk-sw-bad { border-top: 2px solid #e0a8a8; }
+      @media (max-width: 760px) { .gk { grid-template-columns: 1fr; } }
+      </style>
+
+      <script>
+      (function () {
+        var cv = document.getElementById('gk-cv'), ctx = cv.getContext('2d');
+        var stripEl = document.getElementById('gk-strip'), statusEl = document.getElementById('gk-status');
+        var WX = 16, WY = 10, DT = 0.04, SIMDT = 0.02, GKPERIOD = 0.2, KP = 2.4;
+
+        var P = { v: 2.4, wmax: 1.6, TH: 4, N: 16, rr: 0.3 };
+        var S = {};
+
+        function reset() {
+          S = {
+            rob: { x: 1.8, y: 5.6, psi: -0.20 },
+            goal: { x: 14.2, y: 4.4 },
+            obs: [ { x: 7.0, y: 3.6, r: 1.6 }, { x: 11.0, y: 6.8, r: 1.2 } ],
+            tsLeft: 0, running: false, t: 0, acc: 0, trail: [], cands: [], best: -1
+          };
+          var ts0 = runSearch();
+          S.tsLeft = ts0 > 0 ? ts0 : 0;
+        }
+        var rho = function () { return P.v / P.wmax; };
+        var TB  = function () { return 2 * Math.PI / P.wmax; };
+        function wrap(a) { return a - 2 * Math.PI * Math.floor((a + Math.PI) / (2 * Math.PI)); }
+
+        // --- world -------------------------------------------------------
+        function inC(x, y) {
+          var m = P.rr;
+          if (x < m || x > WX - m || y < m || y > WY - m) return false;
+          for (var i = 0; i < S.obs.length; i++) {
+            var o = S.obs[i];
+            if (Math.hypot(x - o.x, y - o.y) < o.r + P.rr) return false;
+          }
+          return true;
+        }
+        function orbitCenter(s) {
+          return { x: s.x + rho() * Math.sin(s.psi), y: s.y - rho() * Math.cos(s.psi) };
+        }
+        function inS0(s) {                         // the escape circle lies entirely in C
+          var c = orbitCenter(s), R = rho(), m = P.rr;
+          if (c.x - R < m || c.x + R > WX - m || c.y - R < m || c.y + R > WY - m) return false;
+          for (var i = 0; i < S.obs.length; i++) {
+            var o = S.obs[i];
+            if (Math.abs(Math.hypot(c.x - o.x, c.y - o.y) - R) < o.r + P.rr) return false;
+          }
+          return true;
+        }
+        function nominalW(s) {
+          var dx = S.goal.x - s.x, dy = S.goal.y - s.y, n = Math.hypot(dx, dy) || 1;
+          dx /= n; dy /= n;
+          var gx = dx, gy = dy;
+          for (var i = 0; i < S.obs.length; i++) {
+            var o = S.obs[i], d = Math.hypot(s.x - o.x, s.y - o.y) || 1e-6;
+            var clear = d - (o.r + P.rr);
+            if (clear < 3) {
+              var w = (3 - Math.max(clear, 0)) / 3;
+              var rx = (s.x - o.x) / d, ry = (s.y - o.y) / d;
+              var tx = -ry, ty = rx;                       // tangent, so the field flows around
+              var sg = (gx * tx + gy * ty) >= 0 ? 1 : -1;  // the way that still makes progress
+              dx += w * (1.3 * rx + 1.7 * sg * tx);
+              dy += w * (1.3 * ry + 1.7 * sg * ty);
+            }
+          }
+          var want = Math.atan2(dy, dx);
+          return Math.max(-P.wmax, Math.min(P.wmax, KP * wrap(want - s.psi)));
+        }
+        function step(s, w, dt) {
+          return { x: s.x + P.v * Math.cos(s.psi) * dt,
+                   y: s.y + P.v * Math.sin(s.psi) * dt,
+                   psi: s.psi + w * dt };
+        }
+
+        // --- the candidate rollout ---------------------------------------
+        function rollout(x0, TS) {
+          var s = { x: x0.x, y: x0.y, psi: x0.psi };
+          var nom = [[s.x, s.y]], bk = [], ok = true, nomOk = true;
+          var kN = Math.round(TS / DT), kB = Math.round(TB() / DT), i;
+          for (i = 0; i < kN; i++) {
+            s = step(s, nominalW(s), DT); nom.push([s.x, s.y]);
+            if (!inC(s.x, s.y)) { ok = false; nomOk = false; }
+          }
+          var sw = { x: s.x, y: s.y, psi: s.psi };
+          bk.push([s.x, s.y]);
+          for (i = 0; i < kB; i++) {
+            s = step(s, -P.wmax, DT); bk.push([s.x, s.y]);
+            if (!inC(s.x, s.y)) ok = false;
+          }
+          var term = inS0(sw);                     // closed form; equals "the orbit lap is clear"
+          return { TS: TS, nom: nom, bk: bk, sw: sw, valid: ok && term, nomOk: nomOk, term: term };
+        }
+
+        function runSearch() {
+          S.cands = []; S.best = -1;
+          for (var i = 0; i <= P.N; i++) {
+            var c = rollout(S.rob, P.TH * i / P.N);
+            S.cands.push(c);
+            if (c.valid) S.best = i;
+          }
+          if (S.best < 0) S.everFailed = true;
+          return S.best >= 0 ? S.cands[S.best].TS : -1;
+        }
+
+        // --- closed loop --------------------------------------------------
+        function advance(dt) {
+          var w;
+          if (S.tsLeft > 0) { w = nominalW(S.rob); S.tsLeft = Math.max(0, S.tsLeft - dt); }
+          else { w = -P.wmax; }
+          S.rob = step(S.rob, w, dt);
+          S.rob.psi = wrap(S.rob.psi);
+          S.t += dt;
+          S.trail.push([S.rob.x, S.rob.y]);
+          if (S.trail.length > 1400) S.trail.shift();
+          S.acc += dt;
+          if (S.acc >= GKPERIOD) {
+            S.acc = 0;
+            var ts = runSearch();
+            if (ts >= 0) S.tsLeft = ts;            // commit; otherwise keep the old commitment
+          }
+        }
+
+        // --- drawing -------------------------------------------------------
+        var sc = 1, W = 1, H = 1;
+        function fit() {
+          var r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+          W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
+          cv.width = W * d; cv.height = H * d;
+          ctx.setTransform(d, 0, 0, d, 0, 0);
+          sc = W / WX;
+        }
+        function X(x) { return x * sc; }
+        function Y(y) { return H - y * sc; }
+        function poly(a, stride) {
+          var k = stride || 1;
+          ctx.beginPath();
+          ctx.moveTo(X(a[0][0]), Y(a[0][1]));
+          for (var i = k; i < a.length; i += k) ctx.lineTo(X(a[i][0]), Y(a[i][1]));
+          ctx.lineTo(X(a[a.length - 1][0]), Y(a[a.length - 1][1]));
+          ctx.stroke();
+        }
+        function draw() {
+          ctx.clearRect(0, 0, W, H);
+          ctx.strokeStyle = '#e2e6ec'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+          ctx.strokeRect(X(P.rr), Y(WY - P.rr), X(WX - 2 * P.rr), X(WY - 2 * P.rr));
+          ctx.setLineDash([]);
+          for (var i = 0; i < S.obs.length; i++) {
+            var o = S.obs[i];
+            ctx.beginPath(); ctx.arc(X(o.x), Y(o.y), X(o.r), 0, 7);
+            ctx.fillStyle = '#f7eded'; ctx.fill();
+            ctx.strokeStyle = '#c98b8b'; ctx.lineWidth = 1.3; ctx.stroke();
+            ctx.beginPath(); ctx.arc(X(o.x), Y(o.y), X(o.r + P.rr), 0, 7);
+            ctx.strokeStyle = '#e8cccc'; ctx.setLineDash([3, 3]); ctx.lineWidth = 1; ctx.stroke();
+            ctx.setLineDash([]);
+          }
+          if (S.trail.length > 1) {
+            ctx.strokeStyle = '#c8cfd8'; ctx.lineWidth = 1.4; poly(S.trail);
+          }
+          ctx.lineWidth = 1.2;
+          for (i = 0; i < S.cands.length; i++) {
+            if (i === S.best) continue;
+            var c = S.cands[i];
+            ctx.strokeStyle = c.valid ? 'rgba(158,194,232,.75)' : 'rgba(224,168,168,.6)';
+            if (c.nom.length > 1) poly(c.nom, 3);
+            ctx.setLineDash([3, 3]); poly(c.bk, 3); ctx.setLineDash([]);
+          }
+          if (S.best >= 0) {
+            var b = S.cands[S.best];
+            ctx.strokeStyle = '#0b5fc1'; ctx.lineWidth = 2.6;
+            if (b.nom.length > 1) poly(b.nom);
+            ctx.lineWidth = 2; ctx.setLineDash([5, 3]); poly(b.bk); ctx.setLineDash([]);
+            ctx.beginPath(); ctx.arc(X(b.sw.x), Y(b.sw.y), 4.5, 0, 7);
+            ctx.fillStyle = '#0b5fc1'; ctx.fill();
+          }
+          ctx.beginPath(); ctx.arc(X(S.goal.x), Y(S.goal.y), 7, 0, 7);
+          ctx.strokeStyle = '#16181d'; ctx.lineWidth = 2; ctx.stroke();
+          ctx.beginPath(); ctx.arc(X(S.goal.x), Y(S.goal.y), 2.5, 0, 7);
+          ctx.fillStyle = '#16181d'; ctx.fill();
+          var rx = X(S.rob.x), ry = Y(S.rob.y), rr = X(P.rr);
+          ctx.beginPath(); ctx.arc(rx, ry, rr, 0, 7);
+          ctx.fillStyle = S.tsLeft > 0 ? '#eef4fc' : '#f7eded';
+          ctx.fill();
+          ctx.strokeStyle = S.tsLeft > 0 ? '#0b5fc1' : '#b03030'; ctx.lineWidth = 2.2; ctx.stroke();
+          var hx = rx + Math.cos(S.rob.psi) * rr * 2.2, hy = ry - Math.sin(S.rob.psi) * rr * 2.2;
+          ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(hx, hy);
+          ctx.strokeStyle = '#16181d'; ctx.lineWidth = 2; ctx.stroke();
+          ctx.beginPath(); ctx.arc(hx, hy, 4, 0, 7);
+          ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = '#16181d'; ctx.lineWidth = 1.5; ctx.stroke();
+        }
+
+        // --- readouts ------------------------------------------------------
+        function fmt(n, d) { return n.toFixed(d === undefined ? 2 : d); }
+        function paint() {
+          var cells = '';
+          for (var i = 0; i <= P.N; i++) {
+            var c = S.cands[i], k = !c ? '' : (i === S.best ? 'sel' : (c.valid ? 'ok' : 'bad'));
+            cells += '<div class="gk-cell ' + k + '"></div>';
+          }
+          stripEl.innerHTML = cells;
+          document.getElementById('gk-rho').textContent = fmt(rho()) + ' m';
+          document.getElementById('gk-tb').textContent = fmt(TB()) + ' s';
+          var tsv = S.best >= 0 ? S.cands[S.best].TS : -1;
+          document.getElementById('gk-ts').textContent = tsv >= 0 ? fmt(tsv) + ' s' : 'none';
+          var msg;
+          if (tsv < 0) {
+            msg = '<span class="gk-warn">No candidate is valid.</span> gatekeeper keeps the ' +
+                  'trajectory it committed earlier, so the robot runs out its remaining nominal ' +
+                  'time and then holds the escape orbit.';
+          } else if (tsv === 0) {
+            msg = 'Only <b>T<sub>S</sub> = 0</b> is valid: the nominal controller is refused ' +
+                  'outright and the backup runs now.';
+          } else if (tsv >= P.TH - 1e-9) {
+            msg = 'Every candidate passes, so the largest is <b>T<sub>S</sub><sup>&#9733;</sup> = ' +
+                  fmt(tsv) + ' s</b>, the whole search horizon. The filter is inactive and the ' +
+                  'nominal controller runs untouched.';
+          } else {
+            msg = 'The latest certified handover is <b>T<sub>S</sub><sup>&#9733;</sup> = ' + fmt(tsv) +
+                  ' s</b>. Candidates beyond it fail' +
+                  (S.cands[Math.min(S.best + 1, P.N)].term === false && S.cands[Math.min(S.best + 1, P.N)].nomOk
+                    ? ' because the escape orbit stops being clear, not because the nominal path hits anything.'
+                    : ' the validity check.');
+          }
+          statusEl.innerHTML = msg;
+        }
+
+        // --- interaction ---------------------------------------------------
+        var drag = null;
+        function toWorld(e) {
+          var r = cv.getBoundingClientRect();
+          return { x: (e.clientX - r.left) / r.width * WX, y: (1 - (e.clientY - r.top) / r.height) * WY };
+        }
+        function pick(p) {
+          var hr = P.rr * 2.2;
+          var hx = S.rob.x + Math.cos(S.rob.psi) * hr, hy = S.rob.y + Math.sin(S.rob.psi) * hr;
+          if (Math.hypot(p.x - hx, p.y - hy) < 0.45) return { t: 'head' };
+          if (Math.hypot(p.x - S.rob.x, p.y - S.rob.y) < Math.max(P.rr, 0.45)) return { t: 'rob' };
+          if (Math.hypot(p.x - S.goal.x, p.y - S.goal.y) < 0.5) return { t: 'goal' };
+          for (var i = 0; i < S.obs.length; i++)
+            if (Math.hypot(p.x - S.obs[i].x, p.y - S.obs[i].y) < S.obs[i].r) return { t: 'obs', i: i };
+          return null;
+        }
+        cv.addEventListener('pointerdown', function (e) {
+          var p = toWorld(e), h = pick(p);
+          if (h) { drag = h; cv.setPointerCapture(e.pointerId); }
+          else { S.obs.push({ x: p.x, y: p.y, r: 1.1 }); runSearch(); paint(); }
+        });
+        cv.addEventListener('pointermove', function (e) {
+          if (!drag) {
+            var h = pick(toWorld(e));
+            cv.style.cursor = h ? (h.t === 'head' ? 'grab' : 'move') : 'crosshair';
+            return;
+          }
+          var p = toWorld(e);
+          if (drag.t === 'rob') { S.rob.x = p.x; S.rob.y = p.y; S.trail = []; }
+          else if (drag.t === 'head') { S.rob.psi = Math.atan2(p.y - S.rob.y, p.x - S.rob.x); }
+          else if (drag.t === 'goal') { S.goal.x = p.x; S.goal.y = p.y; }
+          else if (drag.t === 'obs') { S.obs[drag.i].x = p.x; S.obs[drag.i].y = p.y; }
+          runSearch(); paint();
+        });
+        cv.addEventListener('pointerup', function () { drag = null; });
+        cv.addEventListener('dblclick', function (e) {
+          var h = pick(toWorld(e));
+          if (h && h.t === 'obs') { S.obs.splice(h.i, 1); runSearch(); paint(); }
+        });
+
+        function bind(id, key, dec, suffix) {
+          var el = document.getElementById(id), out = document.getElementById(id + '-o');
+          function sync() {
+            P[key] = parseFloat(el.value);
+            if (key === 'N') P[key] = Math.round(P[key]);
+            out.textContent = (key === 'N' ? P[key] : P[key].toFixed(dec)) + (suffix || '');
+            runSearch(); paint();
+          }
+          el.addEventListener('input', sync); sync();
+        }
+
+        var playBtn = document.getElementById('gk-play');
+        playBtn.addEventListener('click', function () {
+          S.running = !S.running;
+          playBtn.textContent = S.running ? 'Pause' : 'Play';
+        });
+        document.getElementById('gk-reset').addEventListener('click', function () {
+          reset(); S.running = false; playBtn.textContent = 'Play'; paint();
+        });
+
+        var last = 0;
+        function loop(ts) {
+          if (!last) last = ts;
+          var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+          if (S.running) {
+            var n = Math.max(1, Math.round(dt / SIMDT));
+            for (var i = 0; i < n; i++) advance(SIMDT);
+            paint();
+          }
+          draw();
+          requestAnimationFrame(loop);
+        }
+
+        reset();
+        fit();
+        bind('gk-v', 'v', 1, ' m/s'); bind('gk-w', 'wmax', 2, ' rad/s');
+        bind('gk-th', 'TH', 2, ' s'); bind('gk-n', 'N', 0); bind('gk-rr', 'rr', 2, ' m');
+        new ResizeObserver(fit).observe(cv.parentElement);
+        window.addEventListener('resize', fit);
+        paint();
+        requestAnimationFrame(loop);
+      })();
+      </script>
+
+
+      <div class="nb-key">
+        <p>Notice what the demo does <em>not</em> have: no barrier function, no QP, no
+        constraint gradients, no relative-degree bookkeeping, nothing that needs
+        \(\mathcal{C}\) to be smooth or the dynamics to be control-affine. The safe set is just
+        a collision test, and the only numerical machinery is forward integration.</p>
+      </div>
+
+      <p>One honest caveat about dragging. The rollout treats the world as static, so a
+      committed trajectory is a certificate about the obstacles <em>as they were at the last
+      update</em>. Dropping an obstacle directly onto the robot will produce a collision, and no
+      filter could prevent that. This is exactly the assumption the T-RO paper makes explicit:
+      the perceived safe set must only ever shrink in a way the system was warned about, so
+      that a state certified safe at \(t_k\) is not silently reclassified at \(t_{k+1}\). Give
+      the robot room and the guarantee holds - across a few hundred randomized static worlds,
+      with the speed, turn rate, horizon, grid and robot radius all varied, the version above
+      never violates a constraint.</p>
+
+      <h2 id="compare">Why maximize the switching time?</h2>
+
+      <p>gatekeeper is one of three backup-based safety filters that share almost everything.
+      All three assume a backup policy, all three certify safety by showing the system can
+      still bail out, and all three roll out the backup to do it. What separates them is a
+      single design choice: <em>what the online decision variable is.</em></p>
+
+      <div class="nb-table-wrap">
+      <table>
+        <thead>
+          <tr><th></th><th>Backup CBF</th><th>MPS</th><th>gatekeeper</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Decision variable</td><td>control input \(u \in U\)</td><td>accept / reject</td><td>switching time \(T_S \in [0, T_H]\)</td></tr>
+          <tr><td>Mechanism</td><td>QP with barrier constraints along the backup flow</td><td>check validity at \(T_S = \Delta t\)</td><td>check validity, take the largest valid \(T_S\)</td></tr>
+          <tr><td>Output</td><td>a modified input</td><td>\(\pi_{\mathrm{nom}}\) or \(\pi_b\)</td><td>\(\pi_{\mathrm{nom}}\) or \(\pi_b\)</td></tr>
+          <tr><td>Smoothness</td><td>continuous blend</td><td>binary switch</td><td>binary switch</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>The common flaw: safety evaluated on the backup</h3>
+
+      <p>Safety gets certified through
+      <em>the feasibility of a backup maneuver</em>. Essentially, we have pushed the safety problem into the problem of finding the backup controller and terminal set.</p>
+
+
+
+      <h2 id="practice">Pros and Cons</h2>
+
+      <h3>Pros</h3>
+
+      <p>Easily implementable and computationally efficient. Can handle input constraints and complex dynamics and safety constraints.</p>
+
+
+      <h3>Cons</h3>
+
+      <p>Needs a backup policy and a system model accurate enough to correctly predict its rollout. The backup policy must be
+      able to keep the system in a safe set for a known time horizon. Assumes the environment is static.</p>
+
+      <h2 id="reading">References</h2>
+
+      <ul>
+        <li>Agrawal, Chen, Panagou, &ldquo;gatekeeper: Online Safety Verification and Control
+        for Nonlinear Systems in Dynamic Environments,&rdquo; <em>IEEE T-RO</em> 40, 2024
+        (<a href="https://arxiv.org/abs/2211.14361">arXiv:2211.14361</a>). The algorithm, the
+        recursive-safety proof, the robust version with tracking-error tubes, and quadrotor
+        hardware experiments.</li>
+        <li>Kim, Menon, Trivedi, Panagou, &ldquo;Backup-Based Safety Filters: A Comparative
+        Review of Backup CBF, Model Predictive Shielding, and gatekeeper&rdquo;
+        (<a href="https://arxiv.org/abs/2604.02401">arXiv:2604.02401</a>). The unified notation
+        used here, the filter-inactive set comparison, and the two inclusion theorems. Code:
+        <a href="https://github.com/tkkim-robot/safe_control/tree/main/shielding">tkkim-robot/safe_control</a>.</li>
+        <li>Chen, Jankovic, Santillo, Ames, &ldquo;Backup Control Barrier Functions: Formulation
+        and Comparative Study,&rdquo; CDC 2021. The implicit safe set
+        \(\mathcal{R}^{\pi_b}(T_B; \mathcal{S}_0)\).</li>
+        <li>Bastani, &ldquo;Safe Reinforcement Learning with Nonlinear Dynamics via Model
+        Predictive Shielding,&rdquo; ACC 2021. The original MPS.</li>
+        <li>Agrawal, Panagou, &ldquo;Online Safety Under Multiple Constraints and Input Bounds
+        Using gatekeeper,&rdquo; <em>IEEE L-CSS</em> 9, 2025. Multiple simultaneous constraints.</li>
+        <li>Cherenson, Lee, Kim, Panagou, &ldquo;Distributionally Robust Safety Under Arbitrary
+        Uncertainties: A Safety Filtering Approach&rdquo;
+        (<a href="https://arxiv.org/abs/2605.12974">arXiv:2605.12974</a>). Replaces the single
+        deterministic rollout with sampled rollouts and a Wasserstein-inflated failure
+        threshold, keeping the one-dimensional search over \(T_S\).</li>
+      </ul>
+
+      <div class="nb-pager">
+        <a href="cbf-qp.html">&larr; CBF-QP: three clarifications</a>
+        <a href="r-robustness.html">r-robustness &rarr;</a>
+      </div>
+    </div>
+
+    <nav class="nb-toc" aria-label="On this page">
+      <div class="nb-toc-head">On this page</div>
+      <ol>
+        <li><a href="#picture">The idea in one picture</a></li>
+        <li><a href="#policies">The two policies</a></li>
+        <li><a href="#candidate">Candidate trajectories</a></li>
+        <li><a href="#valid">When is a candidate valid?</a></li>
+        <li><a href="#commit">Committing</a></li>
+        <li><a href="#demo">Try it</a></li>
+        <li><a href="#compare">Why maximize T_S?</a></li>
+        <li><a href="#practice">Practical notes</a></li>
+        <li><a href="#reading">References</a></li>
+      </ol>
+    </nav>
+  </div>
+
+</div>
+{% endraw %}
