@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strong r-Robustness CBF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f14; --panel:rgba(14,19,26,.84); --line:rgba(255,255,255,.09);
+    --ink:#e6edf3; --mute:#8b98a5; --lead:#60a5fa; --fol:#4ade80; --mal:#f87171;
+    --ok:#4ade80; --bad:#f87171; --accent:#7dd3fc;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;overflow:hidden}
+  #scene{position:fixed;inset:0}
+  .panel{position:fixed;background:var(--panel);backdrop-filter:blur(10px);
+    border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .mono{font-family:inherit}
+  .tabs{display:flex;gap:6px;flex:none}
+  .tab{text-align:center;padding:7px 11px;white-space:nowrap;border-radius:8px;border:1px solid var(--line);
+    background:rgba(255,255,255,.04);font:500 12px "IBM Plex Sans",system-ui,sans-serif;color:var(--mute);cursor:pointer}
+  .tab.on{background:rgba(125,211,252,.14);border-color:rgba(125,211,252,.5);color:var(--accent)}
+  #hud{top:16px;left:16px;width:300px}
+  .hlabel{font-size:12px;color:var(--mute)}
+  .bigrow{display:flex;align-items:baseline;gap:10px;margin:4px 0 2px}
+  .big{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:44px;font-weight:600;line-height:1}
+  .req{font-size:13px;color:var(--mute)}
+  .meter{display:flex;gap:4px;margin:8px 0 4px}
+  .meter span{flex:1;height:7px;border-radius:2px;background:rgba(255,255,255,.08)}
+  #status{margin-top:10px;padding:9px 10px;border-radius:8px;font-size:12px;display:flex;justify-content:space-between}
+  #status.safe{background:rgba(74,222,128,.1);color:var(--ok)}
+  #status.unsafe{background:rgba(248,113,113,.12);color:var(--bad)}
+  #roles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+  .role{border:1px solid var(--line);border-radius:8px;padding:7px 8px;font-size:11px;color:var(--mute)}
+  .role b{display:block;font:600 18px "IBM Plex Sans",system-ui,sans-serif;margin-top:2px}
+  #metrics{margin-top:10px;font-size:11px;color:var(--mute);display:grid;grid-template-columns:1fr 1fr;gap:5px 10px}
+  #metrics b{color:var(--ink);font-weight:500}
+  #ctrl{left:16px;right:16px;bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 14px}
+  .sep{width:1px;align-self:stretch;background:var(--line)}
+  .views{display:flex;align-items:center;gap:6px;flex:none}
+  .vlabel{font-size:12px;color:var(--mute);margin-right:2px}
+  .flbl{font-size:12px;min-width:116px;text-align:center;white-space:nowrap}
+  #fPrev,#fNext{padding:7px 9px}
+  #fpvHud{position:fixed;inset:0;pointer-events:none;display:none}
+  #fpvHud .reticle{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;
+    border:1.5px solid rgba(125,211,252,.55);border-radius:50%}
+  #fpvHud .reticle::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:rgba(125,211,252,.9)}
+  #fpvHud .tag{position:absolute;left:50%;top:18px;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);
+    border-radius:999px;padding:6px 14px;font-size:12.5px;white-space:nowrap}
+  .btns{display:flex;gap:8px;flex:none}
+  button{background:rgba(255,255,255,.06);color:var(--ink);border:1px solid var(--line);
+    border-radius:8px;padding:7px 11px;font:500 12px "IBM Plex Sans",system-ui,sans-serif;cursor:pointer}
+  button:hover{background:rgba(255,255,255,.12)}
+  button.on{background:rgba(125,211,252,.16);border-color:rgba(125,211,252,.5);color:var(--accent)}
+  button.off{background:rgba(248,113,113,.14);border-color:rgba(248,113,113,.5);color:var(--bad)}
+  .crow{display:flex;align-items:center;gap:10px;font-size:12px;flex:1 1 200px;min-width:180px}
+  .crow label{color:var(--mute);flex:none}
+  .crow input[type=range]{flex:1;accent-color:var(--accent)}
+  .crow .val{width:40px;text-align:right;font-family:inherit;font-size:11.5px}
+  .toggles{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+  .toggles input{accent-color:var(--accent)}
+  #chartbox{top:16px;right:16px;width:min(430px, calc(100vw - 364px));min-width:240px;z-index:1}
+  #chartbox .hd{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);margin:2px 0 4px}
+  .legend{display:flex;gap:10px;font-size:11px;color:var(--mute)}
+  .legend i{display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:4px;vertical-align:middle}
+  canvas.ch{width:100%;display:block}
+  #banner{position:fixed;left:50%;top:18px;z-index:2;transform:translateX(-50%);background:var(--panel);border:1px solid rgba(125,211,252,.4);
+    color:var(--accent);padding:8px 14px;border-radius:999px;font-size:12.5px;display:none;align-items:center;gap:10px}
+  #banner button{padding:4px 10px}
+  #hint{position:fixed;left:50%;top:18px;transform:translateX(-50%);font-size:11.5px;color:var(--mute);
+    background:var(--panel);border:1px solid var(--line);padding:5px 10px;border-radius:999px}
+  @media (max-width: 1000px){ #hint{display:none} }
+  @media (max-width: 760px){
+    #hud{width:min(46vw, 300px);padding:10px 12px} #roles,#metrics{display:none} .hlabel{font-size:11px}
+    #chartbox{width:calc(100vw - min(46vw, 300px) - 44px);min-width:0;padding:10px 12px} #chartbox .legend{display:none}
+    #ctrl .sep,#ctrl .toggles,#ctrl .crow{display:none} #hint{display:none} .big{font-size:32px}
+  }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+
+<div id="hint">drag to orbit · scroll to zoom · right-drag to pan</div>
+<div id="fpvHud"><div class="reticle"></div><div class="tag" id="fpvTag"></div></div>
+<div id="banner"><span id="bannerTxt"></span><button id="bReplay">↺ Replay</button></div>
+
+<div id="hud" class="panel">
+  <div class="hlabel">Strong r-robustness of the network</div>
+  <div class="bigrow"><span class="big" id="rNow">0</span><span class="req" id="rReq">target ≥ 5</span></div>
+  <div class="meter" id="meter"></div>
+  <div id="status" class="safe mono"><span id="statusTxt">SAFE</span><span id="hval">min h = 0.000</span></div>
+  <div id="roles">
+    <div class="role"><span style="color:var(--lead)">● Leaders</span><b id="nL">0</b></div>
+    <div class="role"><span style="color:var(--fol)">● Followers</span><b id="nF">0</b></div>
+    <div class="role"><span style="color:var(--mal)">● Malicious</span><b id="nM">0</b></div>
+  </div>
+  <div id="metrics" class="mono">
+    <div>t <b id="mT">0.0 s</b></div>
+    <div>links (R=3 m) <b id="mE">0</b></div>
+    <div>min sep <b id="mSep">–</b></div>
+    <div>obstacle clr <b id="mObs">–</b></div>
+    <div>consensus err <b id="mCons">–</b></div>
+    <div>CBF active <b id="mPhi">–</b></div>
+  </div>
+</div>
+
+<div id="ctrl" class="panel">
+  <div class="tabs">
+    <div class="tab on" data-s="spread">Spread out</div>
+    <div class="tab" data-s="env1">Env 1 · corridor</div>
+    <div class="tab" data-s="env2">Env 2 · obstacles</div>
+  </div>
+  <div class="sep"></div>
+  <div class="btns">
+    <button id="bPlay" class="on">❚❚ Pause</button>
+    <button id="bReset">↺ Reset</button>
+    <button id="bCBF" class="on">Robustness CBF: ON</button>
+  </div>
+  <div class="sep"></div>
+  <div class="views">
+    <span class="vlabel">View</span>
+    <button id="vOrbit" class="on">Orbit</button>
+    <button id="vFpv">First person</button>
+    <button id="fPrev" title="previous drone (←)">◀</button>
+    <span id="fLbl" class="flbl">Drone 1</span>
+    <button id="fNext" title="next drone (→)">▶</button>
+  </div>
+  <div class="sep"></div>
+  <div class="crow"><label>Sim speed</label><input id="sSpd" type="range" min="0.25" max="4" step="0.25" value="1"><span class="val" id="vSpd">1×</span></div>
+  <div class="sep"></div>
+  <div class="toggles">
+    <label><input type="checkbox" id="tLinks" checked> comm links</label>
+    <label><input type="checkbox" id="tTrail" checked> LED trails</label>
+    <label><input type="checkbox" id="tArrow" checked> velocity arrows</label>
+    <label><input type="checkbox" id="tRot"> auto-rotate</label>
+  </div>
+</div>
+
+<div id="chartbox" class="panel">
+  <div class="hd"><span>Strong r-robustness r(t)</span>
+    <div class="legend"><span><i style="background:#7dd3fc"></i>r(t)</span><span><i style="background:#4ade80"></i>target</span></div></div>
+  <canvas id="ch1" class="ch" style="height:110px"></canvas>
+  <div class="hd" style="margin-top:8px"><span>Consensus values (W-MSR)</span>
+    <div class="legend"><span><i style="background:#60a5fa"></i>leaders</span><span><i style="background:#4ade80"></i>followers</span><span><i style="background:#f87171"></i>malicious</span></div></div>
+  <canvas id="ch2" class="ch" style="height:110px"></canvas>
+</div>
+
+<script>
+// SIM-BEGIN
+// Port of joonlee16/Resilient-Leader-Follower-CBF-QP (spread_out_sim.py, complex_sim1.py, complex_sim2.py,
+// helper/double_integrator.py, helper/bootstrap_percolation.py).
+// Double-integrator robots, smoothed bootstrap-percolation HOCBFs for strong r-robustness, pairwise and
+// obstacle collision CBFs, all composed into one CBF  phi = 1 - sum exp(-w psi)  with  phi_dot >= -c*phi.
+// The composed constraint is a single linear inequality a.u >= b, so the CBF-QP is solved in closed form.
+// The barrier's gradient and v-directional second derivative (v^T Hess v) are computed exactly with
+// forward-mode differentiation, which is all the HOCBF needs.
+const RLF = (() => {
+  const DT = 0.02;          // integration window used by Agent.step2 (solve_ivp over [0, 0.02])
+  const EPS = 1e-4, DELTA = 4, R = 3.0;
+
+  function rng(seed){ let a = seed|0; return () => { a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t; return((t^t>>>14)>>>0)/4294967296; }; }
+  const randint = (rnd, lo, hi) => lo + Math.floor(rnd()*(hi-lo+1));
+
+  // ---------------------------- scenarios ----------------------------
+  function scenario(name){
+    if (name === 'spread'){
+      const yo = -0.3;
+      const P = [[-1.5,yo],[-0.7,yo+0.2],[1,yo+0.2],[0.7,yo+1.5],[0.2,yo-1],     // leaders
+                 [-1.1,yo-0.7],                                                // malicious (in leader block)
+                 [1.4,yo],                                                     // malicious follower
+                 [-1.2,yo-0.3],[0.7,yo+0.3],[1.2,yo-0.9],[-0.8,yo+1.1],[1.1,yo-0.4],[-0.4,yo+0.2],[-0.1,yo+0.3]];
+      const role = P.map((_,i) => i===5||i===6 ? 'malicious' : i<6 ? 'leader' : 'follower');
+      const goals = [[-100,0],[-100,100],[100,100],[100,0],[100,-100],[-100,-100]];
+      return { name, title: 'Spread out', P, role, leaders: 6, r: 5, F: 2, obstacles: [],
+        sA: 2.5, s: 1.3, q: 0.02, qA: 0.02, wRob: 7, wCol: 10, wObs: 0, colAlpha: 6, obsAlpha: 0, alpha: 2.5, cPhi: 2.0,
+        dmin: 0.3, tEnd: 15, goal: i => i < 6 ? goals[i] : null };
+    }
+    const yo = -1.5;
+    const obstacles = [];
+    if (name === 'env1'){
+      let ys = 0;
+      for (let i=0;i<Math.floor(5/0.3);i++){ obstacles.push([-1.2,ys,0.6]); obstacles.push([1.2,ys,0.6]); ys += 0.3; }
+      obstacles.push([-0.9,0.5,0.6],[0.9,1.0,0.6],[-0.9,1.9,0.6],[0.9,2.5,0.6],[0.0,4.0,0.3],
+                     [-1.4,0.1,0.6],[1.4,0.1,0.6],[-1.6,-0.1,0.6],[1.6,-0.1,0.6]);
+      const P = [[-0.7,yo],[0,yo],[-0.3,yo-2.1],[1.1,yo-2.4],
+                 [-1.1,yo-0.5],[-0.7,yo-1.0],[0.8,yo-1.2],[1.1,yo-1.7],[-1.0,yo-2.1],[0.4,yo-1.6],
+                 [-0.5,yo-1.9],[-0.8,yo-1.9],[-0.5,yo-2.4],[0.1,yo-1.3],[0.5,yo-2.2]];
+      const role = P.map((_,i) => i===7 ? 'malicious' : i<4 ? 'leader' : 'follower');
+      return { name, title: 'Narrow passage', P, role, leaders: 4, r: 3, F: 1, obstacles,
+        sA: 1.6, s: 1.5, q: 0.02, qA: 0.02, wRob: 6, wCol: 14, wObs: 15, colAlpha: 1.3, obsAlpha: 3.4, alpha: 2.0, cPhi: 2.0,
+        dmin: 0.3, tEnd: 40, exitY: 4.0, goal: () => [0,10] };
+    }
+    // env2
+    obstacles.push([-1.8,1.7,0.6],[0,4.0,0.6],[-0.5,0.5,0.6],[1.5,1.2,0.6],[-1.2,2.3,0.6],[-0.5,3.3,0.6],[1.75,4,0.6]);
+    const P = [[-0.8,yo],[0,yo],[-1.1,yo-1.2],[1,yo-1.4],
+               [-0.2,yo-1.4],[-1.2,yo-2.3],[0.8,yo-1.1],[1.4,yo-1.7],[1.0,yo-2.1],[-0.8,yo-1.6],
+               [0.2,yo-0.5],[-0.4,yo-1.7],[0.5,yo-0.6],[0.1,yo-1.5],[-0.5,yo-1.1]];
+    const role = P.map((_,i) => i===7 ? 'malicious' : i<4 ? 'leader' : 'follower');
+    return { name: 'env2', title: 'Obstacle field', P, role, leaders: 4, r: 3, F: 1, obstacles,
+      sA: 1.4, s: 1.5, q: 0.02, qA: 0.02, wRob: 6, wCol: 18, wObs: 18, colAlpha: 1.5, obsAlpha: 1.75, alpha: 0.6, cPhi: 2.2,
+      dmin: 0.3, tEnd: 40, exitY: 4.0, goal: () => [0,10] };
+  }
+
+  // parametrised sigmoid  sigma(y) = (1+q)/(1 + e^{-s y}/q) - q,  with first and second derivatives
+  function sig(y, s, q){
+    const E = Math.exp(-s*y), D = 1 + E/q, k = (1+q)*s/q;
+    const v = (1+q)/D - q;
+    const d1 = k*E/(D*D);
+    const d2 = k*(-s*E/(D*D) + 2*s*E*E/(q*D*D*D));
+    return [v, d1, d2];
+  }
+
+  // ---------------- smoothed bootstrap percolation with exact derivatives ----------------
+  // Returns for each follower c: h = pibar_c(delta) - eps, grad (2n), d1 = grad.v, d2 = v^T Hess v.
+  function barrier(S){
+    const sc = S.sc, n = S.n, l = sc.leaders, f = n - l, M = 2*n, p = S.p, v = S.v;
+    // pairwise smoothed adjacency abar_ij = sigma_A((R^2 - |pi-pj|^2)^3) if inside range
+    const A = S.A;  // reuse buffers: a, da/dd coefficient, a', a''
+    for (let i=0;i<n;i++) for (let j=i+1;j<n;j++){
+      const dx = p[2*i]-p[2*j], dy = p[2*i+1]-p[2*j+1];
+      const d = R*R - (dx*dx+dy*dy);
+      const k = i*n+j, k2 = j*n+i;
+      if (d < 0){ A.a[k]=A.a[k2]=0; A.c[k]=A.c[k2]=0; A.a1[k]=A.a1[k2]=0; A.a2[k]=A.a2[k2]=0; continue; }
+      const dvx = v[2*i]-v[2*j], dvy = v[2*i+1]-v[2*j+1];
+      const g = d*d*d, gd = 3*d*d, gdd = 6*d;
+      const [sv, s1, s2] = sig(g, sc.sA, sc.qA);
+      const da = s1*gd, dda = s2*gd*gd + s1*gdd;
+      const dd1 = -2*(dx*dvx + dy*dvy), dd2 = -2*(dvx*dvx + dvy*dvy);
+      A.a[k]=A.a[k2]=sv; A.c[k]=A.c[k2]=da;
+      A.a1[k]=A.a1[k2]=da*dd1; A.a2[k]=A.a2[k2]=dda*dd1*dd1 + da*dd2;
+    }
+    let pv = new Float64Array(f), pg = new Float64Array(f*M), p1 = new Float64Array(f), p2 = new Float64Array(f);
+    for (let it=0; it<DELTA; it++){
+      const nv = new Float64Array(f), ng = new Float64Array(f*M), n1 = new Float64Array(f), n2 = new Float64Array(f);
+      for (let c=0;c<f;c++){
+        const j = l + c;
+        let B = -S.r, B1 = 0, B2 = 0; const gB = ng.subarray(c*M, (c+1)*M);
+        for (let i=0;i<n;i++){
+          if (i===j) continue;
+          const k = j*n+i, a = A.a[k];
+          if (a === 0 && A.c[k] === 0) continue;
+          const ca = A.c[k], a1 = A.a1[k], a2 = A.a2[k];
+          // grad of a_ji: d a/d p_j = ca * (-2)(pj - pi), d a/d p_i = ca * 2 (pj - pi)
+          const ex = p[2*j]-p[2*i], ey = p[2*j+1]-p[2*i+1];
+          const gjx = -2*ca*ex, gjy = -2*ca*ey;
+          if (i < l){
+            B += a; B1 += a1; B2 += a2;
+            gB[2*j] += gjx; gB[2*j+1] += gjy; gB[2*i] -= gjx; gB[2*i+1] -= gjy;
+          } else {
+            const ci = i - l, pi_ = pv[ci], pi1 = p1[ci], pi2 = p2[ci];
+            B += a*pi_; B1 += a1*pi_ + a*pi1; B2 += a2*pi_ + 2*a1*pi1 + a*pi2;
+            gB[2*j] += pi_*gjx; gB[2*j+1] += pi_*gjy; gB[2*i] -= pi_*gjx; gB[2*i+1] -= pi_*gjy;
+            if (a !== 0){ const gp = pg.subarray(ci*M, (ci+1)*M); for (let m=0;m<M;m++) gB[m] += a*gp[m]; }
+          }
+        }
+        const [sv, s1, s2] = sig(B, sc.s, sc.q);
+        nv[c] = sv; n1[c] = s1*B1; n2[c] = s2*B1*B1 + s1*B2;
+        for (let m=0;m<M;m++) gB[m] *= s1;
+      }
+      pv = nv; pg = ng; p1 = n1; p2 = n2;
+    }
+    for (let c=0;c<f;c++) pv[c] -= EPS;
+    return { h: pv, grad: pg, d1: p1, d2: p2 };
+  }
+
+  // value only (for finite-difference checks)
+  function barrierValue(S){ return barrier(S).h; }
+
+  // --------------------- discrete strong r-robustness (bootstrap_percolation.py) ---------------------
+  function adjacency(S){
+    const n = S.n, p = S.p, adj = new Uint8Array(n*n);
+    for (let i=0;i<n;i++) for (let j=i+1;j<n;j++){
+      const dx=p[2*i]-p[2*j], dy=p[2*i+1]-p[2*j+1];
+      if (Math.hypot(dx,dy) < R){ adj[i*n+j]=1; adj[j*n+i]=1; }
+    }
+    return adj;
+  }
+  function strongR(S, adj){
+    const n = S.n, l = S.sc.leaders, f = n - l;
+    let ans = 0;
+    for (let r=1; r<=l+1; r++){
+      let x = new Array(n).fill(0); for (let i=0;i<l;i++) x[i]=1;
+      for (let it=0; it<f; it++){
+        const nx = x.slice();
+        for (let k=0;k<n;k++){ let s=0; for (let i=0;i<n;i++) s += adj[k*n+i]*x[i]; if (s >= r) nx[k] = 1; }
+        x = nx;
+      }
+      if (x.every(e=>e>=1)) ans = r;
+    }
+    return ans;
+  }
+
+  // ------------------------------- consensus (W-MSR) -------------------------------
+  function consensusRound(S, adj){
+    const n = S.n, sc = S.sc, recv = Array.from({length:n}, () => []);
+    for (let i=0;i<n;i++){
+      const role = sc.role[i], isLeaderType = i < sc.leaders || role === 'malicious';
+      if (role === 'malicious') S.val[i] = randint(S.rnd, 0, 1000);
+      const sends = isLeaderType ? true : (S.val[i] !== S.orig[i]);
+      if (!sends) continue;
+      for (let j=0;j<n;j++) if (adj[i*n+j]) recv[j].push(S.val[i]);
+    }
+    for (let i=0;i<n;i++){
+      const isLeaderType = i < sc.leaders || sc.role[i] === 'malicious';
+      if (isLeaderType) continue;
+      const vals = recv[i], F = sc.F, me = S.val[i];
+      if (vals.length >= 2*F+1){
+        let small = vals.filter(a => a < me), big = vals.filter(a => a > me), eq = vals.filter(a => a === me);
+        small = small.length <= F ? [] : small.sort((a,b)=>a-b).slice(F);
+        big = big.length <= F ? [] : big.sort((a,b)=>a-b).slice(0, big.length - F);
+        const comb = small.concat(eq, big), w = 1/(comb.length+1);
+        S.val[i] = w*me + comb.reduce((s,a)=>s+a*w, 0);
+      }
+    }
+  }
+
+  // ------------------------------------ setup ------------------------------------
+  function create(name, seed = 1){
+    const sc = scenario(name), n = sc.P.length, rnd = rng(seed);
+    const p = new Float64Array(2*n), v = new Float64Array(2*n);
+    sc.P.forEach(([x,y],i)=>{ p[2*i]=x; p[2*i+1]=y; });
+    const broadcast = randint(rnd, 0, 1000);
+    const val = new Float64Array(n), orig = new Float64Array(n);
+    for (let i=0;i<n;i++){
+      const role = sc.role[i];
+      val[i] = role === 'malicious' ? randint(rnd,0,1000) : (i < sc.leaders ? broadcast : randint(rnd,0,1000));
+      orig[i] = val[i];
+    }
+    const nn = n*n;
+    const S = { sc, n, p, v, u: new Float64Array(2*n), uref: new Float64Array(2*n), r: sc.r, t: 0, step: 0,
+      A: { a: new Float64Array(nn), c: new Float64Array(nn), a1: new Float64Array(nn), a2: new Float64Array(nn) },
+      val, orig, broadcast, rnd, hist: [], hMin: 0, h: new Float64Array(n - sc.leaders), robust: 0, phi: 0,
+      minSep: Infinity, minObs: Infinity, exited: false, active: false };
+    const adj = adjacency(S); S.adj = adj; S.robust = strongR(S, adj);
+    consensusRound(S, adj);   // counter == 0 triggers a round
+    S.hist.push({ t: 0, robust: S.robust, hMin: 0, vals: Array.from(S.val) });
+    return S;
+  }
+
+  // ------------------------------------ step ------------------------------------
+  function step(S, opt){
+    const { robustOn = true, umax = Infinity } = opt || {};
+    const sc = S.sc, n = S.n, l = sc.leaders, f = n - l, M = 2*n, p = S.p, v = S.v;
+    // nominal input
+    for (let i=0;i<n;i++){
+      const g = sc.goal(i);
+      if (!g){ S.uref[2*i]=0; S.uref[2*i+1]=0; continue; }
+      let gx = g[0]-p[2*i], gy = g[1]-p[2*i+1]; const nr = Math.hypot(gx,gy) || 1;
+      S.uref[2*i] = gx/nr - v[2*i]; S.uref[2*i+1] = gy/nr - v[2*i+1];
+    }
+    // composed constraint  a.u >= b
+    const a = new Float64Array(M); let b = 0, sumE = 0;
+    // inter-agent collision (HOCBF psi_1 = h_dot + col_alpha h)
+    let minSep = Infinity;
+    for (let i=0;i<n;i++) for (let j=i+1;j<n;j++){
+      const dx=p[2*i]-p[2*j], dy=p[2*i+1]-p[2*j+1], dvx=v[2*i]-v[2*j], dvy=v[2*i+1]-v[2*j+1];
+      minSep = Math.min(minSep, Math.hypot(dx,dy));
+      const h = dx*dx+dy*dy - sc.dmin*sc.dmin;
+      const psi = 2*(dx*dvx+dy*dvy) + sc.colAlpha*h;
+      const e = Math.exp(-sc.wCol*psi), w = sc.wCol*e; sumE += e;
+      a[2*i] += w*2*dx; a[2*i+1] += w*2*dy; a[2*j] -= w*2*dx; a[2*j+1] -= w*2*dy;
+      b -= w*(2*(dvx*dvx+dvy*dvy) + sc.colAlpha*2*(dx*dvx+dy*dvy));
+    }
+    // obstacle collision
+    let minObs = Infinity;
+    for (let i=0;i<n;i++) for (const [ox,oy,rad] of sc.obstacles){
+      const dx=p[2*i]-ox, dy=p[2*i+1]-oy, vx=v[2*i], vy=v[2*i+1], dm = rad+0.1;
+      minObs = Math.min(minObs, Math.hypot(dx,dy) - rad);
+      const h = dx*dx+dy*dy - dm*dm;
+      const psi = 2*(dx*vx+dy*vy) + sc.obsAlpha*h;
+      const e = Math.exp(-sc.wObs*psi), w = sc.wObs*e; sumE += e;
+      a[2*i] += w*2*dx; a[2*i+1] += w*2*dy;
+      b -= w*(2*(vx*vx+vy*vy) + sc.obsAlpha*2*(dx*vx+dy*vy));
+    }
+    // robustness HOCBFs
+    const B = barrier(S);
+    let hMin = Infinity;
+    for (let c=0;c<f;c++){
+      S.h[c] = B.h[c]; hMin = Math.min(hMin, B.h[c]);
+      if (!robustOn) continue;
+      const psi = B.d1[c] + sc.alpha*B.h[c];
+      const e = Math.exp(-sc.wRob*psi), w = sc.wRob*e; sumE += e;
+      const g = B.grad.subarray(c*M, (c+1)*M);
+      for (let m=0;m<M;m++) a[m] += w*g[m];
+      b -= w*(B.d2[c] + sc.alpha*B.d1[c]);
+    }
+    const phi = 1 - sumE;
+    b -= sc.cPhi*phi;
+    // closed-form QP:  min |u-uref|^2  s.t.  a.u >= b
+    let au = 0, aa = 0; for (let m=0;m<M;m++){ au += a[m]*S.uref[m]; aa += a[m]*a[m]; }
+    const lam = (aa > 1e-14 && au < b) ? (b - au)/aa : 0;
+    for (let m=0;m<M;m++) S.u[m] = S.uref[m] + lam*a[m];
+    S.active = lam > 0;
+    if (isFinite(umax)) for (let m=0;m<M;m++) S.u[m] = Math.max(-umax, Math.min(umax, S.u[m]));
+    // integrate double integrator exactly over DT
+    for (let m=0;m<M;m++){ p[m] += v[m]*DT + 0.5*S.u[m]*DT*DT; v[m] += S.u[m]*DT; }
+    S.step += 1; S.t = S.step*DT;
+    // network, robustness, consensus every 20 steps
+    const adj = adjacency(S); S.adj = adj; S.robust = strongR(S, adj);
+    if (S.step % 20 === 0) consensusRound(S, adj);
+    S.hMin = hMin; S.phi = phi; S.minSep = minSep; S.minObs = minObs;
+    if (sc.exitY !== undefined){ let all = true; for (let i=0;i<n;i++) if (p[2*i+1] <= sc.exitY) { all=false; break; } S.exited = all; }
+    if (S.step % 5 === 0) S.hist.push({ t: S.t, robust: S.robust, hMin, vals: Array.from(S.val) });
+    return S;
+  }
+
+  return { DT, R, EPS, DELTA, scenario, create, step, barrier, barrierValue, adjacency, strongR };
+})();
+if (typeof module !== 'undefined') module.exports = RLF;
+// SIM-END
+
+</script>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+
+const $ = id => document.getElementById(id);
+const K = 2.0;              // world units per metre (render scale)
+const ALT = 0.7*K;          // fixed flight altitude, as in the Crazyflie experiments (0.7 m)
+const W = (x, y, z=0) => new THREE.Vector3(K*x, z, -K*y);
+const ROLE_COL = { leader: 0x60a5fa, follower: 0x4ade80, malicious: 0xf87171 };
+
+// viridis colormap (the code maps consensus values to LED colours with viridis)
+const VIR = ['#440154','#482878','#3e4989','#31688e','#26828e','#1f9e89','#35b779','#6ece58','#fde725'].map(c=>new THREE.Color(c));
+const _hsl = {};
+function viridis(t, out = new THREE.Color()){
+  t = Math.min(1, Math.max(0, t)) * (VIR.length-1); const i = Math.min(VIR.length-2, Math.floor(t));
+  out.copy(VIR[i]).lerp(VIR[i+1], t - i);
+  // LED boost: keep viridis' hue order (same value -> colour mapping), but saturate and lift
+  // the lightness so purple/blue ends glow against the dark scene.
+  out.getHSL(_hsl);
+  return out.setHSL(_hsl.h, Math.max(0.9, _hsl.s), Math.min(0.66, Math.max(0.56, _hsl.l*1.25)));
+}
+
+// ---------- state ----------
+const params = { playing: true, speed: 1, robustOn: true };
+let scen = 'spread', seed = 1, S = RLF.create(scen, seed), done = false;
+
+// ---------- renderer ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+$('scene').appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0f14);
+scene.fog = new THREE.Fog(0x0b0f14, 26, 60);
+const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.05, 200);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.maxPolarAngle = Math.PI*0.48; controls.minDistance = 2; controls.maxDistance = 45;
+scene.add(new THREE.HemisphereLight(0xbfd9ff, 0x0b0f14, 0.7));
+const sun = new THREE.DirectionalLight(0xffffff, 1.5);
+sun.position.set(-8, 18, 10); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left:-16, right:16, top:16, bottom:-16, near:1, far:60 });
+scene.add(sun);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(120,120), new THREE.MeshStandardMaterial({ color: 0x10161d, roughness: 0.95 }));
+ground.rotation.x = -Math.PI/2; ground.receiveShadow = true; scene.add(ground);
+const grid = new THREE.GridHelper(60, 60, 0x24303c, 0x18212a); grid.position.y = 0.002; scene.add(grid);
+const fine = new THREE.GridHelper(24, 96, 0x1a232c, 0x141b22); fine.position.y = 0.003; scene.add(fine);
+
+// ---------- drone model (same procedural quadrotor as the patrol demo, smaller) ----------
+function makeDrone(shellHex){
+  const root = new THREE.Group(), tilt = new THREE.Group(); root.add(tilt);
+  const dark = new THREE.MeshStandardMaterial({ color: 0x1d232b, roughness: 0.55, metalness: 0.35 });
+  const shell = new THREE.MeshStandardMaterial({ color: shellHex, roughness: 0.35, metalness: 0.1 });
+  const led = new THREE.MeshBasicMaterial({ color: 0x35b779, toneMapped: false });
+  const s = 0.19;
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.34*s, 0.12*s, 0.5*s), shell); body.castShadow = true; tilt.add(body);
+  const canopy = new THREE.Mesh(new THREE.SphereGeometry(0.16*s, 18, 10, 0, Math.PI*2, 0, Math.PI/2), shell);
+  canopy.scale.set(1, 0.55, 1.35); canopy.position.y = 0.06*s; tilt.add(canopy);
+  const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.37*s, 0.06*s, 0.42*s), led); tilt.add(stripe);
+  // LED ring around the airframe, visible from any angle
+  const ledRing = new THREE.Mesh(new THREE.TorusGeometry(0.42*s, 0.035*s, 8, 40), led);
+  ledRing.rotation.x = Math.PI/2; ledRing.position.y = -0.02*s; tilt.add(ledRing);
+  const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.11*s, 14, 10), led); beacon.position.y = 0.16*s; tilt.add(beacon);
+  const props = [], armLen = 0.62*s;
+  [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([sx,sz], i) => {
+    const ang = Math.atan2(sz, sx);
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(armLen, 0.04*s, 0.06*s), dark);
+    arm.position.set(Math.cos(ang)*armLen/2, 0, Math.sin(ang)*armLen/2); arm.rotation.y = -ang; arm.castShadow = true; tilt.add(arm);
+    const mx = Math.cos(ang)*armLen, mz = Math.sin(ang)*armLen;
+    const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.05*s, 0.06*s, 0.1*s, 12), dark);
+    motor.position.set(mx, 0.03*s, mz); tilt.add(motor);
+    const guard = new THREE.Mesh(new THREE.TorusGeometry(0.27*s, 0.014*s, 6, 30), new THREE.MeshStandardMaterial({ color: 0x9aa7b4, roughness: 0.5 }));
+    guard.rotation.x = Math.PI/2; guard.position.set(mx, 0.08*s, mz); tilt.add(guard);
+    const prop = new THREE.Group(); prop.position.set(mx, 0.09*s, mz);
+    const bladeMat = new THREE.MeshStandardMaterial({ color: 0x2a3138, roughness: 0.4 });
+    for (let b=0;b<2;b++){ const bl = new THREE.Mesh(new THREE.BoxGeometry(0.5*s, 0.01*s, 0.05*s), bladeMat); bl.rotation.y = b*Math.PI; prop.add(bl); }
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(0.25*s, 24), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.08, side: THREE.DoubleSide, depthWrite: false }));
+    disc.rotation.x = -Math.PI/2; prop.add(disc);
+    prop.userData.dir = (i===0||i===3) ? 1 : -1; tilt.add(prop); props.push(prop);
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.06*s, 10, 8), led); tip.position.set(mx, -0.05*s, mz); tilt.add(tip);
+  });
+  return { root, tilt, props, led };
+}
+
+// ---------- environment (rebuilt per scenario) ----------
+let envGroup = null;
+function buildEnv(){
+  if (envGroup){ scene.remove(envGroup); envGroup.traverse(o => { o.geometry && o.geometry.dispose(); }); }
+  envGroup = new THREE.Group(); scene.add(envGroup);
+  const sc = S.sc;
+  const pillarMat = new THREE.MeshStandardMaterial({ color: 0x6b7785, roughness: 0.8, metalness: 0.1, transparent: true, opacity: 0.92 });
+  const capMat = new THREE.MeshStandardMaterial({ color: 0x7a8794, roughness: 0.6 });
+  for (const [ox, oy, rad] of sc.obstacles){
+    const h = 2.1 + 0.25*Math.sin(ox*3.1 + oy*1.7);   // a little above the 1.4 flight altitude
+    const c = new THREE.Mesh(new THREE.CylinderGeometry(K*rad, K*rad*1.04, h, 40), pillarMat);
+    c.position.copy(W(ox, oy, h/2)); c.castShadow = c.receiveShadow = true; envGroup.add(c);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(K*rad*0.98, K*rad*0.98, 0.06, 40), capMat);
+    cap.position.copy(W(ox, oy, h + 0.03)); envGroup.add(cap);
+    // safety margin used by the obstacle CBF (radius + 0.1 m), drawn on the ground
+    const ring = new THREE.Mesh(new THREE.RingGeometry(K*(rad+0.1)-0.02, K*(rad+0.1), 48),
+      new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.25, side: THREE.DoubleSide, depthWrite: false }));
+    ring.rotation.x = -Math.PI/2; ring.position.copy(W(ox, oy, 0.01)); envGroup.add(ring);
+  }
+  if (sc.exitY !== undefined){
+    const strip = new THREE.Mesh(new THREE.PlaneGeometry(K*6, 0.12), new THREE.MeshBasicMaterial({ color: 0x4ade80, transparent: true, opacity: 0.7 }));
+    strip.rotation.x = -Math.PI/2; strip.position.copy(W(0, sc.exitY, 0.012)); envGroup.add(strip);
+    envGroup.add(textSprite('EXIT  y = 4 m', '#4ade80', W(2.2, sc.exitY + 0.35, 0.02), 2.6));
+    envGroup.add(textSprite('GOAL ↑ (0, 10)', '#7dd3fc', W(0, 6.2, 0.02), 2.6));
+    envGroup.add(textSprite('START', '#8b98a5', W(-2.4, -4.6, 0.02), 1.4));
+  } else {
+    // leaders' desired spreading directions
+    const goals = [[-1,0],[-1,1],[1,1],[1,0],[1,-1],[-1,-1]];
+    goals.forEach(([gx,gy]) => { const nrm = Math.hypot(gx,gy);
+      const pts = [W(0,0,0.012), W(5*gx/nrm, 5*gy/nrm, 0.012)];
+      const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
+        new THREE.LineDashedMaterial({ color: 0x60a5fa, dashSize: 0.25, gapSize: 0.2, transparent: true, opacity: 0.35 }));
+      l.computeLineDistances(); envGroup.add(l); });
+    envGroup.add(textSprite('leaders pull outward', '#60a5fa', W(0, -4.3, 0.02), 3.2));
+  }
+}
+function textSprite(text, color, pos, width){
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 80;
+  const g = cv.getContext('2d'); g.font = '600 44px "IBM Plex Sans", system-ui, sans-serif'; g.fillStyle = color;
+  g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 256, 42);
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(width, width*80/512), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false }));
+  m.rotation.x = -Math.PI/2; m.position.copy(pos); return m;
+}
+
+// soft LED glow so the small drones read at a distance
+const HALO = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 64; const g = cv.getContext('2d');
+  const gr = g.createRadialGradient(32,32,0,32,32,32); gr.addColorStop(0,'rgba(255,255,255,1)'); gr.addColorStop(0.35,'rgba(255,255,255,.45)'); gr.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0,0,64,64); return new THREE.CanvasTexture(cv); })();
+// ---------- drones, links, trails ----------
+const TRAIL_MAT = new LineMaterial({ vertexColors: true, linewidth: 3.5, transparent: true, opacity: 0.95, toneMapped: false, depthWrite: false });
+TRAIL_MAT.resolution.set(innerWidth, innerHeight);
+// write the ring buffer (newest first) into Line2's per-segment start/end arrays; older points fade out
+function syncTrail(d){
+  const g = d.trail.geometry, n = d.tcount;
+  const P = g.attributes.instanceStart.data, C = g.attributes.instanceColorStart.data;
+  const pa = P.array, ca = C.array;
+  for (let k=0; k<n-1; k++){
+    const f0 = 1 - 0.75*k/(TL-1), f1 = 1 - 0.75*(k+1)/(TL-1);
+    for (let c=0;c<3;c++){
+      pa[k*6+c] = d.tpos[k*3+c]; pa[k*6+3+c] = d.tpos[(k+1)*3+c];
+      ca[k*6+c] = d.tcol[k*3+c]*f0; ca[k*6+3+c] = d.tcol[(k+1)*3+c]*f1;
+    }
+  }
+  g.instanceCount = Math.max(0, n-1); P.needsUpdate = true; C.needsUpdate = true;
+}
+let drones = [];
+let links = null;
+const TL = 260;   // trail samples (every 3 steps ≈ 15 s)
+function buildDrones(){
+  drones.forEach(d => [d.root, d.ring, d.arrow, d.trail, d.tether].forEach(o => { scene.remove(o); o.traverse(c=>{ c.geometry && c.geometry.dispose(); }); }));
+  drones = [];
+  const sc = S.sc;
+  for (let i=0;i<S.n;i++){
+    const role = sc.role[i];
+    const shell = role === 'leader' ? 0x9cc3ff : role === 'malicious' ? 0xff9b9b : 0xe3e8ee;
+    const d = makeDrone(shell); scene.add(d.root);
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: HALO, color: 0x35b779, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 1, toneMapped: false }));
+    halo.scale.set(0.8, 0.8, 1); d.root.add(halo); d.halo = halo;
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.11, 0.15, 32),
+      new THREE.MeshBasicMaterial({ color: ROLE_COL[role], transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false }));
+    ring.rotation.x = -Math.PI/2; scene.add(ring);
+    const tether = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]),
+      new THREE.LineBasicMaterial({ color: ROLE_COL[role], transparent: true, opacity: 0.25 }));
+    scene.add(tether);
+    const arrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(), 0.4, ROLE_COL[role], 0.12, 0.08);
+    scene.add(arrow);
+    const tpos = new Float32Array(TL*3), tcol = new Float32Array(TL*3);
+    const tg = new LineGeometry(); tg.setPositions(new Float32Array(TL*3)); tg.setColors(new Float32Array(TL*3));
+    tg.instanceCount = 0;
+    const trail = new Line2(tg, TRAIL_MAT); trail.frustumCulled = false; scene.add(trail);
+    drones.push({ ...d, ring, tether, arrow, trail, tpos, tcol, tcount: 0, yaw: 0, role });
+  }
+  if (links){ scene.remove(links); links.geometry.dispose(); }
+  const npair = S.n*(S.n-1)/2;
+  const lg = new THREE.BufferGeometry();
+  lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(npair*6), 3));
+  lg.setAttribute('color', new THREE.BufferAttribute(new Float32Array(npair*6), 3));
+  links = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.9,
+    blending: THREE.AdditiveBlending, depthWrite: false }));
+  links.frustumCulled = false; scene.add(links);
+  links.visible = $('tLinks').checked;
+  drones.forEach(d => { d.trail.visible = $('tTrail').checked; d.arrow.visible = $('tArrow').checked; });
+}
+
+// ---------- first-person view ----------
+const view = { mode: 'orbit', idx: 0, saved: null, savedScen: null, yaw: 0, pitch: -0.12 };
+const ROLE_NAME = { leader: 'leader', follower: 'follower', malicious: 'malicious' };
+const ROLE_CSS = { leader: '#60a5fa', follower: '#4ade80', malicious: '#f87171' };
+function fpvLabel(){
+  const i = Math.min(view.idx, S.n-1), role = S.sc.role[i];
+  $('fLbl').innerHTML = `Drone ${i+1} · <span style="color:${ROLE_CSS[role]}">${ROLE_NAME[role]}</span>`;
+  $('fpvTag').innerHTML = `First person · Drone ${i+1} <span style="color:${ROLE_CSS[role]}">(${ROLE_NAME[role]})</span> · ←/→ switch drone · Esc to exit`;
+}
+function setView(mode){
+  if (mode === view.mode) return;
+  if (mode === 'fpv'){
+    view.saved = { pos: camera.position.clone(), tgt: controls.target.clone() }; view.savedScen = scen;
+    controls.enabled = false; camera.fov = 78; view.yaw = drones[view.idx] ? drones[view.idx].yaw : 0;
+  } else {
+    controls.enabled = true; camera.fov = 42;
+    if (view.saved && view.savedScen === scen){ camera.position.copy(view.saved.pos); controls.target.copy(view.saved.tgt); }
+    else frameCamera();
+  }
+  camera.updateProjectionMatrix();
+  view.mode = mode;
+  $('vOrbit').className = mode === 'orbit' ? 'on' : ''; $('vFpv').className = mode === 'fpv' ? 'on' : '';
+  $('fpvHud').style.display = mode === 'fpv' ? 'block' : 'none';
+  $('hint').style.display = mode === 'fpv' || done ? 'none' : '';
+  drones.forEach((d, i) => showDrone(d, !(mode === 'fpv' && i === view.idx)));
+  fpvLabel();
+}
+function showDrone(d, on){ d.root.visible = on; d.tether.visible = on; d.ring.visible = on; d.arrow.visible = on && $('tArrow').checked; }
+function pickDrone(k){
+  const prev = view.idx; view.idx = (k + S.n) % S.n;
+  if (view.mode === 'fpv'){ if (drones[prev]) showDrone(drones[prev], true); showDrone(drones[view.idx], false); view.yaw = drones[view.idx].yaw; }
+  fpvLabel();
+}
+const fwd = new THREE.Vector3(), eye = new THREE.Vector3(), look = new THREE.Vector3();
+function updateFpv(dt){
+  const d = drones[view.idx]; if (!d) return;
+  // smooth heading so the view does not snap when the velocity flips
+  let df = d.yaw - view.yaw; df = Math.atan2(Math.sin(df), Math.cos(df)); view.yaw += df*Math.min(1, dt*3);
+  fwd.set(-Math.sin(view.yaw), 0, -Math.cos(view.yaw));
+  eye.copy(d.root.position).addScaledVector(fwd, -0.12); eye.y += 0.07;
+  camera.position.lerp(eye, Math.min(1, dt*12));
+  look.copy(camera.position).addScaledVector(fwd, 2); look.y += 2*Math.tan(view.pitch);
+  camera.lookAt(look);
+}
+addEventListener('keydown', e => {
+  if (view.mode !== 'fpv') return;
+  if (e.key === 'ArrowRight'){ pickDrone(view.idx+1); e.preventDefault(); }
+  else if (e.key === 'ArrowLeft'){ pickDrone(view.idx-1); e.preventDefault(); }
+  else if (e.key === 'Escape') setView('orbit');
+});
+
+function frameCamera(){
+  if (S.sc.exitY !== undefined){ camera.position.set(8.5, 15.5, 16.5); controls.target.set(0, 0.4, -0.5); }
+  else { camera.position.set(0.6, 9.5, 10.5); controls.target.set(0, 0.8, 0); }
+  controls.update();
+}
+
+// ---------- HUD ----------
+const ch1 = $('ch1'), ch2 = $('ch2'), c1 = ch1.getContext('2d'), c2 = ch2.getContext('2d');
+function sizeCharts(){ for (const c of [ch1, ch2]){ const r = c.getBoundingClientRect(); c.width = r.width*devicePixelRatio; c.height = r.height*devicePixelRatio; } }
+sizeCharts();
+function axes(ctx, w, h, pad, ymax, yticks, tEnd, fmt){
+  const dpr = devicePixelRatio;
+  ctx.font = `${10*dpr}px IBM Plex Sans, system-ui, sans-serif`; ctx.fillStyle = '#5b6672'; ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 1;
+  for (const v of yticks){ const y = h-pad.b - v/ymax*(h-pad.t-pad.b); ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke(); ctx.fillText(fmt(v), 3*dpr, y+3*dpr); }
+  const step = tEnd > 30 ? 10 : 5;
+  for (let t=0;t<=tEnd;t+=step){ const x = pad.l + t/tEnd*(w-pad.l-pad.r); ctx.fillText(t+'s', x-6*dpr, h-3*dpr); }
+}
+function drawCharts(){
+  const dpr = devicePixelRatio, H = S.hist, tEnd = Math.max(S.sc.tEnd, S.t);
+  // chart 1: strong r(t) and min h
+  { const w = ch1.width, h = ch1.height, pad = { l: 30*dpr, r: 8*dpr, t: 6*dpr, b: 16*dpr };
+    c1.clearRect(0,0,w,h); const ymax = S.sc.leaders + 1;
+    axes(c1, w, h, pad, ymax, [...new Set([0, S.r, ymax])], tEnd, v=>v);
+    const X = t => pad.l + t/tEnd*(w-pad.l-pad.r), Y = v => h-pad.b - v/ymax*(h-pad.t-pad.b);
+    c1.setLineDash([4*dpr,4*dpr]); c1.strokeStyle = 'rgba(74,222,128,.7)'; c1.beginPath(); c1.moveTo(pad.l, Y(S.r)); c1.lineTo(w-pad.r, Y(S.r)); c1.stroke(); c1.setLineDash([]);
+    c1.strokeStyle = '#7dd3fc'; c1.lineWidth = 2*dpr; c1.beginPath();
+    H.forEach((s,k) => { const x = X(s.t), y = Y(s.robust); if (!k) c1.moveTo(x,y); else { c1.lineTo(x, Y(H[k-1].robust)); c1.lineTo(x,y); } }); c1.stroke();
+  }
+  // chart 2: consensus values
+  { const w = ch2.width, h = ch2.height, pad = { l: 30*dpr, r: 8*dpr, t: 6*dpr, b: 16*dpr };
+    c2.clearRect(0,0,w,h);
+    axes(c2, w, h, pad, 1000, [0, 500, 1000], tEnd, v=>(v/1000).toFixed(1));
+    const X = t => pad.l + t/tEnd*(w-pad.l-pad.r), Y = v => h-pad.b - v/1000*(h-pad.t-pad.b);
+    const order = [...S.sc.role.keys()].sort((a,b) => (S.sc.role[a]==='leader') - (S.sc.role[b]==='leader'));
+    for (const i of order){
+      const role = S.sc.role[i];
+      c2.strokeStyle = role === 'leader' ? '#60a5fa' : role === 'malicious' ? 'rgba(248,113,113,.65)' : 'rgba(74,222,128,.85)';
+      c2.lineWidth = (role === 'leader' ? 2.2 : 1.2)*dpr; c2.setLineDash(role === 'malicious' ? [3*dpr,3*dpr] : []);
+      c2.beginPath(); H.forEach((s,k) => { const x = X(s.t), y = Y(s.vals[i]); if (!k) c2.moveTo(x,y); else { c2.lineTo(x, Y(H[k-1].vals[i])); c2.lineTo(x,y); } }); c2.stroke();
+    }
+    c2.setLineDash([]);
+  }
+}
+function updateHUD(){
+  const sc = S.sc, r = S.r, safe = S.robust >= r;
+  $('rNow').textContent = S.robust; $('rNow').style.color = safe ? 'var(--ok)' : 'var(--bad)';
+  $('rReq').textContent = `target ≥ ${r}  (max ${sc.leaders})`;
+  $('meter').innerHTML = Array.from({length: sc.leaders+1}, (_,k) => `<span style="${k < S.robust ? `background:${k < r ? '#4ade80' : '#7dd3fc'}` : (k < r ? 'background:rgba(248,113,113,.35)' : '')}"></span>`).join('');
+  const st = $('status'); st.className = 'mono ' + (safe ? 'safe' : 'unsafe');
+  $('statusTxt').textContent = safe ? `SAFE · r ≥ ${r}` : `VIOLATED · r < ${r}`;
+  $('hval').textContent = 'min h ' + (isFinite(S.hMin) ? S.hMin.toFixed(3) : '–');
+  const roles = sc.role; $('nL').textContent = roles.filter((x,i)=>i<sc.leaders && x!=='malicious').length;
+  $('nF').textContent = roles.filter(x=>x==='follower').length; $('nM').textContent = roles.filter(x=>x==='malicious').length;
+  let e = 0; for (let i=0;i<S.n;i++) for (let j=i+1;j<S.n;j++) e += S.adj[i*S.n+j]; $('mE').textContent = e;
+  $('mT').textContent = S.t.toFixed(1)+' s';
+  $('mSep').textContent = isFinite(S.minSep) ? S.minSep.toFixed(2)+' m' : '–';
+  $('mObs').textContent = sc.obstacles.length && isFinite(S.minObs) ? S.minObs.toFixed(2)+' m' : '–';
+  let dev = 0; for (let i=0;i<S.n;i++) if (roles[i]==='follower') dev = Math.max(dev, Math.abs(S.val[i]-S.broadcast)/1000);
+  $('mCons').textContent = dev.toFixed(3);
+  $('mPhi').textContent = S.active ? 'yes' : 'no'; $('mPhi').style.color = S.active ? '#fbbf24' : '';
+}
+
+// ---------- controls ----------
+function load(name){
+  scen = name; S = RLF.create(scen, seed); done = false; $('banner').style.display = 'none';
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.s === name));
+  buildEnv(); buildDrones(); frameCamera(); updateHUD();
+  view.idx = Math.min(view.idx, S.n-1); if (view.mode === 'fpv'){ controls.enabled = false; showDrone(drones[view.idx], false); view.yaw = drones[view.idx].yaw; } fpvLabel();
+  if (!params.playing) $('bPlay').click();
+}
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => load(t.dataset.s));
+$('bPlay').onclick = () => { params.playing = !params.playing; $('bPlay').textContent = params.playing ? '❚❚ Pause' : '▶ Play'; $('bPlay').className = params.playing ? 'on' : ''; };
+$('bReset').onclick = () => { seed = (seed % 997) + 1; load(scen); };
+$('bReplay').onclick = () => load(scen);
+$('bCBF').onclick = () => { params.robustOn = !params.robustOn;
+  $('bCBF').textContent = 'Robustness CBF: ' + (params.robustOn ? 'ON' : 'OFF'); $('bCBF').className = params.robustOn ? 'on' : 'off'; };
+$('vOrbit').onclick = () => setView('orbit');
+$('vFpv').onclick = () => setView('fpv');
+$('fPrev').onclick = () => { pickDrone(view.idx-1); setView('fpv'); };
+$('fNext').onclick = () => { pickDrone(view.idx+1); setView('fpv'); };
+$('sSpd').oninput = e => { params.speed = +e.target.value; $('vSpd').textContent = params.speed+'×'; };
+$('tLinks').onchange = e => { links.visible = e.target.checked; };
+$('tTrail').onchange = e => drones.forEach(d => d.trail.visible = e.target.checked);
+$('tArrow').onchange = e => drones.forEach((d,i) => d.arrow.visible = e.target.checked && !(view.mode === 'fpv' && i === view.idx));
+$('tRot').onchange = e => { controls.autoRotate = e.target.checked; controls.autoRotateSpeed = 0.6; };
+addEventListener('resize', () => { TRAIL_MAT.resolution.set(innerWidth, innerHeight); camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); sizeCharts(); });
+
+// ---------- loop ----------
+const clock = new THREE.Clock(); let acc = 0, spin = 0;
+const tmp = new THREE.Vector3(), colA = new THREE.Color(), colB = new THREE.Color();
+buildEnv(); buildDrones(); frameCamera(); updateHUD(); fpvLabel();
+
+function finish(msg){ done = true; $('bannerTxt').textContent = msg; $('banner').style.display = 'flex'; $('hint').style.display = 'none'; }
+
+function frame(){
+  const dt = Math.min(clock.getDelta(), 0.1);
+  if (params.playing && !done){
+    acc += dt*params.speed; let k = 0;
+    while (acc >= RLF.DT && k < 200 && !done){
+      RLF.step(S, { robustOn: params.robustOn }); acc -= RLF.DT; k++;
+      if (!isFinite(S.p[0])){ finish('Numerical blow-up, press replay'); break; }
+      if (S.step % 3 === 0) drones.forEach((d,i) => {
+        d.tpos.copyWithin(3, 0, (TL-1)*3); d.tcol.copyWithin(3, 0, (TL-1)*3);
+        d.tpos[0] = K*S.p[2*i]; d.tpos[1] = ALT - 0.03; d.tpos[2] = -K*S.p[2*i+1]; d.dirty = true;
+        viridis(S.val[i]/1000, colA); d.tcol[0]=colA.r; d.tcol[1]=colA.g; d.tcol[2]=colA.b;
+        if (d.tcount < TL) d.tcount++;
+      });
+      if (S.sc.exitY !== undefined && S.exited) finish(`All ${S.n} drones exited at t = ${S.t.toFixed(1)} s · min strong r = ${Math.min(...S.hist.map(h=>h.robust))}`);
+      else if (S.sc.exitY === undefined && S.t >= S.sc.tEnd) finish(`Done (t = ${S.sc.tEnd} s) · min strong r = ${Math.min(...S.hist.map(h=>h.robust))} (target ≥ ${S.r})`);
+    }
+    spin += dt*60;
+  }
+  updateHUD();
+
+  // drones
+  drones.forEach((d, i) => {
+    const x = S.p[2*i], y = S.p[2*i+1], vx = S.v[2*i], vy = S.v[2*i+1], sp = Math.hypot(vx, vy);
+    const bob = Math.sin(performance.now()/500 + i*1.3)*0.012;
+    d.root.position.copy(W(x, y, ALT + bob));
+    if (sp > 0.03){ const yaw = Math.atan2(vy, vx) - Math.PI/2; let df = yaw - d.yaw; df = Math.atan2(Math.sin(df), Math.cos(df)); d.yaw += df*Math.min(1, dt*5); }
+    d.root.rotation.y = d.yaw; d.tilt.rotation.x = -Math.min(sp, 2)*0.12;
+    d.props.forEach(p => p.rotation.y = spin*p.userData.dir);
+    viridis(S.val[i]/1000, colA); d.led.color.copy(colA); d.halo.material.color.copy(colA);
+    { const dist = camera.position.distanceTo(d.root.position); d.halo.scale.setScalar(Math.min(0.8, 0.12 + 0.07*dist)); d.halo.material.opacity = Math.min(1, 0.35 + 0.08*dist); }
+    d.ring.position.copy(W(x, y, 0.015));
+    const tp = d.tether.geometry.attributes.position.array; tp[0]=K*x; tp[1]=0.015; tp[2]=-K*y; tp[3]=K*x; tp[4]=ALT-0.05; tp[5]=-K*y; d.tether.geometry.attributes.position.needsUpdate = true;
+    if (sp > 1e-3){ tmp.set(vx, 0, -vy).normalize(); d.arrow.setDirection(tmp); d.arrow.setLength(0.25 + Math.min(sp, 2)*0.6, 0.12, 0.08); d.arrow.visible = $('tArrow').checked && !(view.mode === 'fpv' && i === view.idx); }
+    else d.arrow.visible = false;
+    d.arrow.position.copy(W(x, y, ALT));
+    if (d.dirty){ syncTrail(d); d.dirty = false; }
+  });
+  // communication links: brightness = smoothed adjacency abar_ij (fades as the pair nears range R)
+  if (links.visible){
+    const pa = links.geometry.attributes.position.array, ca = links.geometry.attributes.color.array; let m = 0;
+    for (let i=0;i<S.n;i++) for (let j=i+1;j<S.n;j++){
+      const on = S.adj[i*S.n+j], a = S.A.a[i*S.n+j];
+      pa[m*6]=K*S.p[2*i]; pa[m*6+1]=ALT; pa[m*6+2]=-K*S.p[2*i+1]; pa[m*6+3]=K*S.p[2*j]; pa[m*6+4]=ALT; pa[m*6+5]=-K*S.p[2*j+1];
+      const li = S.sc.role[i]==='leader' || S.sc.role[j]==='leader';
+      const base = li ? [0.38,0.65,0.98] : [0.5,0.6,0.7], g = on ? 0.05 + 0.2*Math.min(1, a) : 0;
+      ca[m*6]=base[0]*g; ca[m*6+1]=base[1]*g; ca[m*6+2]=base[2]*g; ca[m*6+3]=base[0]*g; ca[m*6+4]=base[1]*g; ca[m*6+5]=base[2]*g;
+      m++;
+    }
+    links.geometry.attributes.position.needsUpdate = true; links.geometry.attributes.color.needsUpdate = true;
+  }
+  drawCharts();
+  if (view.mode === 'fpv') updateFpv(dt); else controls.update();
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
