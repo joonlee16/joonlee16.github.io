@@ -46,7 +46,8 @@ title: "Home"
       <a href="https://dasc-lab.github.io/" target="_blank">DASC Lab</a>, part of the 
       <a href="https://robotics.umich.edu/" target="_blank">Department of Robotics</a> at the University of Michigan, Ann Arbor. 
       I am advised by <a href="https://websites.umich.edu/~dpanagou/" target="_blank">Professor Dimitra Panagou</a>. 
-      My research centers on <strong>safe, robust, resilient and scalable multi-agent and autonomous systems</strong>, with a focus on multi-robot coordination, control, and planning in dynamic, uncertain, and potentially adversarial environments.
+
+      I develop algorithms that enable autonomous multi-agent systems to operate safely and reliably in dynamic, uncertain, and adversarial environments. My research combines provable guarantees with scalable algorithms across resilient network design, distributed control, optimization, and learning, with a recent focus on diffusion-based planning for large robot teams. My long-term vision is to enable hundreds of robots to coordinate and make decisions online, efficiently and resiliently, in real-world environments.
       </p>
 
       <p>
