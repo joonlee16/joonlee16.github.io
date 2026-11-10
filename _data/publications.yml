@@ -1,4 +1,18 @@
 - year: 2026
+  title: "Discrete Model-Based Diffusion for Combinatorial Optimization in Multi-Robot Task Allocation"
+  category: conferences
+  image: "/pics/discrete_mbd.gif"
+  venue: "preprint"
+  authors: "<strong>Haejoon Lee</strong>, Thomas Marshall Vielmetti, Xinyi Wang, Dimitra Panagou"
+  first_coauthors: false
+  links:
+    # pdf: ""
+    # webpage: "https://distributed-mbd.github.io/dmbd.github.io"
+    # code: "https://github.com/distributed-mbd/dmbd"
+    demo: "/playground/discrete-mbd"
+
+
+- year: 2026
   title: "Distributed Model-Based Diffusion For Scalable Multi-Robot Trajectory Optimization"
   category: conferences
   image: "/pics/dmbd.gif"
