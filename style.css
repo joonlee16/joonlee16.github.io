@@ -254,8 +254,8 @@ a:hover {
 
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
 }
 
 .project-card a {
@@ -265,7 +265,7 @@ a:hover {
 
 .project-card img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   object-fit: contain;
   background: #fff;
   border-radius: 8px;
@@ -280,10 +280,18 @@ a:hover {
 .project-title {
   margin-top: 0.6rem;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   line-height: 1.35;
 }
 
 .project-card a:hover .project-title {
   text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .project-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .project-grid { grid-template-columns: repeat(2, 1fr); }
 }
