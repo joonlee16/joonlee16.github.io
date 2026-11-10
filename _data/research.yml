@@ -1,0 +1,42 @@
+# Research questions and the papers that answer them.
+# Paper titles must match _data/publications.yml exactly. List papers newest first.
+
+- name: "Resilient Consensus, Learning, and Decision-Making of Multi-Robot Teams"
+  questions:
+    - q: "How can agents agree, learn, and decide reliably despite faulty and adversarial robots?"
+      papers:
+        - "Robust Multi-Agent LLMs Under Byzantine Faults"
+        - "Fully Byzantine-Resilient Distributed Multi-Agent Q-Learning"
+        - "Partial Resilient Leader-Follower Consensus in Time-Varying Graphs"
+
+- name: "Scalable Multi-Robot Trajectory Planning and Task Allocation"
+  questions:
+    - q: "How can robot teams plan trajectories at scale?"
+      papers:
+        - "Distributed Model-Based Diffusion For Scalable Multi-Robot Trajectory Optimization"
+    - q: "How can robot teams be dynamically formed and coordinated to efficiently accomplish tasks?"
+      papers:
+        - "Discrete Model-Based Diffusion for Combinatorial Optimization in Multi-Robot Task Allocation"
+        - "Multi-Robot Allocation for Information Gathering in Non-Uniform Spatiotemporal Environments"
+
+- name: "Safe Optimization-Based Control with Guarantees"
+  questions:
+    - q: "How can optimization-based controllers stay regular and feasible?"
+      papers:
+        - "Feasibility Analysis and Constraint Selection in Optimization-Based Controllers"
+        - "Reformulations of Quadratic Programs for Lipschitz Continuity"
+    - q: "How can we enforce complex safety requirements?"
+      papers:
+        - "Distributionally Robust Safety Under Arbitrary Uncertainties: A Safety Filtering Approach"
+        - "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
+
+- name: "Resilient Multi-Robot Networks"
+  questions:
+    - q: "What network structures make a team resilient to adversaries?"
+      papers:
+        - "Minimal Construction of Graphs with Maximum Robustness"
+        - "Construction of the Sparsest Maximally r-Robust Graphs"
+    - q: "How can moving robots maintain resilient networks despite spatial constraints?"
+      papers:
+        - "Distributed Resilience-Aware Control in Multi-Robot Networks"
+        - "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"

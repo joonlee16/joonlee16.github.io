@@ -3,7 +3,6 @@ layout: default
 title: Projects
 permalink: /projects/
 redirect_from: /projects.html
-noindex: true
 ---
 
 <h1>Projects</h1>
@@ -19,7 +18,7 @@ noindex: true
           <div class="project-card">
             {% if link %}<a href="{{ link }}" target="_blank">{% endif %}
               <img src="{{ pub.image }}" alt="{{ pub.title }}" loading="lazy">
-              <div class="project-title">{{ pub.title }}</div>
+              <div class="project-title">{% if pub.venue contains "(" %}{% assign short = pub.venue | split: "(" | last | split: ")" | first %}<span class="project-venue">[{{ short }} {{ pub.year }}]</span> {% endif %}{{ pub.title }}</div>
             {% if link %}</a>{% endif %}
           </div>
         {% endif %}

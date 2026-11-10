@@ -295,3 +295,28 @@ a:hover {
 @media (max-width: 560px) {
   .project-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+.project-venue {
+  color: #555;
+  font-weight: 700;
+}
+
+/* Research questions page (reuses the Projects grid) */
+.rq-intro {
+  max-width: 800px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.rq-item {
+  margin-bottom: 1.75rem;
+}
+
+.rq-question {
+  border-left: 3px solid #333;
+  padding: 0.2rem 0 0.2rem 0.8rem;
+  margin-bottom: 0.9rem;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: #222;
+}
