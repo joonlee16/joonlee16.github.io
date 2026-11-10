@@ -1,29 +1,30 @@
 # Each project lists paper titles exactly as they appear in _data/publications.yml.
-# A paper can appear under more than one project.
+# A paper can appear under more than one project. Papers are listed newest first.
 
 - name: "Diffusion-Based Planning"
   papers:
-    - "Distributed Model-Based Diffusion For Scalable Multi-Robot Trajectory Optimization"
     - "Discrete Model-Based Diffusion for Combinatorial Optimization in Multi-Robot Task Allocation"
+    - "Distributed Model-Based Diffusion For Scalable Multi-Robot Trajectory Optimization"
 
 - name: "Safety-Critical Control"
   papers:
     - "Distributionally Robust Safety Under Arbitrary Uncertainties: A Safety Filtering Approach"
+    - "Feasibility Analysis and Constraint Selection in Optimization-Based Controllers"
     - "Combinatorial Control Barrier Functions: Nested Boolean and p-choose-r Compositions of Safety Constraints"
     - "Reformulations of Quadratic Programs for Lipschitz Continuity"
-    - "Feasibility Analysis and Constraint Selection in Optimization-Based Controllers"
     - "Distributed Resilience-Aware Control in Multi-Robot Networks"
     - "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"
 
 - name: "Multi-Agent Reinforcement Learning"
   papers:
     - "Fully Byzantine-Resilient Distributed Multi-Agent Q-Learning"
+    - "Fully Byzantine-Resilient Multi-Agent Reinforcement Learning"
 
 - name: "Resilient Multi-Agent Decision-Making"
   papers:
-    - "Robust Multi-Agent LLMs Under Byzantine Faults"
-    - "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"
-    - "Distributed Resilience-Aware Control in Multi-Robot Networks"
-    - "Partial Resilient Leader-Follower Consensus in Time-Varying Graphs"
     - "Minimal Construction of Graphs with Maximum Robustness"
+    - "Robust Multi-Agent LLMs Under Byzantine Faults"
+    - "Partial Resilient Leader-Follower Consensus in Time-Varying Graphs"
+    - "Distributed Resilience-Aware Control in Multi-Robot Networks"
+    - "Maintaining Strong r-Robustness in Reconfigurable Multi-Robot Networks Using Control Barrier Functions"
     - "Construction of the Sparsest Maximally r-Robust Graphs"

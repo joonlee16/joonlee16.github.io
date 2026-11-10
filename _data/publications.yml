@@ -26,6 +26,17 @@
     demo: "https://mbd.taekyung.me/"
 
 
+- year: 2026
+  title: "Fully Byzantine-Resilient Multi-Agent Reinforcement Learning"
+  category: journals
+  image: "/pics/frac_marl.gif"
+  venue: "submitted and under review" 
+  authors: " <strong>Haejoon Lee</strong>, Dimitra Panagou"
+  first_coauthors: false
+  links:
+    pdf: "https://arxiv.org/pdf/2609.25701" 
+    code: "https://github.com/joonlee16/frac-marl"
+
 
 - year: 2026
   title: "Distributionally Robust Safety Under Arbitrary Uncertainties: A Safety Filtering Approach"
