@@ -17,8 +17,9 @@
 
 - name: "Multi-Agent Reinforcement Learning"
   papers:
-    - "Fully Byzantine-Resilient Distributed Multi-Agent Q-Learning"
     - "Fully Byzantine-Resilient Multi-Agent Reinforcement Learning"
+    - "Fully Byzantine-Resilient Distributed Multi-Agent Q-Learning"
+
 
 - name: "Resilient Multi-Agent Decision-Making"
   papers:
