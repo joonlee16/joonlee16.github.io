@@ -1,0 +1,28 @@
+---
+layout: default
+title: Projects
+permalink: /projects/
+redirect_from: /projects.html
+---
+
+<h1>Projects</h1>
+
+{% for project in site.data.projects %}
+  <section class="project-section">
+    <h2>{{ project.name }}</h2>
+    <div class="project-grid">
+      {% for t in project.papers %}
+        {% assign pub = site.data.publications | where: "title", t | first %}
+        {% if pub %}
+          {% assign link = pub.links.webpage | default: pub.links.pdf | default: pub.links.demo %}
+          <div class="project-card">
+            {% if link %}<a href="{{ link }}" target="_blank">{% endif %}
+              <img src="{{ pub.image }}" alt="{{ pub.title }}" loading="lazy">
+              <div class="project-title">{{ pub.title }}</div>
+            {% if link %}</a>{% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+{% endfor %}

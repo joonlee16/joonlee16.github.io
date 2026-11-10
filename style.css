@@ -246,3 +246,44 @@ a:hover {
   text-decoration: underline; /* Optional: underline on hover */
   color: #0056b3; /* Optional: darker blue on hover */
 }
+
+/* Projects page */
+.project-section {
+  margin-bottom: 2.5rem;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.project-card a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.project-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.15s ease;
+}
+
+.project-card a:hover img {
+  transform: translateY(-3px);
+}
+
+.project-title {
+  margin-top: 0.6rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.project-card a:hover .project-title {
+  text-decoration: underline;
+}
