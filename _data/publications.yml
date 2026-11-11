@@ -6,9 +6,9 @@
   authors: "<strong>Haejoon Lee</strong>, Thomas Marshall Vielmetti, Xinyi Wang, Dimitra Panagou"
   first_coauthors: false
   links:
-    # pdf: ""
-    # webpage: "https://distributed-mbd.github.io/dmbd.github.io"
-    # code: "https://github.com/distributed-mbd/dmbd"
+    pdf: "https://arxiv.org/pdf/2611.13382"
+    webpage: "https://joonlee16.github.io/discrete-mbd.github.io/"
+    code: "https://github.com/joonlee16/discrete-mbd"
     demo: "/playground/discrete-mbd"
 
 
